@@ -1,21 +1,70 @@
-*
+/* --bs-info-rgb: 13, 202, 240; */
+/* :root {
+    --bs-faansy-red-rgb: rgb(130, 3, 3);
+} */
+
+/* @import url('https://fonts.googleapis.com/css2?family=Fahkwang:ital@0;1&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Sulphur+Point&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Thasadith&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
+
 html {
     box-sizing: border-box;
     margin: 0;
     border: 0;
 }
 
-.show-more:hover {
-    color: #0dcaf0;
-    border-color: #6f8589;
+body {
+    /* font-family: 'Fahkwang', sans-serif; */
+    /* font-family: 'Sulphur Point', sans-serif; */
+    /* font-family: 'Thasadith', sans-serif; */
+    /* font-weight: 600; */
+    font-family: 'Comfortaa', sans-serif;
+}
+
+.form-control:focus {
+    border-color: #820303 !important;
+    box-shadow: 0 0 5px #82030375 !important;
+}
+
+.btn-faansy-red {
+    --bs-btn-color: #000;
+    --bs-btn-bg: #820303;
+    --bs-btn-border-color: #820303;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-bg: #820303e7;
+    --bs-btn-hover-border-color: #82030375;
+    --bs-btn-focus-shadow-rgb: 11, 172, 204;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-bg: #820303d1;
+    --bs-btn-active-border-color: #82030375;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #000;
+    --bs-btn-disabled-bg: #820303;
+    --bs-btn-disabled-border-color: #820303;
+}
+
+.text-faansy-red {
+    color: #820303;
+}
+
+.bg-faansy-red {
+    --bs-bg-opacity: 1;
+    --bs-faansy-red-rgb: rgb(130, 3, 3);
+    background-color: rgba(var(--bs-faansy-red-rgb), var(--bs-bg-opacity)) !important;
 }
 
 .show-more:hover {
-    background: #0dcaf026;
+    color: #820303;
+    border-color: #820303;
+}
+
+.show-more:hover {
+    background: #82030326;
 }
 
 .sidebar-item:hover {
-    color: #0dcaf0;
+    color: #820303;
 }
 
 /* aside span a {
@@ -25,7 +74,7 @@ html {
 aside span a:hover {
     background: #76e7fb6d;
     border-radius: 25px;
-    color: #0dcaf0;
+    color: #820303;
     padding-inline: 1rem;
     padding-block: 0.15rem;
 } */

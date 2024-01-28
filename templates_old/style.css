@@ -1,0 +1,31 @@
+*
+html {
+    box-sizing: border-box;
+    margin: 0;
+    border: 0;
+}
+
+.show-more:hover {
+    color: #0dcaf0;
+    border-color: #6f8589;
+}
+
+.show-more:hover {
+    background: #0dcaf026;
+}
+
+.sidebar-item:hover {
+    color: #0dcaf0;
+}
+
+/* aside span a {
+    
+}
+
+aside span a:hover {
+    background: #76e7fb6d;
+    border-radius: 25px;
+    color: #0dcaf0;
+    padding-inline: 1rem;
+    padding-block: 0.15rem;
+} */
