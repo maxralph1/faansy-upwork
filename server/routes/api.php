@@ -4,8 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\BlockController;
+use App\Http\Controllers\Api\V1\BookmarkController;
+use App\Http\Controllers\Api\V1\PostlikeController;
+use App\Http\Controllers\Api\V1\PostcommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +42,10 @@ Route::controller(TodoController::class)->group(function () {
 });
 
 Route::apiResource('users', UserController::class);
+Route::apiResource('posts', PostController::class);
+Route::apiResource('postcomments', PostcommentController::class);
+Route::apiResource('postlikes', PostlikeController::class);
+Route::apiResource('bookmarks', BookmarkController::class);
 Route::apiResource('blocks', BlockController::class);
 Route::controller(BlockController::class)->group(function () {
     Route::patch('blocks/{block}/restore', 'restore');

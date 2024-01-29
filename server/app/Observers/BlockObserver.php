@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Models\Role;
 use App\Models\User;
 use App\Models\Block;
 use App\Http\Requests\StoreBlockRequest;
@@ -10,7 +9,7 @@ use App\Http\Requests\StoreBlockRequest;
 class BlockObserver
 {
     /**
-     * Handle the Block "created" event.
+     * Handle the Block "creating" event.
      */
     public function creating(StoreBlockRequest $request, Block $block): void
     {
@@ -19,16 +18,15 @@ class BlockObserver
 
             $admin = auth()->user()->role()->where('title', 'super-admin')
                 ->orWhere('title', 'admin')
-                ->value('id')
                 ->first();
 
             // !auth()->user()->role()->where('title', $role)->exists()
 
             if (!$admin) {
                 $block->blocker_id = auth()->id();
+            } else {
+                $block->blocker_id = $request->blocker_id;
             }
-
-            $block->blocker_id = $request->blocker_id;
         }
     }
 
@@ -36,6 +34,14 @@ class BlockObserver
      * Handle the Block "created" event.
      */
     public function created(Block $block): void
+    {
+        //
+    }
+
+    /**
+     * Handle the Block "updating" event.
+     */
+    public function updating(Block $block): void
     {
         //
     }

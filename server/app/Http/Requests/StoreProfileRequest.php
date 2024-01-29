@@ -31,8 +31,6 @@ class StoreProfileRequest extends FormRequest
             'google_account' => 'nullable|max:255',
             'language' => 'nullable|in:de,en-US,fr',
             'dark_mode' => 'nullable|boolean',
-            // 'photo' => 'mimes:jpg,jpeg,bmp,png',
-            // 'video' => 'mimetypes:video/avi,video/mp4,video/mpeg,video/quicktime'
         ];
     }
 }

@@ -10,6 +10,11 @@ use App\Http\Requests\UpdateBookmarkRequest;
 
 class BookmarkController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -25,6 +30,19 @@ class BookmarkController extends Controller
      */
     public function store(StoreBookmarkRequest $request)
     {
+        $already_bookmarked = Bookmark::where([
+            'user_id' => $request->user_id,
+            'post_id' => $request->post_id,
+        ])->first();
+
+        if ($already_bookmarked) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Conflict: Already Bookmarked!',
+            ], 409);
+            // abort('409', 'Conflict: Already Blocked!');
+        }
+
         $bookmark = Bookmark::create($request->validated());
 
         return new BookmarkResource($bookmark);

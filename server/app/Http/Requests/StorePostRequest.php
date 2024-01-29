@@ -22,12 +22,10 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'user_id' => 'required|string',
+            'user_id' => 'required|string',
             'body' => 'required|string',
-            'image_url' => 'required|string',
-            'video_url' => 'required|string',
-            // 'pinned' => 'required|string',
-            // 'pinned_at' => 'required|string',
+            'image_url' => 'nullable|mimes:jpg,jpeg,bmp,png',
+            'video_url' => 'nullable|mimetypes:video/avi,video/mp4,video/mpeg,video/quicktime'
         ];
     }
 }

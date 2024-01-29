@@ -45,7 +45,8 @@ class AuthController extends Controller
 
         $detailedToken = Auth::claims([
             'id' => $user->id,
-            'name' => $user->name,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
             'username' => $user->username,
             'email' => $user->email,
             'created_at' => $user->created_at,
@@ -57,7 +58,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             // 'user' => $user,
-            'authorisation' => [
+            'authorization' => [
                 'token' => $detailedToken,
                 'type' => 'bearer',
             ]
@@ -67,7 +68,8 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'username' => 'required|string|max:55',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
@@ -90,7 +92,8 @@ class AuthController extends Controller
 
         $token = Auth::claims([
             'id' => $user->id,
-            'name' => $user->name,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
             'username' => $user->username,
             'email' => $user->email,
             'created_at' => now(),
@@ -103,15 +106,19 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'User created successfully',
             // 'user' => $user,
-            'authorisation' => [
+            'authorization' => [
                 'token' => $token,
                 'type' => 'bearer',
             ]
-        ]);
+        ], 201);
     }
 
     public function logout()
     {
+        $loggedInUser = User::where('id', auth()->user()->id)->first();
+        $loggedInUser->last_seen = now();
+        $loggedInUser->save();
+
         Auth::logout();
         return response()->json([
             'status' => 'success',
@@ -124,7 +131,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             // 'user' => Auth::user(),
-            'authorisation' => [
+            'authorization' => [
                 'token' => Auth::refresh(),
                 'type' => 'bearer',
             ]
