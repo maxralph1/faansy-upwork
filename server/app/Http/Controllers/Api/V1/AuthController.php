@@ -43,6 +43,10 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $loggedInUser = User::where('id', auth()->user()->id)->first();
+        $loggedInUser->last_seen = now();
+        $loggedInUser->save();
+
         $detailedToken = Auth::claims([
             'id' => $user->id,
             'first_name' => $user->first_name,

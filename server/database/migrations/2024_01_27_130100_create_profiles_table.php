@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('language', ['de', 'en-US', 'fr']);
             $table->boolean('dark_mode')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

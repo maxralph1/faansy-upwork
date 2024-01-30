@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
 import axios from 'axios'
@@ -27,7 +28,7 @@ export function usePostcomment(id = null) {
 
         console.log(user_id, post_id, body)
         return axiosInstance.post('postcomments', {user_id, post_id, body})
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);
@@ -43,7 +44,7 @@ export function usePostcomment(id = null) {
     async function getPostcomment(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`http://127.0.0.1:8000/api/postcomments/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/postcomments/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -54,7 +55,7 @@ export function usePostcomment(id = null) {
         setErrors({});
 
         return axiosInstance.put(`postcomments/${postcomment.id}/`, postcomment)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -65,7 +66,7 @@ export function usePostcomment(id = null) {
 
     async function destroyPostcomment(postcomment) {
         return axiosInstance.delete(`postcomments/${postcomment.id}/`)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

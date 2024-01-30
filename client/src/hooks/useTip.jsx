@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
 import axios from 'axios'
@@ -27,7 +28,7 @@ export function useTip(id = null) {
 
         console.log(user_id, post_id)
         return axiosInstance.post('tips', {user_id, post_id})
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);
@@ -43,7 +44,7 @@ export function useTip(id = null) {
     async function getTip(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`http://127.0.0.1:8000/api/tips/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/tips/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -54,7 +55,7 @@ export function useTip(id = null) {
         setErrors({});
 
         return axiosInstance.put(`tips/${tip.id}/`, tip)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -65,7 +66,7 @@ export function useTip(id = null) {
 
     async function destroyTip(tip) {
         return axiosInstance.delete(`tips/${tip.id}/`)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

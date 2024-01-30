@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\BlockController;
 use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\PostlikeController;
 use App\Http\Controllers\Api\V1\PostcommentController;
+use App\Http\Controllers\Api\V1\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,9 +43,15 @@ Route::controller(TodoController::class)->group(function () {
 });
 
 Route::apiResource('users', UserController::class);
+Route::controller(UserController::class)->group(function () {
+    Route::get('creators', 'creators');
+    Route::get('creators/{user:username}', 'creator');
+    Route::put('creators/{user:username}/verify', 'verifyCreator');
+});
 Route::apiResource('posts', PostController::class);
 Route::apiResource('postcomments', PostcommentController::class);
 Route::apiResource('postlikes', PostlikeController::class);
+Route::apiResource('subscriptions', SubscriptionController::class);
 Route::apiResource('bookmarks', BookmarkController::class);
 Route::apiResource('blocks', BlockController::class);
 Route::controller(BlockController::class)->group(function () {

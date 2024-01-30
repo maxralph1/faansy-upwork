@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 // import axiosInstance from '@/utils/axios';
 import axios from 'axios';
 
@@ -13,7 +14,7 @@ export function usePosts() {
     }, []);
 
     async function getPosts({ signal } = {}) {
-        return axios.get('http://127.0.0.1:8000/api/posts', { signal })
+        return axios.get(`${ Constants.serverURL }/api/posts`, { signal })
         // return axiosInstance.get(`posts`, { signal })
             .then(response => setPosts(response.data.data))
             .catch(() => {});

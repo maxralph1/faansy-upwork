@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 // import axiosInstance from '@/utils/axios';
 import axios from 'axios';
 
@@ -13,7 +14,7 @@ export function usePostlikes() {
     }, []);
 
     async function getPostlikes({ signal } = {}) {
-        return axios.get('http://127.0.0.1:8000/api/postlikes', { signal })
+        return axios.get(`${ Constants.serverURL }/api/postlikes`, { signal })
         // return axiosInstance.get(`postlikes`, { signal })
             .then(response => setPostlikes(response.data.data))
             .catch(() => {});

@@ -30,6 +30,13 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'email',
         'password',
+        'user_image_url',
+        'user_background_image_url',
+        'show_activity_status',
+        'free_subscription',
+        'show_subscription_offers',
+        'passport_image_url',
+        'verified',
     ];
 
     /**
@@ -80,8 +87,98 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Profile::class);
     }
 
+    public function userlikers(): HasMany
+    {
+        return $this->hasMany(Userlike::class, 'liker_id');
+    }
+
+    public function userliked(): HasMany
+    {
+        return $this->hasMany(Userlike::class, 'liked_id');
+    }
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function subscribers(): HasMany
+    {
+        return $this->hasMany(Subscription::class, 'subscriber_id');
+    }
+
+    public function subscribed(): HasMany
+    {
+        return $this->hasMany(Subscription::class, 'subscribed_id');
+    }
+
+    public function tips(): HasMany
+    {
+        return $this->hasMany(Tip::class);
+    }
+
+    public function wallets(): HasMany
+    {
+        return $this->hasMany(Wallet::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function postcomments(): HasMany
+    {
+        return $this->hasMany(Postcomment::class);
+    }
+
+    public function postlikes(): HasMany
+    {
+        return $this->hasMany(Postlike::class);
+    }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    public function cards(): HasMany
+    {
+        return $this->hasMany(Card::class);
+    }
+
+    public function chats(): HasMany
+    {
+        return $this->hasMany(Chat::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function streams(): HasMany
+    {
+        return $this->hasMany(Stream::class);
+    }
+
+    public function streamcomments(): HasMany
+    {
+        return $this->hasMany(Streamcomment::class);
+    }
+
+    public function streamlikes(): HasMany
+    {
+        return $this->hasMany(Streamlike::class);
+    }
+
+    public function blocks(): HasMany
+    {
+        return $this->hasMany(Block::class);
+    }
+
+    public function restricts(): HasMany
+    {
+        return $this->hasMany(Restrict::class);
     }
 }

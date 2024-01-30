@@ -78,4 +78,38 @@ class UserController extends Controller
 
         return response()->noContent();
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function creators()
+    {
+        $creator_role = Role::where('title', 'creator')->first();
+
+        $creators = User::where('role_id', $creator_role->id)->latest()
+            ->paginate();
+
+        // return UserCollection::collection($creators);
+        return UserResource::collection($creators);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function creator(User $user)
+    {
+        return new UserResource($user);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function verifyCreator(UpdateUserRequest $request, User $user)
+    {
+        // $user = User::firstWhere('username', $user->username);
+
+        $user->update(['verified' => true]);
+
+        return new UserResource($user);
+    }
 }

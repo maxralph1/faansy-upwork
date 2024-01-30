@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 // import axiosInstance from '@/utils/axios';
 import axios from 'axios';
 
@@ -13,7 +14,7 @@ export function useTips() {
     }, []);
 
     async function getTips({ signal } = {}) {
-        return axios.get('http://127.0.0.1:8000/api/tips', { signal })
+        return axios.get(`${ Constants.serverURL }/api/tips`, { signal })
         // return axiosInstance.get(`tips`, { signal })
             .then(response => setTips(response.data.data))
             .catch(() => {});

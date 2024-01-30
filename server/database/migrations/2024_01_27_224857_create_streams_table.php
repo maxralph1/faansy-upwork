@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUlid('user_id')->constrained();
             $table->enum('media_type', ['video', 'audio']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 // import axiosInstance from '@/utils/axios';
 import axios from 'axios';
 
@@ -13,7 +14,7 @@ export function usePostcomments() {
     }, []);
 
     async function getPostcomments({ signal } = {}) {
-        return axios.get('http://127.0.0.1:8000/api/postcomments', { signal })
+        return axios.get(`${ Constants.serverURL }/api/postcomments`, { signal })
         // return axiosInstance.get(`postcomments`, { signal })
             .then(response => setPostcomments(response.data.data))
             .catch(() => {});

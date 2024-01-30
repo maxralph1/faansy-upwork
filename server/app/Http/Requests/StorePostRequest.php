@@ -24,7 +24,7 @@ class StorePostRequest extends FormRequest
         return [
             'user_id' => 'required|string',
             'body' => 'required|string',
-            'image_url' => 'nullable|mimes:jpg,jpeg,bmp,png',
+            'image_url' => 'mimes:jpg,jpeg,bmp,png|nullable',
             'video_url' => 'nullable|mimetypes:video/avi,video/mp4,video/mpeg,video/quicktime'
         ];
     }

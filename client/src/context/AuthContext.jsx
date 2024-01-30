@@ -40,12 +40,12 @@ export const AuthProvider = ({children}) => {
             setAuthTokens(data);
             setUser(jwtDecode(data.authorization.token));
             localStorage.setItem('authTokens', JSON.stringify(data));
-            navigate(route('home'));
+            navigate(route('home.index'));
             console.log('Login successful')
         } else {
-            console.log(response.status);
-            console.log(response);
-            // console.log(error);
+            // console.log(response.status);
+            // console.log(response);
+            console.log(error);
             console.log('Something went wrong!');
             console.log('Username or password does not exist!');
         }
@@ -69,7 +69,7 @@ export const AuthProvider = ({children}) => {
 
         if (response.status == 201) {
             navigate(route('index'))
-            // navigate(route('home'));
+            // navigate(route('home.index'));
             console.log('Registration Successful, Login Now')
         } else {
             console.log(response.status);

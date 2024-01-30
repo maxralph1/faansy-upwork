@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
 import axios from 'axios'
@@ -27,7 +28,7 @@ export function useBookmark(id = null) {
 
         console.log(user_id, post_id)
         return axiosInstance.post('bookmarks', {user_id, post_id})
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);
@@ -43,7 +44,7 @@ export function useBookmark(id = null) {
     async function getBookmark(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`http://127.0.0.1:8000/api/bookmarks/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/bookmarks/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -54,7 +55,7 @@ export function useBookmark(id = null) {
         setErrors({});
 
         return axiosInstance.put(`bookmarks/${bookmark.id}/`, bookmark)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -65,7 +66,7 @@ export function useBookmark(id = null) {
 
     async function destroyBookmark(bookmark) {
         return axiosInstance.delete(`bookmarks/${bookmark.id}/`)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

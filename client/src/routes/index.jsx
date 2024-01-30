@@ -1,14 +1,33 @@
 const routeNames = {
-    /** Public Routes */
-    'index': '/',
-    'create-account': '/create-account',
-
     /** Private Routes */
-    'home': '/home',
+    'home.users.create': '/home/users/create',
+    'home.users.show': '/home/users/:username',
+    'home.users.edit': '/home/users/:username/edit',
+    'home.users.index': '/home/users',
+    'home.user-likes.index': '/home/user-likes',
+    'home.posts.edit': '/home/posts/:id/edit',
     'home.posts.index': '/home/posts',
-    'home.posts.create': '/home/posts/create',
-    'home.posts.show': '/home/posts/show',
-    'home.posts.edit': '/home/posts/edit',
+    'home.post-comments.edit': '/home/post-comments/:id/edit',
+    'home.post-comments.index': '/home/post-comments',
+    'home.post-likes.edit': '/home/post-likes/:id/edit',
+    'home.post-likes.index': '/home/post-likes',
+    'home.bookmarks.index': '/home/bookmarks',
+    'home.subscriptions.edit': '/home/subscriptions/:id/edit',
+    'home.subscriptions.index': '/home/subscriptions',
+    'home.tips.edit': '/home/tips/:id/edit',
+    'home.tips.index': '/home/tips',
+    'home.cards.edit': '/home/cards/:id/edit',
+    'home.cards.index': '/home/cards',
+    'home.chats.show': '/home/chats/:id',
+    'home.chats.index': '/home/chats',
+    'home.notifications.edit': '/home/notifications/:id/edit',
+    'home.notifications.index': '/home/notifications',
+    'home.my-profile': '/home/my-profile',
+    'home.index': '/home',
+
+    /** Public Routes */
+    'create-account': '/create-account',
+    'index': '/',
 }
 
 function route(name, params = {}) {

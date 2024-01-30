@@ -85,7 +85,7 @@ export default function CreateAccount() {
                 <div className="mt-4 px-5 d-flex justify-content-center flex-wrap column-gap-1">
                     <span className="">Already have an account?&nbsp;
                         <Link 
-                            to={ route('home') } 
+                            to={ route('home.index') } 
                             className="text-decoration-none text-faansy-red fs-6">
                                 Sign in
                         </Link>

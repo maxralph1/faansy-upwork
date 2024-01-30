@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
 import axios from 'axios'
@@ -41,7 +42,7 @@ export function usePost(id = null) {
 
         console.log(post)
         return axiosInstance.postForm('posts', post)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -56,7 +57,7 @@ export function usePost(id = null) {
     async function getPost(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`http://127.0.0.1:8000/api/posts/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/posts/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -67,7 +68,7 @@ export function usePost(id = null) {
         setErrors({});
 
         return axiosInstance.put(`posts/${post.id}/`, post)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -78,7 +79,7 @@ export function usePost(id = null) {
 
     async function destroyPost(post) {
         return axiosInstance.delete(`posts/${post.id}/`)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

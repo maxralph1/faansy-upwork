@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('creator_id')->references('id')->on('users');
+            $table->foreignUlid('subscribed_id')->references('id')->on('users');
             $table->foreignUlid('subscriber_id')->references('id')->on('users');
             $table->unsignedInteger('amount_paid');
             $table->timestamps();

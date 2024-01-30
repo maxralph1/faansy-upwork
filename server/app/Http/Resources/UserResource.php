@@ -29,10 +29,12 @@ class UserResource extends JsonResource
             'last_seen' => $this->last_seen,
             'show_activity_status' => $this->show_activity_status,
             'free_subscription' => $this->free_subscription,
+            'subscription_amount' => $this->subscription_amount,
             'show_subscription_offers' => $this->show_subscription_offers,
             'verified' => $this->verified,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'deleted_at' => $this->deleted_at,
             'profile' => [
                 'id' => $this->profile->id,
                 'bio' => $this->profile->bio,
@@ -46,6 +48,14 @@ class UserResource extends JsonResource
                 'id' => $this->role->id,
                 'title' => $this->role->title,
             ],
+            'userlikers' => $this->userlikers,
+            'subscribers' => $this->subscribers,
+            'posts' => $this->posts,
+            'postcomments' => $this->postcomments,
+            'postlikes' => $this->postlikes,
+            'streams' => $this?->streams,
+            'streamcomments' => $this?->streamcomments,
+            'streamlikes' => $this?->streamlikes,
         ];
     }
 }

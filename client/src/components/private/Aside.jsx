@@ -1,4 +1,19 @@
+import dayjs from 'dayjs';
+import relativeTime from "dayjs/plugin/relativeTime"; 
+dayjs.extend(relativeTime);
+import { Link } from 'react-router-dom';
+import { route } from '@/routes';
+import Constants from '@/utils/Constants.jsx';
+import { useCreators } from '@/hooks/useCreators.jsx';
+// import { useCreator } from '@/hooks/useCreator.jsx';
+import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
+import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
+
+
 export default function Aside() {
+    const { creators, getCreators } = useCreators();
+    // const { creator, createCreator, destroyCreator } = useCreator();
+
     return (
         <aside className="d-none d-md-block col-md-4 vh-100 position-sticky top-0 end-0 card rounded-0 d-flex flex-column row-gap-4 align-items-center py-4 px-3 overflow-y-auto">
             <section className="d-flex flex-column">
@@ -8,13 +23,19 @@ export default function Aside() {
                     <h3 className="text-uppercase text-secondary fs-6"><small>Suggestions</small></h3>
                     <div className="mb-2 d-flex justify-content-between column-gap-3">
                         <span>
-                            <a href="" className="text-decoration-none text-secondary">
+                            <button
+                                type="button"
+                                className="text-decoration-none text-secondary bg-transparent border-0"
+                                onClick={ async () => {
+                                    await getCreators();
+                                } }
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-clockwise"
                                     viewBox="0 0 16 16">
                                     <path fillRule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
                                     <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                 </svg>
-                            </a>
+                            </button>
                         </span>
                         <span>
                             <a href="" className="text-decoration-none text-secondary">
@@ -39,84 +60,57 @@ export default function Aside() {
             </section>
 
             <section className="d-flex flex-column row-gap-2">
-                <article className="card text-bg-dark border-0 rounded">
-                    <img src="../images/background.jpeg" className="card-img object-fit-cover" style={{ maxHeight: '125px' }} alt="..." />
-                    <div className="card-img-overlay">
-                        <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
-                            <span className="bg-secondary opacity-50 px-1 rounded z-2"><small>Free</small></span>
-                            <span className="mb-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                                </svg>
-                            </span>
-                        </div>
-                        
-                        <div className="d-flex column-gap-3 px-2 pb-3 h-50" style={{ background: '#256d7c26' }}>
-                            <div className="d-flex align-items-end">
-                                <img src="../images/photo.jpeg" alt="" width="70" height="70" className="z-1 object-fit-cover border border-light border-3 rounded-circle" />
-                                <span className="z-3 bg-success p-1 border border-light border-1 rounded-circle" style={{ width: '10px', height: '10px', marginLeft: '-17px', marginBottom: '5px' }}></span>
-                            </div>
-                            <div className="text-light d-flex flex-column justify-content-center">
-                                <h4 className="fs-6">Raylan</h4>
-                                <span style={{ marginTop: '-14px' }}><small>@goalgoddess</small></span>
-                            </div>
-                        </div>
+                {(creators.length > 0) ? creators.map(creator => {
+                    return (
+                        <article key={ creator.id } className="card text-bg-dark border-0 rounded">
+                            <Link to={ route('home.users.show', { username: creator.username }) }>
+                                <img src={ creator.user_background_image_url ? `${ Constants.serverURL }/storage/${creator.user_background_image_url}` : MissingUserBackgroundImage } className="card-img object-fit-cover" style={{ maxHeight: '125px' }} alt="..." />
+                                <div className="card-img-overlay">
+                                    <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
+                                        <span className="bg-secondary text-light opacity-75 px-1 rounded z-2" style={{ boxShadow: '3px 3px 5px #000000', textShadow: '7px 7px 10px #000000' }}><small>{ creator.free_subscription == true ? 'Free' : 'Paid' }</small></span>
+                                        <span className="mb-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    
+                                    <div className="d-flex column-gap-3 px-2 pb-3 h-50" style={{ background: '#256d7c26' }}>
+                                        <div className="d-flex align-items-end">
+                                            <img src={ creator.user_image_url ? `${ Constants.serverURL }/storage/${creator.user_image_url}` : MissingUserImage } alt="" width="70" height="70" className="z-1 object-fit-cover border border-light border-3 rounded-circle" />
+                                            { (dayjs().diff(dayjs(creator?.last_seen)) < 7200000) &&
+                                            <span className="z-3 bg-success p-1 border border-light border-1 rounded-circle" style={{ width: '10px', height: '10px', marginLeft: '-17px', marginBottom: '5px' }}></span> }
+                                        </div>
+                                        <div className="text-light d-flex flex-column justify-content-center">
+                                            <div className='d-flex align-items-center column-gap-1'>
+                                                <h4 className="fs-6 fw-bold" style={{ textShadow: '7px 7px 10px #000000' }}>{ `${ creator.first_name } ${ creator.last_name }`}</h4>
+                                                { creator.verified == true
+                                                    && 
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                        className="bi bi-patch-check fw-bold mb-2 rounded-circle" style={{ boxShadow: '3px 3px 10px #000000' }} viewBox="0 0 16 16">
+                                                        <path fillRule="evenodd"
+                                                            d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                                                        <path
+                                                            d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z" />
+                                                    </svg>
+                                                }
+                                            </div>
+                                            
+                                            <span style={{ marginTop: '-14px', textShadow: '7px 7px 10px #000000' }}><small>@{ creator.username }</small></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        </article>
+                    )
+                    
+                }) : (
+                    <div>
+                        <span className='text-center'>No creators yet</span>
                     </div>
-                </article>
-                <article className="card text-bg-dark border-0 rounded">
-                    <img src="../images/background.jpeg" className="card-img object-fit-cover" style={{ maxHeight: '125px' }} alt="..." />
-                    <div className="card-img-overlay">
-                        <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
-                            <span className="bg-secondary opacity-50 px-1 rounded z-2"><small>Free</small></span>
-                            <span className="mb-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                                </svg>
-                            </span>
-                        </div>
-                        
-                        <div className="d-flex column-gap-3 px-2 pb-3 h-50" style={{ background: '#256d7c26' }}>
-                            <div className="d-flex align-items-end">
-                                <img src="../images/photo.jpeg" alt="" width="70" height="70" className="z-1 object-fit-cover border border-light border-3 rounded-circle" />
-                                <span className="z-3 bg-success p-1 border border-light border-1 rounded-circle" style={{ width: '10px', height: '10px', marginLeft: '-17px', marginBottom: '5px' }}></span>
-                            </div>
-                            <div className="text-light d-flex flex-column justify-content-center">
-                                <h4 className="fs-6">Raylan</h4>
-                                <span style={{ marginTop: '-14px' }}><small>@goalgoddess</small></span>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article className="card text-bg-dark border-0 rounded">
-                    <img src="../images/background.jpeg" className="card-img object-fit-cover" style={{ maxHeight: '125px' }} alt="..." />
-                    <div className="card-img-overlay">
-                        <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
-                            <span className="bg-secondary opacity-50 px-1 rounded z-2"><small>Free</small></span>
-                            <span className="mb-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                                </svg>
-                            </span>
-                        </div>
-                        
-                        <div className="d-flex column-gap-3 px-2 pb-3 h-50" style={{ background: '#256d7c26' }}>
-                            <div className="d-flex align-items-end">
-                                <img src="../images/photo.jpeg" alt="" width="70" height="70" className="z-1 object-fit-cover border border-light border-3 rounded-circle" />
-                                <span className="z-3 bg-success p-1 border border-light border-1 rounded-circle" style={{ width: '10px', height: '10px', marginLeft: '-17px', marginBottom: '5px' }}></span>
-                            </div>
-                            <div className="text-light d-flex flex-column justify-content-center">
-                                <h4 className="fs-6">Raylan</h4>
-                                <span style={{ marginTop: '-14px' }}><small>@goalgoddess</small></span>
-                            </div>
-                        </div>
-                    </div>
-                </article>
+                )}
             </section>
             
             <hr className="my-4" />

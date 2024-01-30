@@ -18,11 +18,11 @@ class SubscriptionResource extends JsonResource
         return [
             'id' => $this->id,
             'amount_paid' => $this->amount_paid,
-            'creator' => [
-                'id' => $this->creator->id,
-                'username' => $this->creator->username,
-                'first_name' => $this->creator->first_name,
-                'last_name' => $this->creator->last_name,
+            'subscribed' => [
+                'id' => $this->subscribed->id,
+                'username' => $this->subscribed->username,
+                'first_name' => $this->subscribed->first_name,
+                'last_name' => $this->subscribed->last_name,
             ],
             'subscriber' => [
                 'id' => $this->subscriber->id,

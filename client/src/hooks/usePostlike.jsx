@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
 import axios from 'axios'
@@ -27,7 +28,7 @@ export function usePostlike(id = null) {
 
         console.log(user_id, post_id)
         return axiosInstance.post('postlikes', {user_id, post_id})
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);
@@ -43,7 +44,7 @@ export function usePostlike(id = null) {
     async function getPostlike(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`http://127.0.0.1:8000/api/postlikes/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/postlikes/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -54,7 +55,7 @@ export function usePostlike(id = null) {
         setErrors({});
 
         return axiosInstance.put(`postlikes/${postlike.id}/`, postlike)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -65,11 +66,10 @@ export function usePostlike(id = null) {
 
     async function destroyPostlike(postlike) {
         return axiosInstance.delete(`postlikes/${postlike.id}/`)
-            .then(() => navigate(route('home')))
+            .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
-                swalUnauthAlert(error);
             })
             .finally(() => setLoading(false));
     }

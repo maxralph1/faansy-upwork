@@ -25,6 +25,18 @@ class PostlikeController extends Controller
      */
     public function store(StorePostlikeRequest $request)
     {
+        $already_liked = Postlike::where([
+            'post_id' => $request->post_id,
+            'user_id' => $request->user_id,
+        ])->first();
+
+        if ($already_liked) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Conflict: Already Liked!',
+            ], 409);
+        }
+
         $postlike = Postlike::create($request->validated());
 
         return new PostlikeResource($postlike);

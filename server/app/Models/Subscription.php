@@ -13,14 +13,14 @@ class Subscription extends Model
     use HasFactory, HasUlids, SoftDeletes;
 
     protected $fillable = [
-        'creator_id',
+        'subscribed_id',
         'subscriber_id',
         'amount_paid',
     ];
 
-    public function creator(): BelongsTo
+    public function subscribed(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'creator_id');
+        return $this->belongsTo(User::class, 'subscribed_id');
     }
 
     public function subscriber(): BelongsTo

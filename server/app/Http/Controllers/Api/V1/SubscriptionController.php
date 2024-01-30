@@ -25,6 +25,18 @@ class SubscriptionController extends Controller
      */
     public function store(StoreSubscriptionRequest $request)
     {
+        $already_subscribed = Subscription::where([
+            'subscriber_id' => $request->subscriber_id,
+            'subscribed_id' => $request->subscribed_id,
+        ])->first();
+
+        if ($already_subscribed) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Conflict: Already Subscribed!',
+            ], 409);
+        }
+
         $subscription = Subscription::create($request->validated());
 
         return new SubscriptionResource($subscription);
