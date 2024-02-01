@@ -22,6 +22,8 @@ class CardResource extends JsonResource
                 'username' => $this->user->username,
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
+                'user_image_url' => $this->user->user_image_url,
+                'verified' => $this->user->verified,
             ],
             'country' => $this->country,
             'state_province' => $this->state_province,

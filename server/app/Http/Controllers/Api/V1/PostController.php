@@ -30,41 +30,29 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    // public function store(StorePostRequest $request)
+    public function store(StorePostRequest $request)
     {
-        // $request->file('image_url')->store('post_images');
-
-        // $post = Post::create($request->validated());
-
-        // return new PostResource($post);
-
-
-        $request->validate([
-            'user_id' => 'required|string',
-            'body' => 'required|string',
-            'image_url' => 'nullable|image|mimes:jpg,jpeg,bmp,png|max:2048',
-            'video_url' => 'nullable|mimetypes:video/avi,video/mp4,video/mpeg,video/quicktime'
-        ]);
-
         $post = new Post();
 
-        if ($request->file('image_url')) {
-            // $file = $request->file('image_url');
-            // $filename = date('YmdHi') . $file->getClientOriginalName();
-            // $file->move(public_path('post-images'), $filename);
-            // $post['image_url'] = $filename;
+        $validated = $request->validated();
 
-            // // Upload an Image File to Cloudinary with One line of Code
-            // $uploadedFileUrl = Cloudinary::upload($request->file('image_url')->getRealPath())->getSecurePath();
+        if ($request->file('image_url')) {
+            // Upload an Image File to Cloudinary with One line of Code
+            // $uploadedFileUrl = Cloudinary::upload($validated['image_url'])->getRealPath())->getSecurePath();
+            // // $uploadedFileUrl = Cloudinary::upload($request->file('image_url')->getRealPath())->getSecurePath();
             // $post['image_url'] = $uploadedFileUrl;
 
-            $path = $request->file('image_url')->store('posts/images');
+            $path = $validated['image_url']->store('images/posts');
             $post['image_url'] = $path;
         }
 
-        $post['user_id'] = $request->user_id;
-        $post['body'] = $request->body;
+        if ($request->file('video_url')) {
+            $path = $validated['video_url']->store('videos/posts');
+            $post['video_url'] = $path;
+        }
+
+        $post['user_id'] = $validated['user_id'];
+        $post['body'] = $validated['body'];
 
         $post->save();
 
@@ -111,5 +99,24 @@ class PostController extends Controller
     public function forceDestroy(Post $post)
     {
         $post->forceDelete();
+    }
+
+
+    /**
+     * Additional Methods
+     */
+
+    /**
+     * Repost a post.
+     */
+    public function repost(StorePostRequest $request)
+    {
+        $validated = $request->validated();
+
+        $validated['repost'] = true;
+
+        $post = Post::create($validated);
+
+        return new PostResource($post);
     }
 }

@@ -17,7 +17,7 @@ export function useCreators() {
         return axios.get(`${ Constants.serverURL }/api/creators`, { signal })
         // return axiosInstance.get(`creators`, { signal })
             .then(response => setCreators(response.data.data))
-            .catch(() => {});
+            .catch((error) => {console.log(error)});
     }
 
     return { creators, getCreators }

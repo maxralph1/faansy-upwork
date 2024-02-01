@@ -3,7 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\PostcommentCollection;
+use App\Http\Resources\BookmarkResource;
+use App\Http\Resources\PostlikeResource;
+use App\Http\Resources\PostcommentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
@@ -19,8 +21,10 @@ class PostResource extends JsonResource
         return [
             'id' => $this->id,
             'body' => $this->body,
-            'image_url' => $this->image_url,
-            'video_url' => $this->video_url,
+            // 'image_url' => $this->image_url,
+            'image_url' => $this->when($this->pay_per_view == false, $this->image_url),
+            // 'video_url' => $this->video_url,
+            'video_url' => $this->when($this->pay_per_view == false, $this->video_url),
             'pinned' => $this->pinned,
             'pinned_at' => $this->pinned_at,
             'user' => [
@@ -31,10 +35,12 @@ class PostResource extends JsonResource
                 'user_image_url' => $this->user->user_image_url,
                 'verified' => $this->user->verified,
             ],
-            'comments' => $this->comments,
-            // 'comments' => PostcommentCollection::collection($this->whenLoaded('comments')),
-            'likes' => $this->likes,
-            'bookmarks' => $this->bookmarks,
+            // 'comments' => $this->comments,
+            'comments' => PostcommentResource::collection($this->comments),
+            'likes' => PostlikeResource::collection($this->likes),
+            'bookmarks' => BookmarkResource::collection($this->bookmarks),
+            'pay_per_view' => $this->pay_per_view,
+            'pay_per_view_amount' => $this->pay_per_view_amount,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

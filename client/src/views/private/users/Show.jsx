@@ -2,7 +2,9 @@ import { useContext } from 'react';
 import AuthContext from '@/context/AuthContext.jsx';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"; 
+import utc from 'dayjs/plugin/utc';
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 // dayjs.extend(utc);
 // dayjs.extend(timezone);
 import { Link, useParams } from 'react-router-dom';
@@ -11,7 +13,7 @@ import Constants from '@/utils/Constants.jsx';
 import { useCreator } from '@/hooks/useCreator';
 import { useSubscription } from '@/hooks/useSubscription';
 import Layout from '@/components/private/Layout.jsx';
-import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
+import MissingUserBackgroundImage from '@/assets/images/faansy_bg_index.png';
 import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 
 
@@ -63,10 +65,10 @@ export default function Show() {
                             </div>
                             
                             <span style={{ marginTop: '-6.5px'}}>
-                                { creator?.data?.last_seen == null ? 'N/A' 
-                                    : (dayjs().diff(dayjs(creator?.data?.last_seen)) > 7200000) 
-                                    ? `Last seen ${(dayjs(creator?.data?.last_seen).fromNow())}` 
-                                    : (dayjs().diff(dayjs(creator?.data?.last_seen)) < 7200000) 
+                                { creator?.data?.last_seen == null ? 'Last activity: N/A' 
+                                    : (dayjs.utc().diff(dayjs.utc(creator?.data?.last_seen)) > 7200000) 
+                                    ? `Last seen ${(dayjs.utc(creator?.data?.last_seen).fromNow())}` 
+                                    : (dayjs.utc().diff(dayjs.utc(creator?.data?.last_seen)) < 7200000) 
                                     && 'Online' }
                             </span>
                         </div>
@@ -147,7 +149,7 @@ export default function Show() {
                     <div className="card rounded-0">
                         <div className="d-flex align-items-end ms-2" style={{ marginTop: '-2.5rem' }}>
                             <img src={ creator.user_image_url ? `${ Constants.serverURL }/storage/${creator.user_image_url}` : MissingUserImage } alt="" width="90" height="90" className="z-1 object-fit-cover border border-light border-3 rounded-circle" />
-                            { (dayjs().diff(dayjs(creator?.data?.last_seen)) < 7200000) &&
+                            { (dayjs.utc().diff(dayjs.utc(creator?.data?.last_seen)) < 7200000) &&
                             <span className="z-2 bg-success p-1 border border-light border-1 rounded-circle"
                                 style={{ width: '10px', height: '10px', marginLeft: '-25px', marginBottom: '5px' }}></span> }
                         </div>
@@ -167,10 +169,10 @@ export default function Show() {
                                         }
                                     </div>
                                     <small className="text-secondary">@{ creator?.data?.username } -&nbsp;
-                                        { creator?.data?.last_seen == null ? 'N/A' 
-                                            : (dayjs().diff(dayjs(creator?.data?.last_seen)) > 7200000) 
-                                            ? `Last seen ${(dayjs(creator?.data?.last_seen).fromNow())}` 
-                                            : (dayjs().diff(dayjs(creator?.data?.last_seen)) < 7200000) 
+                                        { creator?.data?.last_seen == null ? 'Last activity: N/A' 
+                                            : (dayjs.utc().diff(dayjs.utc(creator?.data?.last_seen)) > 7200000) 
+                                            ? `Last seen ${(dayjs.utc(creator?.data?.last_seen).fromNow())}` 
+                                            : (dayjs.utc().diff(dayjs.utc(creator?.data?.last_seen)) < 7200000) 
                                             && 'Online' }
                                     </small>
                                 </div>

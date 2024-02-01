@@ -31,6 +31,8 @@ class PostcommentResource extends JsonResource
                     'username' => $this->post->user->username,
                     'first_name' => $this->post->user->first_name,
                     'last_name' => $this->post->user->last_name,
+                    'user_image_url' => $this->post->user->user_image_url,
+                    'verified' => $this->post->user->verified,
                 ],
             ],
             'body' => $this->body,

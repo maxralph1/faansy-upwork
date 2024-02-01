@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import AuthContext from '@/context/AuthContext.jsx';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"; 
@@ -23,10 +23,16 @@ export default function Index() {
     const { posts, getPosts } = usePosts();
     const { post, createPost, destroyPost } = usePost();
     const { postcomment, createPostcomment, destroyPostcomment } = usePostcomment();
-    const { postlikes, getPostlikes } = usePostlikes();
+    // const { postlikes, getPostlikes } = usePostlikes();
     const { postlike, createPostlike, destroyPostlike } = usePostlike();
     const { tip, createTip, destroyTip } = useTip();
     const { bookmark, createBookmark, destroyBookmark } = useBookmark();
+
+    /* Post state */
+    // const [postBody, setPostBody] = useState();
+
+    /* Post comment state*/
+    const [postCommentBody, setPostCommentBody] = useState();
 
     console.log(user);
     console.log(posts);
@@ -40,7 +46,7 @@ export default function Index() {
         post.data.video_url && formData.append('video_url', post.data.video_url);
         formData.append('user_id', user.id);
 
-        await createPost(formData)
+        await createPost(formData);
         await getPosts();
     }
 
@@ -49,9 +55,10 @@ export default function Index() {
 
         const user_id = event.target.user_id.value;
         const post_id = event.target.post_id.value;
-        const body = event.target.body.value;
+        const body = postCommentBody;
 
         await createPostcomment(user_id, post_id, body);
+        setPostCommentBody('');
         await getPosts();
     }
 
@@ -83,6 +90,7 @@ export default function Index() {
         const post_id = event.target.post_id.value;
 
         createBookmark(user_id, post_id);
+        await getPosts();
     }
 
     function openImageSelectWindow(){
@@ -184,7 +192,7 @@ export default function Index() {
                         <div>
                             <p>Dear { `${user.first_name} ${user.last_name}` },</p>
                             <p>We've updated our Privacy Policy, which can be viewed <a href={ `${ Constants.clientURL }/privacy-policy` } className="text-decoration-none text-faansy-red" target='_blank'>here</a>.</p>
-                            <p>At Faansy, we respect your privacy. We are committed to protecting your personal data and being transparent about how it is used.</p>
+                            <p>At <span className='text-faansy-red'>Faansy</span>, we respect your privacy. We are committed to protecting your personal data and being transparent about how it is used.</p>
                             <p>The key updates include more information about:</p>
                             <p>- the personal data we collect, why we collect it and why we share it.</p>
                         </div>
@@ -219,8 +227,8 @@ export default function Index() {
                                             </div>
                             
                                             <div className="d-flex column-gap-3">
-                                                {/* <span className="text-body-secondary">{dayjs(post.created_at).format('MMM D, YYYY HH:mm')}</span> */}
-                                                <span className="text-body-secondary">{ dayjs(post.created_at).fromNow() }</span>
+                                                {/* <span className="text-body-secondary">{dayjs.utc(post.created_at).format('MMM D, YYYY HH:mm')}</span> */}
+                                                <span className="text-body-secondary">{ dayjs.utc(post.created_at).fromNow() }</span>
                                                 {/* <span className="text-body-secondary">9 hours ago</span> */}
                                                 <span>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
@@ -254,21 +262,26 @@ export default function Index() {
                                         </p>
                                         {/* <span><a href="" className="text-decoration-none text-faansy-red">onlyfans.com/natalie.brooks</a> / <a href="" className="text-decoration-none text-faansy-red">onlyfans.com/natalie.brooks</a></span> */}
                                     </div>
-                                    {/* <video controls width="250" className="card-img-bottom rounded-0" alt="video title">
-                                        <source src="/media/cc0-videos/flower.webm" type="video/webm" />
-                                        <source src="../videos/spicy_tofu(720p).mp4" type="video/mp4" />
-                                        Download the
-                                        <a href="/media/cc0-videos/flower.webm">WEBM</a>
-                                        or
-                                        <a href="../videos/spicy_tofu(720p).mp4">MP4</a>
-                                        video.
-                                    </video> */}
-                                    <img src={ post.image_url ? `${ Constants.serverURL }/storage/${post.image_url}` : MissingImage } className="card-img-bottom rounded-0" alt="..." />
-                                    {/* <div className="card-img-bottom rounded-0">
-                                        <img 
-                                            src={ `${ Constants.serverURL }/storage/${post.image_url}`} 
-                                            alt="" />
-                                    </div> */}
+
+                                    { (post.pay_per_view == false) 
+                                        ?
+                                            <>
+                                            {/* <video controls width="250" className="card-img-bottom rounded-0" alt="video title">
+                                                <source src="/media/cc0-videos/flower.webm" type="video/webm" />
+                                                <source src="../videos/spicy_tofu(720p).mp4" type="video/mp4" />
+                                                Download the
+                                                <a href="/media/cc0-videos/flower.webm">WEBM</a>
+                                                or
+                                                <a href="../videos/spicy_tofu(720p).mp4">MP4</a>
+                                                video.
+                                            </video> */}
+                                            <img src={ post.image_url ? `${ Constants.serverURL }/storage/${post.image_url}` : MissingImage } className="card-img-bottom rounded-0" alt="..." />
+                                            </>
+                                        : 
+                                            <span className="card-img-bottom rounded d-flex justify-content-center align-items-center">
+                                                <button className='btn btn-faansy-red text-light'>View Content (Pay-Per-View (${ post.pay_per_view_amount }))</button>
+                                            </span>
+                                    }
 
                                     <section className="card-body row px-4 column-gap-4 row-gap-3">
                                         {/* <article className="card col-md text-bg-dark border-0 rounded">
@@ -338,199 +351,86 @@ export default function Index() {
                                                     href="" 
                                                     type='button' 
                                                     data-bs-toggle="modal" 
-                                                    data-bs-target="#likeModal" 
-                                                    data-bs-body={ `@${post.user.username}` }
+                                                    data-bs-target={`#likeModal${ post?.id }`} 
+                                                    data-bs-body='' 
                                                     className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
-                                                        
-                                                        {(post?.likes?.length > 0) ? 
-                                                            post?.likes?.filter(postlike => 
-                                                                (postlike.post_id == post.id) && (postlike.user_id == user.id)).slice(0,1).map(filteredPostlike => {
-                                                                    {console.log(filteredPostlike)}
-                                                                    return (
-                                                                        <svg key={ filteredPostlike.id } xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill" viewBox="0 0 16 16">
-                                                                            <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                                                                        </svg>
-                                                                    )
-                                                                }
-                                                                
-                                                            ) : (
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart"
-                                                            viewBox="0 0 16 16">
-                                                                    <path
-                                                                        d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
-                                                                </svg>
-                                                            )}
+
+                                                    {(post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id)
+                                                        ? 
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
+                                                            <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                                        </svg>
+                                                        :
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart mt-1" viewBox="0 0 16 16">
+                                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                                        </svg>
+                                                    }
                                                 </button>
 
-                                                <div className="modal fade" id="likeModal" tabIndex="-1" aria-labelledby="likeModalLabel" aria-hidden="true">
+                                                <div 
+                                                    className="modal fade" 
+                                                    id={`likeModal${ post?.id }`} 
+                                                    tabIndex="-1" aria-labelledby="likeModalLabel" aria-hidden="true">
                                                     <div className="modal-dialog">
                                                         <div className="modal-content">
                                                             <div className="modal-header">
-                                                                <h4 className="modal-title fs-5 fw-semibold" id="likeModalLabel">Like post</h4>
+                                                                <h4 className="modal-title fs-5 fw-semibold">Like post</h4>
                                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div className="modal-body">
-                                                                
-
-
-                                                                
-
-                                                                
-
-{/* 
-
-        {(post?.likes?.length > 0) 
-            ? post?.likes?.find(postlike => (postlike?.post_id == post?.id && postlike?.user_id == user?.id) => {
-
-            } 
-            && 
-                <div 
-                    key={ postlike.id }
-                    className='text-decoration-none border-0 bg-transparent d-flex justify-content-end'
-                    type="button" 
-                    onClick={ async () => {
-                        await destroyPostlike(postlike)
-                        await getPostlikes()
-                    } }>
-                        <span>Unlike Post</span>&nbsp;
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill" viewBox="0 0 16 16">
-                            <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                        </svg>
-                </div>
-            ) : (
-                <form onSubmit={ likePost }>
-                    <div className="d-none">
-                        <input 
-                            type="text" 
-                            name="user_id" 
-                            id="user_id" 
-                            defaultValue={ user?.id } 
-                            hidden="hidden" />
-                        <input 
-                            type="text" 
-                            name="post_id" 
-                            id="post_id" 
-                            defaultValue={ post?.id } 
-                            hidden="hidden" />
-                    </div>
-                    <div className="d-flex justify-content-end">
-                        <button 
-                            href="" 
-                            type='submit' 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#likeModal" 
-                            data-bs-body={ `@${post.user.username}` }
-                            className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
-                                <span>Like Post</span>&nbsp;
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
-                                </svg>
-                        </button>
-                    </div>
-                </form>
-            )} */}
-
-
-
-
-
-                                                                
-
-                                                                {(post?.likes?.length > 0) ? 
-                                                                    post?.likes?.filter(postlike => 
-                                                                        (postlike?.post_id == post?.id && postlike?.user_id == user?.id)).slice(0,1).map(filteredPostlike => {
-                                                                            {console.log(filteredPostlike)}
-                                                                            return (
-                                                                                <div 
-                                                                                    key={ filteredPostlike.id }
-                                                                                    className='text-decoration-none border-0 bg-transparent d-flex justify-content-end'
-                                                                                    type="button" 
-                                                                                    onClick={ async () => {
-                                                                                        await destroyPostlike(postlike)
-                                                                                        await getPostlikes()
-                                                                                    } }>
-                                                                                        <span>Unlike Post</span>&nbsp;
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill" viewBox="0 0 16 16">
-                                                                                            <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                                                                                        </svg>
-                                                                                </div>
-                                                                            )
-                                                                        }
-                                                                        
-                                                                    ) : ( 
-                                                                        <form onSubmit={ likePost }>
-                                                                            <div className="d-none">
-                                                                                <input 
-                                                                                    type="text" 
-                                                                                    name="user_id" 
-                                                                                    id="user_id" 
-                                                                                    defaultValue={ user?.id } 
-                                                                                    hidden="hidden" />
-                                                                                <input 
-                                                                                    type="text" 
-                                                                                    name="post_id" 
-                                                                                    id="post_id" 
-                                                                                    defaultValue={ post?.id } 
-                                                                                    hidden="hidden" />
-                                                                            </div>
-                                                                            <div className="d-flex justify-content-end">
-                                                                                <button 
-                                                                                    href="" 
-                                                                                    type='submit' 
-                                                                                    data-bs-toggle="modal" 
-                                                                                    data-bs-target="#likeModal" 
-                                                                                    data-bs-body={ `@${post.user.username}` }
-                                                                                    className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
-                                                                                        <span>Like Post</span>&nbsp;
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart"
-                                                                                            viewBox="0 0 16 16">
-                                                                                            <path
-                                                                                                d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
-                                                                                        </svg>
-                                                                                </button>
-                                                                            </div>
-                                                                        </form>
-                                                                    )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                                                <form onSubmit={ likePost }>
+                                                                    <div className="d-none">
+                                                                        <input 
+                                                                            type="text" 
+                                                                            name="user_id" 
+                                                                            id="user_id" 
+                                                                            defaultValue={ user?.id } 
+                                                                            hidden="hidden" />
+                                                                        <input 
+                                                                            type="text" 
+                                                                            name="post_id" 
+                                                                            id="post_id" 
+                                                                            defaultValue={ post?.id } 
+                                                                            hidden="hidden" />
+                                                                    </div>
+                                                                    <div className="d-flex justify-content-end">
+                                                                        <button 
+                                                                            type="submit" 
+                                                                            className="bg-transparent border-0 text-faansy-red pe-1">
+                                                                                Like Post&nbsp;
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#820303" className="bi bi-heart mt-1" viewBox="0 0 16 16">
+                                                                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                                                                </svg>
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
                                                             </div>
 
                                                             <hr />
 
                                                             <div>
                                                                 <div className="modal-header">
-                                                                    <h4 className="modal-title fs-6 fw-semibold" id="likeModalLabel">Likes on post</h4>
-                                                                    <small className='fw-semibold'>{ post?.likes?.length } likes</small>
+                                                                    <h4 className="modal-title fs-6 fw-semibold">Post likes</h4>
+                                                                    <small><span className="fw-semibold">{ post?.likes?.length }</span>{ (post?.likes?.length > 1) ? ' likes' : ' like' }</small>
                                                                 </div>
                                                                 <div className="modal-body">
                                                                     <div>
-                                                                        {(post?.likes?.length > 0) ? post?.likes.map(like => {
+                                                                        {(post?.likes?.length > 0) ? post.likes?.sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at)).map(sortedLike => {
+                                                                            if (sortedLike?.post?.id == post?.id){
                                                                             return (
                                                                                 <div 
-                                                                                    key={ like.id } 
+                                                                                    key={ sortedLike.id } 
                                                                                     className='border-bottom d-flex flex-column'>
-                                                                                    <span>{ like?.user_id }</span>
-                                                                                    <span className='align-self-end'>, { dayjs(like.created_at).fromNow() }</span>
-                                                                                    {/* <span className='align-self-end'>on {dayjs(like.created_at).format('MMM D, YYYY HH:mm')}</span> */}
-                                                                                    
+                                                                                    <span>{ sortedLike?.body }</span>
+                                                                                    <span className='align-self-end'>by&nbsp;
+                                                                                        <a 
+                                                                                            href={ route('home.users.show', { username: sortedLike?.user?.username })} 
+                                                                                            className='text-decoration-none text-faansy-red'>
+                                                                                            { `${ sortedLike?.user?.first_name } ${ sortedLike?.user?.last_name }` }
+                                                                                        </a>,&nbsp;
+                                                                                        { dayjs.utc(sortedLike.created_at).fromNow() }</span>
                                                                                 </div>
-                                                                            )}) : (
+                                                                            )}}) : (
                                                                                 <div>
                                                                                     <span>No likes</span>
                                                                                 </div>
@@ -548,8 +448,8 @@ export default function Index() {
                                                     href="" 
                                                     type='button' 
                                                     data-bs-toggle="modal" 
-                                                    data-bs-target="#commentModal" 
-                                                    data-bs-body={ `@${post.user.username}` }
+                                                    data-bs-target={`#commentModal${ post?.id }`} 
+                                                    data-bs-body='' 
                                                     className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-chat"
                                                         viewBox="0 0 16 16">
@@ -558,11 +458,14 @@ export default function Index() {
                                                     </svg>
                                                 </button>
 
-                                                <div className="modal fade" id="commentModal" tabIndex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+                                                <div 
+                                                    className="modal fade" 
+                                                    id={`commentModal${ post?.id }`} 
+                                                    tabIndex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
                                                     <div className="modal-dialog">
                                                         <div className="modal-content">
                                                             <div className="modal-header">
-                                                                <h4 className="modal-title fs-5 fw-semibold" id="commentModalLabel">Comment on post</h4>
+                                                                <h4 className="modal-title fs-5 fw-semibold">Comment on post</h4>
                                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div className="modal-body">
@@ -585,6 +488,8 @@ export default function Index() {
                                                                         <textarea 
                                                                             name="body" 
                                                                             id="body" 
+                                                                            value={postCommentBody}
+                                                                            onChange={e => setPostCommentBody(e.target.value)}
                                                                             placeholder={` Nice post @${post.user.username} ...`} 
                                                                             aria-label="Comment body"
                                                                             className="form-control"></textarea>
@@ -599,22 +504,27 @@ export default function Index() {
 
                                                             <div>
                                                                 <div className="modal-header">
-                                                                    <h4 className="modal-title fs-6 fw-semibold" id="commentModalLabel">Comments on post</h4>
-                                                                    <small className='fw-semibold'>{ post?.comments?.length } comments</small>
+                                                                    <h4 className="modal-title fs-6 fw-semibold">Comments on post</h4>
+                                                                    <small><span className="fw-semibold">{ post?.comments?.length }</span>{ (post?.comments?.length > 1) ? ' comments' : ' comment' }</small>
                                                                 </div>
                                                                 <div className="modal-body">
                                                                     <div>
-                                                                        {(post?.comments?.length > 0) ? post?.comments.map(comment => {
+                                                                        {(post?.comments?.length > 0) ? post.comments?.sort((a, b) => new Date(b?.created_at) - new Date(a?.created_at)).map(sortedComment => {
+                                                                            if (sortedComment?.post?.id == post?.id){
                                                                             return (
                                                                                 <div 
-                                                                                    key={ comment.id } 
+                                                                                    key={ sortedComment.id } 
                                                                                     className='border-bottom d-flex flex-column'>
-                                                                                    <span>{ comment?.body }</span>
-                                                                                    <span className='align-self-end'>by { comment?.user_id }, { dayjs(comment.created_at).fromNow() }</span>
-                                                                                    {/* <span className='align-self-end'>by { comment?.user_id } on {dayjs(comment.created_at).format('MMM D, YYYY HH:mm')}</span> */}
-                                                                                    
+                                                                                    <span>{ sortedComment?.body }</span>
+                                                                                    <span className='align-self-end'>by&nbsp;
+                                                                                        <a 
+                                                                                            href={ route('home.users.show', { username: sortedComment?.user?.username })} 
+                                                                                            className='text-decoration-none text-faansy-red'>
+                                                                                            { `${ sortedComment?.user?.first_name } ${ sortedComment?.user?.last_name }` }
+                                                                                        </a>,&nbsp;
+                                                                                        { dayjs.utc(sortedComment.created_at).fromNow() }</span>
                                                                                 </div>
-                                                                            )}) : (
+                                                                            )}}) : (
                                                                                 <div>
                                                                                     <span>No comments</span>
                                                                                 </div>
@@ -681,7 +591,6 @@ export default function Index() {
                                                     </div>
                                                 </div>
                                             </span>
-
                                         </div>
 
                                         <div>
@@ -702,15 +611,23 @@ export default function Index() {
                                                     type='submit'
                                                     href="" 
                                                     className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-bookmark"
+                                                    
+
+                                                    {(post?.bookmarks?.length > 0) && post.bookmarks?.find(foundBookmark => foundBookmark?.user?.id == user?.id)
+                                                        ? 
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#820303" className="bi bi-bookmark-fill" viewBox="0 0 16 16">
+                                                            <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2"/>
+                                                        </svg>
+                                                        :
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-bookmark"
                                                         viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
-                                                    </svg>
+                                                            <path
+                                                                d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
+                                                        </svg>
+                                                    }
                                                 </button>
                                             </form>
                                         </div>
-
                                     </section>
 
                                     <section className="px-3 d-flex gap-3">

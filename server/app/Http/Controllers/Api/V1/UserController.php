@@ -87,7 +87,7 @@ class UserController extends Controller
         $creator_role = Role::where('title', 'creator')->first();
 
         $creators = User::where('role_id', $creator_role->id)->latest()
-            ->paginate();
+            ->get();
 
         // return UserCollection::collection($creators);
         return UserResource::collection($creators);

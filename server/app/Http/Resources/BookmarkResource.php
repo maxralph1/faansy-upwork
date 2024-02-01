@@ -24,6 +24,8 @@ class BookmarkResource extends JsonResource
                 'username' => $this->user->username,
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
+                'user_image_url' => $this->user->user_image_url,
+                'verified' => $this->user->verified,
             ],
             'post' => [
                 'id' => $this->post->id,
@@ -33,6 +35,8 @@ class BookmarkResource extends JsonResource
                     'username' => $this->post->user->username,
                     'first_name' => $this->post->user->first_name,
                     'last_name' => $this->post->user->last_name,
+                    'user_image_url' => $this->post->user->user_image_url,
+                    'verified' => $this->post->user->verified,
                 ],
             ],
             'created_at' => $this->created_at,

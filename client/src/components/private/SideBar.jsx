@@ -12,6 +12,7 @@ export default function SideBar() {
     return (
         <aside className="col-md-3 vh-100 position-sticky top-0 start-0 card rounded-0 d-flex flex-column row-gap-4 align-items-start py-4 ps-3 pe-5 overflow-y-auto sidenav">
 
+        <div className='d-flex gap-2 flex-wrap'>
             <span href="" className="text-decoration-none text-light">
                 <div className="d-flex align-items-center column-gap-3 bg-dark rounded-pill py-1 ps-2 pe-4 d-none d-md-block">
                     <img src={ user.user_image_url ? `${ Constants.serverURL }/${ user.user_image_url }` : MissingUserImage } alt="" width="25" />
@@ -22,6 +23,18 @@ export default function SideBar() {
                 </div>
             </span>
 
+            { user.verified != true &&
+            <span className="sidebar-item border border-success rounded ps-1 pe-2 py-1" title='Verify your ID'>
+                <Link to={ route('home.my-profile') + '#verify-id' } className="text-decoration-none text-secondary d-flex align-items-center column-gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" className="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                        <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                    </svg>
+                    <span className="d-none d-md-block fs-6 fw-bold">Verify Your ID</span>
+                </Link>
+            </span>
+            }
+        </div>
+            
             <span className="sidebar-item">
                 <Link to={ route('home.index') } className="text-decoration-none text-secondary d-flex align-items-center column-gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-house"

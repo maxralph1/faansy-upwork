@@ -28,12 +28,15 @@ const useAxios = () => {
         if (!isExpired) return req;
 
         const response = await axios.post(`${baseURL}/refresh`);
-        console.log(response.data)
+        // console.log(response.data)
 
         localStorage.setItem('authTokens', JSON.stringify(response.data))
 
         setAuthTokens(response.data);
         setUser(jwtDecode(response.data.authorization.token));
+
+        // Update user's last seen here
+        // await ...
 
         req.headers.Authorization = `Bearer ${response.data.authorization.token}`;
         return req;

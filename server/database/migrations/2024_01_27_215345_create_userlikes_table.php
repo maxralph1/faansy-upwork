@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUlid('liked_id')->references('id')->on('users');
             $table->foreignUlid('liker_id')->references('id')->on('users');
             $table->timestamps();
-            $table->softDeletes();
+            // $table->softDeletes();
         });
     }
 

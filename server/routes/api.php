@@ -48,8 +48,16 @@ Route::controller(UserController::class)->group(function () {
     Route::get('creators/{user:username}', 'creator');
     Route::put('creators/{user:username}/verify', 'verifyCreator');
 });
+
 Route::apiResource('posts', PostController::class);
+Route::controller(PostController::class)->group(function () {
+    Route::get('posts/{post}/repost', 'repost');
+});
+
 Route::apiResource('postcomments', PostcommentController::class);
+Route::controller(PostcommentController::class)->group(function () {
+    Route::get('posts/{postcomment:post_id}/comments', 'getSpecificPostComments');
+});
 Route::apiResource('postlikes', PostlikeController::class);
 Route::apiResource('subscriptions', SubscriptionController::class);
 Route::apiResource('bookmarks', BookmarkController::class);

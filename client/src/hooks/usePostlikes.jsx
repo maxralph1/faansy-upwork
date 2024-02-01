@@ -17,7 +17,7 @@ export function usePostlikes() {
         return axios.get(`${ Constants.serverURL }/api/postlikes`, { signal })
         // return axiosInstance.get(`postlikes`, { signal })
             .then(response => setPostlikes(response.data.data))
-            .catch(() => {});
+            .catch((error) => {console.log(error)});
     }
 
     return { postlikes, getPostlikes }

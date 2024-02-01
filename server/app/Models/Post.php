@@ -18,6 +18,11 @@ class Post extends Model
         'body',
         'image_url',
         'video_url',
+        'pay_per_view',
+        'pay_per_view_amount',
+        'scheduled_live_time',
+        'repost',
+        'repost_body',
         // 'pinned',
         // 'pinned_at',
     ];

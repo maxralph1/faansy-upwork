@@ -17,8 +17,15 @@ return new class extends Migration
             $table->string('body');
             $table->string('image_url')->nullable();
             $table->string('video_url')->nullable();
+            $table->boolean('pay_per_view')->default(false);
+            $table->boolean('pay_per_view_amount')->nullable();
+            $table->timestamp('scheduled_live_time')->nullable();
             $table->boolean('pinned')->default(false);
             $table->timestamp('pinned_at')->nullable();
+            $table->boolean('featured')->default(false);
+            $table->boolean('repost')->default(false);
+            $table->string('repost_body')->nullable();
+            $table->timestamp('repost_original_post_timestamp')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
