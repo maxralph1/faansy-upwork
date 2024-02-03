@@ -32,6 +32,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'register');
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
+    Route::post('password-reset-request', 'resetPasswordRequest');
+    Route::post('password-reset', 'resetPassword');
 });
 
 Route::controller(TodoController::class)->group(function () {

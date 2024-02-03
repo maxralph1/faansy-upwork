@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Profile;
-use App\Models\Role;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\PasswordResetToken;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+// use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'resetPasswordRequest', 'resetPassword']]);
     }
 
     public function login(Request $request)
@@ -141,6 +146,77 @@ class AuthController extends Controller
                 'token' => Auth::refresh(),
                 'type' => 'bearer',
             ]
+        ]);
+    }
+
+    public function resetPasswordRequest(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $valid_email = User::where('email', $request->email)->first();
+
+        if (!$valid_email) {
+            return response()->json([
+                'status' => 'Not Found',
+                'message' => 'Email does not exist.'
+            ], 404);
+        } elseif ($valid_email) {
+            $token_already_exists = DB::table('password_reset_tokens')
+                ->where('email', $request->email)
+                ->first();
+
+            if ($token_already_exists) {
+                Mail::to($request->email)->send(new PasswordResetToken($request->email, $token_already_exists->token));
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Reset token sent to your email. Click on the link to reset your password.'
+                ]);
+            } elseif (!$token_already_exists) {
+                $token = Str::random(80);
+                $email = $request->email;
+
+                DB::table('password_reset_tokens')->insert([
+                    'email' => $request->email,
+                    'token' => $token,
+                    'created_at' => now(),
+                ]);
+
+                Mail::to($request->email)->send(new PasswordResetToken($email, $token));
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Reset token sent to your email. Click on the link to reset your password.'
+                ]);
+            }
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $reset_token_found = DB::table('password_reset_tokens')->where([
+            'token' => $request->token
+        ]);
+
+        if (!$reset_token_found) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email wrong or token expired.',
+            ], 404);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        $reset_token_found->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password has been updated.'
         ]);
     }
 }
