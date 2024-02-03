@@ -55,9 +55,6 @@ Route::controller(PostController::class)->group(function () {
 });
 
 Route::apiResource('postcomments', PostcommentController::class);
-Route::controller(PostcommentController::class)->group(function () {
-    Route::get('posts/{postcomment:post_id}/comments', 'getSpecificPostComments');
-});
 Route::apiResource('postlikes', PostlikeController::class);
 Route::apiResource('subscriptions', SubscriptionController::class);
 Route::apiResource('bookmarks', BookmarkController::class);

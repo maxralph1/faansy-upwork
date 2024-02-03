@@ -9,8 +9,8 @@ import Constants from '@/utils/Constants.jsx';
 import { useCreator } from '@/hooks/useCreator';
 import { usePosts } from '@/hooks/usePosts.jsx';
 import { usePostcomment } from '@/hooks/usePostcomment.jsx';
-import { usePostlikes } from '@/hooks/usePostlikes.jsx';
 import { usePostlike } from '@/hooks/usePostlike.jsx';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useBookmark } from '@/hooks/useBookmark.jsx';
 import { useTip } from '@/hooks/useTip.jsx';
 import Layout from '@/components/private/Layout.jsx';
@@ -75,12 +75,12 @@ export default function Index() {
       createBookmark(user_id, post_id);
       await getPosts();
   }
-    
+
   return (
     <Layout>
       <section className="col-sm-10 col-md-5 card rounded-0">
         <div className="position-sticky top-0 d-flex justify-content-between align-items-center pt-3 pb-2 px-3 bg-white border-bottom z-3">
-            <h2 className="text-uppercase fs-5 fw-bold">Bookmarks</h2>
+            <h2 className="text-uppercase fs-5 fw-bold">Streams</h2>
             <span className="mb-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
                     viewBox="0 0 16 16">

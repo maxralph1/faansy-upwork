@@ -13,6 +13,14 @@ import PrivateUserEdit from '@/views/private/users/Edit.jsx';
 
 import PrivateUserLikesIndex from '@/views/private/userlikes/Index.jsx';
 
+import PrivateLivestreamsIndex from '@/views/private/livestreams/Index.jsx';
+
+import PrivateStreamsIndex from '@/views/private/streams/Index.jsx';
+
+import PrivateWalletIndex from '@/views/private/wallet/Index.jsx';
+
+import PrivateStatsIndex from '@/views/private/stats/Index.jsx';
+
 import PrivatePostsIndex from '@/views/private/posts/Index.jsx';
 import PrivatePostEdit from '@/views/private/posts/Edit.jsx';
 
@@ -63,6 +71,12 @@ function App() {
 
             <Route element={<PrivateUserLikesIndex/>} path={ route('home.user-likes.index') } />
 
+            <Route element={<PrivateLivestreamsIndex/>} path={ route('home.livestreams.index') } />
+
+            <Route element={<PrivateStreamsIndex/>} path={ route('home.streams.index') } />
+
+            <Route element={<PrivateWalletIndex/>} path={ route('home.wallet.index') } />
+
             <Route element={<PrivatePostsIndex/>} path={ route('home.posts.index') } />
             <Route element={<PrivatePostEdit/>} path={ route('home.posts.edit') } />
 
@@ -88,6 +102,8 @@ function App() {
 
             <Route element={<PrivateNotificationsIndex/>} path={ route('home.notifications.index') } />
             <Route element={<PrivateNotificationEdit/>} path={ route('home.notifications.edit') } />
+
+            <Route element={<PrivateStatsIndex/>} path={ route('home.stats.index') } />
 
             <Route element={<MyProfile/>} path={ route('home.my-profile') } />
 

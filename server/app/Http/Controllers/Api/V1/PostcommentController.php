@@ -71,15 +71,4 @@ class PostcommentController extends Controller
     {
         $postcomment->forceDelete();
     }
-
-
-    /**
-     * Display a listing of the specified resource.
-     */
-    public function getSpecificPostComments(Postcomment $postcomment)
-    {
-        $specificpostcomments = Postcomment::where('post_id', $postcomment)->latest()->paginate();
-
-        return PostcommentResource::collection($specificpostcomments);
-    }
 }

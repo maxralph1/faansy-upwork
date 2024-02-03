@@ -23,7 +23,6 @@ export default function Index() {
     const { posts, getPosts } = usePosts();
     const { post, createPost, destroyPost } = usePost();
     const { postcomment, createPostcomment, destroyPostcomment } = usePostcomment();
-    // const { postlikes, getPostlikes } = usePostlikes();
     const { postlike, createPostlike, destroyPostlike } = usePostlike();
     const { tip, createTip, destroyTip } = useTip();
     const { bookmark, createBookmark, destroyBookmark } = useBookmark();
@@ -202,7 +201,34 @@ export default function Index() {
                         {(posts.length > 0) ? posts.map(post => {
                             return (
                                 <article key={ post.id } className="card border-0 border-top border-bottom pb-3">
-                                    <div className="card-body">
+                                    { post.repost == true 
+                                        &&                                        
+                                            <div className="d-flex justify-content-between card-body">
+                                                <div className="d-flex justify-content-start align-items-center column-gap-2">
+                                                    <span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#820303" className="bi bi-repeat" viewBox="0 0 16 16">
+                                                            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192m3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z"/>
+                                                        </svg>&nbsp;<span className='fw-bold text-faansy-red'>repost</span>
+                                                    </span>
+                                                </div>
+                                
+                                                <div className="d-flex column-gap-3">
+                                                    {/* <span className="text-body-secondary">{dayjs.utc(post.created_at).format('MMM D, YYYY HH:mm')}</span> */}
+                                                    <small className="text-body-secondary">
+                                                        <span>reposted</span> { dayjs.utc(post.created_at).fromNow() }
+                                                    </small>
+                                                    {/* <span className="text-body-secondary">9 hours ago</span> */}
+                                                    <span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    <div className={ `card-body ${ post.repost == true && 'px-5' }` }>
                                         <div className="d-flex justify-content-between mb-3">
                                             <div className="d-flex justify-content-start align-items-center column-gap-2">
                                                 <div className="rounded-circle">
@@ -228,7 +254,11 @@ export default function Index() {
                             
                                             <div className="d-flex column-gap-3">
                                                 {/* <span className="text-body-secondary">{dayjs.utc(post.created_at).format('MMM D, YYYY HH:mm')}</span> */}
-                                                <span className="text-body-secondary">{ dayjs.utc(post.created_at).fromNow() }</span>
+                                                <span className="text-body-secondary">
+                                                    { post.repost_original_post_timestamp != null 
+                                                        ? dayjs.utc(post.repost_original_post_timestamp).fromNow() 
+                                                        : dayjs.utc(post.created_at).fromNow()}
+                                                </span>
                                                 {/* <span className="text-body-secondary">9 hours ago</span> */}
                                                 <span>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"

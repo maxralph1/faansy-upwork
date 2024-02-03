@@ -64,6 +64,11 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        if ($post->pay_per_view == true) {
+            // check subscriber wallet balance, if they do not have enough balance, abort!
+            // if they have enough balance, charge the subscriber
+        }
+
         return new PostResource($post);
     }
 
