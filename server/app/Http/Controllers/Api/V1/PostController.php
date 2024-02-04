@@ -14,7 +14,7 @@ class PostController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+        $this->middleware('auth:api', ['except' => ['index', 'show', 'featuredPosts']]);
     }
 
     /**
@@ -123,5 +123,15 @@ class PostController extends Controller
         $post = Post::create($validated);
 
         return new PostResource($post);
+    }
+
+    /**
+     * Display a listing of featired posts.
+     */
+    public function featuredPosts()
+    {
+        $posts = Post::where('featured', true)->latest()->paginate();
+
+        return PostResource::collection($posts);
     }
 }

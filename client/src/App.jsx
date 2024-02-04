@@ -5,6 +5,10 @@ import PrivateRoute from '@/utils/PrivateRoute.jsx';
 
 import Index from '@/views/public/Index.jsx';
 import CreateAccount from '@/views/public/CreateAccount.jsx';
+import ResetPasswordRequest from '@/views/public/ResetPasswordRequest.jsx';
+import ResetPassword from '@/views/public/ResetPassword.jsx';
+import PasswordlessSigninRequest from '@/views/public/PasswordlessSigninRequest.jsx';
+import PasswordlessSignin from '@/views/public/PasswordlessSignin.jsx';
 
 import PrivateUsersIndex from '@/views/private/users/Index.jsx';
 import PrivateUserCreate from '@/views/private/users/Create.jsx';
@@ -59,55 +63,59 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route element={<Index />} path={ route('index') } />
-          <Route element={<CreateAccount/>} path={ route('create-account') } />
+          <Route element={<CreateAccount />} path={ route('create-account') } />
+          <Route element={<ResetPasswordRequest />} path={ route('reset-password-request') } />
+          <Route element={<ResetPassword />} path={ route('reset-password') } />
+          <Route element={<PasswordlessSigninRequest />} path={ route('passwordless-signin-request') } />
+          <Route element={<PasswordlessSignin />} path={ route('passwordless-signin') } />
           {/* End of Public routes */}
 
           {/* Protected routes */}
-          <Route element={<PrivateRoute/>} path='/' >
-            <Route element={<PrivateUsersIndex/>} path={ route('home.users.index') } />
-            <Route element={<PrivateUser/>} path={ route('home.users.show') } />
-            <Route element={<PrivateUserCreate/>} path={ route('home.users.create') } />
-            <Route element={<PrivateUserEdit/>} path={ route('home.users.edit') } />
+          <Route element={<PrivateRoute />} path='/' >
+            <Route element={<PrivateUsersIndex />} path={ route('home.users.index') } />
+            <Route element={<PrivateUser />} path={ route('home.users.show') } />
+            <Route element={<PrivateUserCreate />} path={ route('home.users.create') } />
+            <Route element={<PrivateUserEdit />} path={ route('home.users.edit') } />
 
-            <Route element={<PrivateUserLikesIndex/>} path={ route('home.user-likes.index') } />
+            <Route element={<PrivateUserLikesIndex />} path={ route('home.user-likes.index') } />
 
-            <Route element={<PrivateLivestreamsIndex/>} path={ route('home.livestreams.index') } />
+            <Route element={<PrivateLivestreamsIndex />} path={ route('home.livestreams.index') } />
 
-            <Route element={<PrivateStreamsIndex/>} path={ route('home.streams.index') } />
+            <Route element={<PrivateStreamsIndex />} path={ route('home.streams.index') } />
 
-            <Route element={<PrivateWalletIndex/>} path={ route('home.wallet.index') } />
+            <Route element={<PrivateWalletIndex />} path={ route('home.wallet.index') } />
 
-            <Route element={<PrivatePostsIndex/>} path={ route('home.posts.index') } />
-            <Route element={<PrivatePostEdit/>} path={ route('home.posts.edit') } />
+            <Route element={<PrivatePostsIndex />} path={ route('home.posts.index') } />
+            <Route element={<PrivatePostEdit />} path={ route('home.posts.edit') } />
 
-            <Route element={<PrivatePostCommentsIndex/>} path={ route('home.post-comments.index') } />
-            <Route element={<PrivatePostCommentEdit/>} path={ route('home.post-comments.edit') } />
+            <Route element={<PrivatePostCommentsIndex />} path={ route('home.post-comments.index') } />
+            <Route element={<PrivatePostCommentEdit />} path={ route('home.post-comments.edit') } />
 
-            <Route element={<PrivatePostLikesIndex/>} path={ route('home.post-likes.index') } />
-            <Route element={<PrivatePostLikeEdit/>} path={ route('home.post-likes.edit') } />
+            <Route element={<PrivatePostLikesIndex />} path={ route('home.post-likes.index') } />
+            <Route element={<PrivatePostLikeEdit />} path={ route('home.post-likes.edit') } />
 
-            <Route element={<PrivateBookmarksIndex/>} path={ route('home.bookmarks.index') } />
+            <Route element={<PrivateBookmarksIndex />} path={ route('home.bookmarks.index') } />
 
-            <Route element={<PrivateSubscriptionsIndex/>} path={ route('home.subscriptions.index') } />
-            <Route element={<PrivateSubscriptionEdit/>} path={ route('home.subscriptions.edit') } />
+            <Route element={<PrivateSubscriptionsIndex />} path={ route('home.subscriptions.index') } />
+            <Route element={<PrivateSubscriptionEdit />} path={ route('home.subscriptions.edit') } />
 
-            <Route element={<PrivateTipsIndex/>} path={ route('home.tips.index') } />
-            <Route element={<PrivateTipEdit/>} path={ route('home.tips.edit') } />
+            <Route element={<PrivateTipsIndex />} path={ route('home.tips.index') } />
+            <Route element={<PrivateTipEdit />} path={ route('home.tips.edit') } />
 
-            <Route element={<PrivateCardsIndex/>} path={ route('home.cards.index') } />
-            <Route element={<PrivateCardEdit/>} path={ route('home.cards.edit') } />
+            <Route element={<PrivateCardsIndex />} path={ route('home.cards.index') } />
+            <Route element={<PrivateCardEdit />} path={ route('home.cards.edit') } />
 
-            <Route element={<PrivateChatsIndex/>} path={ route('home.chats.index') } />
-            <Route element={<PrivateChatShow/>} path={ route('home.chats.show') } />
+            <Route element={<PrivateChatsIndex />} path={ route('home.chats.index') } />
+            <Route element={<PrivateChatShow />} path={ route('home.chats.show') } />
 
-            <Route element={<PrivateNotificationsIndex/>} path={ route('home.notifications.index') } />
-            <Route element={<PrivateNotificationEdit/>} path={ route('home.notifications.edit') } />
+            <Route element={<PrivateNotificationsIndex />} path={ route('home.notifications.index') } />
+            <Route element={<PrivateNotificationEdit />} path={ route('home.notifications.edit') } />
 
-            <Route element={<PrivateStatsIndex/>} path={ route('home.stats.index') } />
+            <Route element={<PrivateStatsIndex />} path={ route('home.stats.index') } />
 
-            <Route element={<MyProfile/>} path={ route('home.my-profile') } />
+            <Route element={<MyProfile />} path={ route('home.my-profile') } />
 
-            <Route element={<Home/>} path={ route('home.index') } />
+            <Route element={<Home />} path={ route('home.index') } />
           </Route>
           {/* End of Protected routes */}
         </Routes>

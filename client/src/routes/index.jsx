@@ -31,6 +31,10 @@ const routeNames = {
 
     /** Public Routes */
     'create-account': '/create-account',
+    'reset-password-request': '/reset-password-request',
+    'reset-password': '/reset-password/:email/:token',
+    'passwordless-signin-request': '/passwordless-signin-request',
+    'passwordless-signin': '/passwordless-signin/:username/:token',
     'index': '/',
 }
 

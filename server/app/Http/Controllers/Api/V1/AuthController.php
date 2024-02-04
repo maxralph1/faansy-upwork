@@ -10,23 +10,24 @@ use Illuminate\Http\Request;
 use App\Mail\PasswordResetToken;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordlessLoginToken;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-// use Illuminate\Support\Facades\Mail;
+
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'resetPasswordRequest', 'resetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'resetPasswordRequest', 'resetPassword', 'passwordlessSigninRequest', 'passwordlessSignin']]);
     }
 
     public function login(Request $request)
     {
         $request->validate([
             'username' => 'required|string',
-            // 'email' => 'required|string|email',
+            // 'email' => 'required|email',
             'password' => 'required|string',
         ]);
         $credentials = $request->only('username', 'password');
@@ -70,6 +71,96 @@ class AuthController extends Controller
             // 'user' => $user,
             'authorization' => [
                 'token' => $detailedToken,
+                'type' => 'bearer',
+            ]
+        ]);
+    }
+
+    public function passwordlessSigninRequest(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+        ]);
+
+        $user_found = User::where('username', $request->username)->first();
+
+        if (!$user_found) {
+            return response()->json([
+                'status' => 'Not Found',
+                'message' => 'Username does not exist.'
+            ], 404);
+        } elseif ($user_found) {
+            $token_already_exists = DB::table('passwordless_sign_in_tokens')
+                ->where('username', $request->username)
+                ->first();
+
+            if ($token_already_exists) {
+                Mail::to($token_already_exists->email)->send(new PasswordlessLoginToken($token_already_exists->username, $token_already_exists->token));
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Sign in token sent to your email. Click on the link to sign in to your account.'
+                ]);
+            } elseif (!$token_already_exists) {
+                $token = Str::random(80);
+
+                $user_found = User::where('username', $request->username)->first();
+
+                $username = $user_found->username;
+
+                DB::table('passwordless_sign_in_tokens')->insert([
+                    'username' => $user_found->username,
+                    'email' => $user_found->email,
+                    'token' => $token,
+                    'created_at' => now(),
+                ]);
+
+                Mail::to($user_found->email)->send(new PasswordlessLoginToken($username, $token));
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Sign in token sent to your email. Click on the link to sign in.'
+                ]);
+            }
+        }
+    }
+
+    public function passwordlessSignin(Request $request)
+    {
+        $sign_in_token_found = DB::table('passwordless_sign_in_tokens')->where([
+            'username' => $request->route('username'),
+            'token' => $request->route('token'),
+        ]);
+
+        if (!$sign_in_token_found) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Username wrong or token expired.',
+            ], 404);
+        }
+
+        $user = User::where('username', $request->route('username'))->first();
+
+        $token = Auth::claims([
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'username' => $user->username,
+            'email' => $user->email,
+            'verified' => $user->verified,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'profile' => $user->profile,
+            'role' => $user->role->title
+        ])->login($user);
+
+        $sign_in_token_found->delete();
+
+        return response()->json([
+            'status' => 'success',
+            // 'user' => $user,
+            'authorization' => [
+                'token' => $token,
                 'type' => 'bearer',
             ]
         ]);
@@ -197,6 +288,7 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $reset_token_found = DB::table('password_reset_tokens')->where([
+            'email' => $request->email,
             'token' => $request->token
         ]);
 

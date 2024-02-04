@@ -15,7 +15,8 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('subscribed_id')->references('id')->on('users');
             $table->foreignUlid('subscriber_id')->references('id')->on('users');
-            $table->unsignedInteger('amount_paid');
+            $table->unsignedInteger('subscription_amount_paid');
+            $table->unsignedInteger('cumulative_amount_spent_by_subscriber_on_subscribed');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -22,36 +22,6 @@ export const AuthProvider = ({children}) => {
     const navigate = useNavigate();
 
 
-    let loginUser = async (username, password) => {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
-            method: 'POST', 
-            headers: {
-                'Content-Type': 'application/json'
-            }, 
-            body: JSON.stringify({
-                username, 
-                password 
-            })
-        })
-        const data = await response.json()
-
-        if (response.status == 200) {
-            console.log('Logged in');
-            setAuthTokens(data);
-            setUser(jwtDecode(data.authorization.token));
-            localStorage.setItem('authTokens', JSON.stringify(data));
-            navigate(route('home.index'));
-            console.log('Login successful')
-        } else {
-            // console.log(response.status);
-            // console.log(response);
-            console.log(error);
-            console.log('Something went wrong!');
-            console.log('Username or password does not exist!');
-        }
-    }
-
-
     const registerUser = async (email, firstname, lastname, username, password) => {
         const response = await fetch('http://127.0.0.1:8000/api/register', {
             method: 'POST', 
@@ -80,7 +50,86 @@ export const AuthProvider = ({children}) => {
     }
 
 
-    let logoutUser = async () => {
+    const loginUser = async (username, password) => {
+        const response = await fetch('http://127.0.0.1:8000/api/login', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({
+                username, 
+                password 
+            })
+        })
+        const data = await response.json()
+        console.log(data)
+
+        if (response.status == 200) {
+            console.log('Logged in');
+            setAuthTokens(data);
+            setUser(jwtDecode(data.authorization.token));
+            localStorage.setItem('authTokens', JSON.stringify(data));
+            navigate(route('home.index'));
+            console.log('Login successful');
+        } else {
+            // console.log(response.status);
+            // console.log(response);
+            console.log(error);
+            console.log('Something went wrong!');
+            console.log('Username or password does not exist!');
+        }
+    }
+
+
+    
+    const passwordlessSigninRequest = async (username) => {
+        const response = await fetch('http://127.0.0.1:8000/api/passwordless-signin-request', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({
+                username 
+            })
+        })
+
+        if (response.status == 200) {
+            console.log('Email notification with sign in token sent to your email.')
+        } else {
+            console.log(response.status);
+            console.log(response);
+            // console.log('Something went wrong!');
+            // console.log(`'An Error Occured ' + ${response.status} + ': Check the password (ensure alphanumeric password not less than 15 characters). You should also check the other details you entered.'`)
+        }
+    }
+
+
+    const passwordlessSignin = async (email, password, token) => {
+        const response = await fetch(`http://127.0.0.1:8000/api/passwordless-signin/${ username }/${ token }`, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            // body: JSON.stringify({
+            //     email,
+            //     password, 
+            //     token
+            // })
+        })
+
+        if (response.status == 200) {
+            console.log('Password reset.');
+            navigate(route('home.index'));
+        } else {
+            console.log(response.status);
+            console.log(response);
+            // console.log('Something went wrong!');
+            // console.log(`'An Error Occured ' + ${response.status} + ': Check the password (ensure alphanumeric password not less than 15 characters). You should also check the other details you entered.'`)
+        }
+    }
+
+
+    const logoutUser = async () => {
         setAuthTokens(null);
         setUser(null);
         localStorage.removeItem('authTokens'); 
@@ -89,13 +138,63 @@ export const AuthProvider = ({children}) => {
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({
-                refresh: authTokens?.refresh, 
-            })
+            // body: JSON.stringify({
+            //     refresh: authTokens?.refresh, 
+            // })
         })
         navigate(route('index'));
         console.log('You have been logged out.')
     }
+
+
+    const resetPasswordRequest = async (email) => {
+        const response = await fetch('http://127.0.0.1:8000/api/password-reset-request', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({
+                email 
+            })
+        })
+
+        if (response.status == 200) {
+            console.log('Email notification with reset token sent to your email.')
+        } else {
+            console.log(response.status);
+            console.log(response);
+            // console.log('Something went wrong!');
+            // console.log(`'An Error Occured ' + ${response.status} + ': Check the password (ensure alphanumeric password not less than 15 characters). You should also check the other details you entered.'`)
+        }
+    }
+
+    
+    const resetPassword = async (email, password, token) => {
+        const response = await fetch('http://127.0.0.1:8000/api/password-reset', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({
+                email,
+                password, 
+                token
+            })
+        })
+
+        if (response.status == 200) {
+            console.log('Password reset.');
+            navigate(route('home.index'));
+        } else {
+            console.log(response.status);
+            console.log(response);
+            // console.log('Something went wrong!');
+            // console.log(`'An Error Occured ' + ${response.status} + ': Check the password (ensure alphanumeric password not less than 15 characters). You should also check the other details you entered.'`)
+        }
+    }
+
+
+
 
 
     let contextData = {
@@ -104,7 +203,11 @@ export const AuthProvider = ({children}) => {
         authTokens, 
         setAuthTokens, 
         loginUser, 
+        passwordlessSigninRequest, 
+        passwordlessSignin, 
         registerUser, 
+        resetPasswordRequest,
+        resetPassword,
         logoutUser, 
     }
 

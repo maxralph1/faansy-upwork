@@ -4,19 +4,28 @@ import Constants from '@/utils/Constants.jsx';
 import axios from 'axios';
 
 
-export function usePosts() {
+export function usePosts(page = 1) {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        const controller = new AbortController();
-        getPosts({ signal: controller.signal });
-        return () => { controller.abort() };
-    }, []);
+        if (page !== null) {
+            const controller = new AbortController();
+            getPosts(page, { signal: controller.signal });
+            return () => { controller.abort() };
+        }
+    }, [page]);
 
-    async function getPosts({ signal } = {}) {
-        return axios.get(`${ Constants.serverURL }/api/posts`, { signal })
+    async function getPosts(page, { signal } = {}) {
+        return axios.get(`${ Constants.serverURL }/api/posts?page=${page}`, { signal })
         // return axiosInstance.get(`posts`, { signal })
-            .then(response => setPosts(response.data.data))
+            .then(response => {
+                console.log(response)
+                setPosts(response.data);
+                // setPosts(response?.data?.data);
+                // const [array,setArray] = useState([]);
+                // setArray(oldArray => [...oldArray,newValue] );
+                // setArray(oldArray => [newValue,...oldArray] );
+            })
             .catch(() => {});
     }
 

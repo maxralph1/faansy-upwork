@@ -34,6 +34,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('refresh', 'refresh');
     Route::post('password-reset-request', 'resetPasswordRequest');
     Route::post('password-reset', 'resetPassword');
+    Route::post('passwordless-signin-request', 'passwordlessSigninRequest');
+    Route::post('passwordless-signin/{username}/{token}', 'passwordlessSignin');
 });
 
 Route::controller(TodoController::class)->group(function () {
@@ -54,6 +56,7 @@ Route::controller(UserController::class)->group(function () {
 Route::apiResource('posts', PostController::class);
 Route::controller(PostController::class)->group(function () {
     Route::get('posts/{post}/repost', 'repost');
+    Route::get('posts/featured-posts', 'featuredPosts');
 });
 
 Route::apiResource('postcomments', PostcommentController::class);

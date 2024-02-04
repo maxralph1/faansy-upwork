@@ -9,18 +9,18 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PasswordResetToken extends Mailable
+class PasswordlessLoginToken extends Mailable
 {
     use Queueable, SerializesModels;
-    public $email;
+    public $username;
     public $token;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($email, $token)
+    public function __construct($username, $token)
     {
-        $this->email = $email;
+        $this->username = $username;
         $this->token = $token;
     }
 
@@ -30,7 +30,7 @@ class PasswordResetToken extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Password Reset Token Notification',
+            subject: 'Passwordless Sign In Token Notification',
         );
     }
 
@@ -40,9 +40,9 @@ class PasswordResetToken extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.auth.password-reset',
+            markdown: 'mail.auth.passwordless-sign-in',
             with: [
-                'email' => $this->email,
+                'username' => $this->username,
                 'token' => $this->token,
             ]
         );
