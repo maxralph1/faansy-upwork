@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Polloption;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PolloptionResource;
 use App\Http\Requests\StorePolloptionRequest;
 use App\Http\Requests\UpdatePolloptionRequest;
 
@@ -14,15 +15,9 @@ class PolloptionController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $polloptions = Polloption::latest()->paginate();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return PolloptionResource::collection($polloptions);
     }
 
     /**
@@ -30,7 +25,9 @@ class PolloptionController extends Controller
      */
     public function store(StorePolloptionRequest $request)
     {
-        //
+        $polloption = Polloption::create($request->validated());
+
+        return new PolloptionResource($polloption);
     }
 
     /**
@@ -38,15 +35,7 @@ class PolloptionController extends Controller
      */
     public function show(Polloption $polloption)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Polloption $polloption)
-    {
-        //
+        return new PolloptionResource($polloption);
     }
 
     /**
@@ -54,7 +43,9 @@ class PolloptionController extends Controller
      */
     public function update(UpdatePolloptionRequest $request, Polloption $polloption)
     {
-        //
+        $polloption->update($request->validated());
+
+        return new PolloptionResource($polloption);
     }
 
     /**
@@ -62,6 +53,22 @@ class PolloptionController extends Controller
      */
     public function destroy(Polloption $polloption)
     {
-        //
+        $polloption->delete();
+    }
+
+    /**
+     * Restore the specified deleted resource.
+     */
+    public function restore(Polloption $polloption)
+    {
+        $polloption->restore();
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDestroy(Polloption $polloption)
+    {
+        $polloption->forceDelete();
     }
 }

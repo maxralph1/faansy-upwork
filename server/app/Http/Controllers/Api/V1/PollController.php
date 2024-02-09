@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Poll;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PollResource;
 use App\Http\Requests\StorePollRequest;
 use App\Http\Requests\UpdatePollRequest;
 
@@ -14,15 +15,9 @@ class PollController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $polls = Poll::latest()->paginate();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return PollResource::collection($polls);
     }
 
     /**
@@ -30,7 +25,9 @@ class PollController extends Controller
      */
     public function store(StorePollRequest $request)
     {
-        //
+        $poll = Poll::create($request->validated());
+
+        return new PollResource($poll);
     }
 
     /**
@@ -38,15 +35,7 @@ class PollController extends Controller
      */
     public function show(Poll $poll)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Poll $poll)
-    {
-        //
+        return new PollResource($poll);
     }
 
     /**
@@ -54,7 +43,9 @@ class PollController extends Controller
      */
     public function update(UpdatePollRequest $request, Poll $poll)
     {
-        //
+        $poll->update($request->validated());
+
+        return new PollResource($poll);
     }
 
     /**
@@ -62,6 +53,22 @@ class PollController extends Controller
      */
     public function destroy(Poll $poll)
     {
-        //
+        $poll->delete();
+    }
+
+    /**
+     * Restore the specified deleted resource.
+     */
+    public function restore(Poll $poll)
+    {
+        $poll->restore();
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDestroy(Poll $poll)
+    {
+        $poll->forceDelete();
     }
 }

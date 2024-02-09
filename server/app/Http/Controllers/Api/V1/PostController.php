@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use App\Models\Post;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Models\Notification;
+use App\Models\Subscription;
+use App\Models\Transaction;
+
+// use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PostController extends Controller
 {
@@ -22,7 +28,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::withTrashed()->latest()->paginate();
+        // $posts = Post::withTrashed()->latest()->paginate();
+        $posts = Post::latest()->paginate();
 
         return PostResource::collection($posts);
     }
@@ -64,9 +71,64 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        // Pay Per View Logic
         if ($post->pay_per_view == true) {
             // check subscriber wallet balance, if they do not have enough balance, abort!
+            $subscriber_sufficient_fund = auth()->user()->wallet->balance >= $post->pay_per_view_amount;
+
             // if they have enough balance, charge the subscriber
+            if ($subscriber_sufficient_fund) {
+                $subscriber_wallet = Wallet::where('user_id', auth()->id)->first();
+                $subscribed_wallet = Wallet::where('user_id', $post->user->id)->first();
+
+                DB::transaction(function () use ($subscriber_wallet, $subscribed_wallet, $post) {
+                    // $subscriber_wallet_balance = $subscriber_wallet->balance;
+                    // $subscribed_wallet_balance = $subscribed_wallet->balance;
+
+                    $subscriber_wallet->update([
+                        'balance' => $subscriber_wallet->balance - $post->pay_per_view_amount
+                    ]);
+
+                    $subscribed_wallet->update([
+                        'balance' => $subscribed_wallet->balance + $post->pay_per_view_amount
+                    ]);
+
+                    Transaction::create([
+                        'beneficiary_id' => $subscriber_wallet->user->id,
+                        'transactor_id' => auth()->id,
+                        'transaction_type' => 'pay_per_view',
+                        'amount' => $post->pay_per_view_amount,
+                    ]);
+
+                    Notification::create([
+                        'user_id' => $post->user->id,
+                        'title' => 'Pay-Per-View Notification',
+                        'body' => 'You have received a pay-per-view of $' . $post->pay_per_view_amount / 100 . '.',
+                    ]);
+                });
+
+                return new PostResource($post);
+            } elseif (!$subscriber_sufficient_fund) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unauthorized. You must have sufficient funds in order to view this content.',
+                ], 403);
+            }
+        }
+
+        // Subscription Logic
+        if ($post->user->users_must_be_subscribed_to_view_my_content == true) {
+            $subscription_exists = Subscription::where([
+                'subscribed_id' => $post->user->id,
+                'subscriber_id' => auth()->id,
+            ])->first();
+
+            return new PostResource($post);
+        } elseif ($post->user->users_must_be_subscribed_to_view_my_content == false) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized. You must be subscribed to creator in order to view this content.',
+            ], 403);
         }
 
         return new PostResource($post);
@@ -77,6 +139,10 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
+        if ($request->user()->cannot('update', $post)) {
+            abort(403);
+        }
+
         $post->update($request->validated());
 
         return new PostResource($post);
@@ -118,11 +184,20 @@ class PostController extends Controller
     {
         $validated = $request->validated();
 
-        $validated['repost'] = true;
+        $re_check_if_post_exists = Post::where('id', $validated['repost_original_id'])->first();
 
-        $post = Post::create($validated);
+        if ($re_check_if_post_exists) {
+            $validated['repost'] = true;
 
-        return new PostResource($post);
+            $post = Post::create($validated);
+
+            return new PostResource($post);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Post you are trying to repost does not exist or has been deleted.',
+            ], 404);
+        }
     }
 
     /**
@@ -133,5 +208,42 @@ class PostController extends Controller
         $posts = Post::where('featured', true)->latest()->paginate();
 
         return PostResource::collection($posts);
+
+        // $posts = Post::withTrashed()->latest()->paginate();
+
+        // return PostResource::collection($posts);
+    }
+
+    /**
+     * Make a post featured.
+     */
+    public function makePostFeatured(Post $post)
+    {
+        $post->update(['featured' => true]);
+
+        return new PostResource($post);
+    }
+
+    /**
+     * Display a listing of the authenticated user's posts.
+     */
+    public function myPosts()
+    {
+        $posts = Post::where('user_id', auth()->user()->id)->latest()->paginate();
+
+        return PostResource::collection($posts);
+    }
+
+    /**
+     * Pin a post.
+     */
+    public function pinPost(Post $post)
+    {
+        $post->update([
+            'pinned' => true,
+            'pinned_at' => now(),
+        ]);
+
+        return new PostResource($post);
     }
 }

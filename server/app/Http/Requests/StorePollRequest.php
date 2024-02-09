@@ -11,7 +11,7 @@ class StorePollRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StorePollRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|ulid',
+            'questionnaire' => 'required|string',
+            'close_time' => 'required|date_format',
         ];
     }
 }

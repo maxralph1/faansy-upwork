@@ -22,9 +22,9 @@ class UpdateSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'creator_id' => 'nullable|string',
-            'subscriber_id' => 'nullable|string',
-            'amount_paid' => 'nullable|string',
+            'subscribed_id' => 'nullable|ulid',
+            'subscriber_id' => 'nullable|ulid',
+            'subscription_amount_paid' => 'required|numeric',
         ];
     }
 }

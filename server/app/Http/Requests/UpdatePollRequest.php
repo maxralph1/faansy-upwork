@@ -11,7 +11,7 @@ class UpdatePollRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdatePollRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|ulid',
+            'questionnaire' => 'required|string',
+            'close_time' => 'nullable|date_format',
         ];
     }
 }

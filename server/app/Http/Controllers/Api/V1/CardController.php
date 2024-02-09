@@ -15,7 +15,7 @@ class CardController extends Controller
      */
     public function index()
     {
-        $cards = Card::withTrashed()->latest()->paginate();
+        $cards = Card::where('user_id', auth()->id)->latest()->paginate();
 
         return CardResource::collection($cards);
     }

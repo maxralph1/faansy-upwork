@@ -10,12 +10,20 @@ use App\Http\Requests\UpdateSubscriptionRequest;
 
 class SubscriptionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $subscriptions = Subscription::withTrashed()->latest()->paginate();
+        $subscriptions = Subscription::where('subscriber_id', auth()->id)
+            ->orWhere('subscribed_id', auth()->id)
+            ->latest()
+            ->paginate();
 
         return SubscriptionResource::collection($subscriptions);
     }

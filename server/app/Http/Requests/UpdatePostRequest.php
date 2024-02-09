@@ -22,12 +22,13 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'user_id' => 'nullable|string',
+            'user_id' => 'nullable|ulid',
             'body' => 'nullable|string',
-            'image_url' => 'nullable|string',
-            'video_url' => 'nullable|string',
-            // 'pinned' => 'nullable|string',
-            // 'pinned_at' => 'nullable|string',
+            'image_url' => 'nullable|mimes:jpg,jpeg,bmp,png',
+            'video_url' => 'nullable|mimetypes:video/avi,video/mp4,video/mpeg,video/quicktime',
+            'scheduled_live_time' => 'nullable|date_format',
+            'repost_original_id' => 'nullable|ulid',
+            'repost_body' => 'nullable|string',
         ];
     }
 }

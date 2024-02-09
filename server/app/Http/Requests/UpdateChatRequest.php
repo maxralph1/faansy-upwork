@@ -22,8 +22,8 @@ class UpdateChatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'initiator_id' => 'nullable|string',
-            'responder_id' => 'nullable|string',
+            'participator_1_id' => 'nullable|ulid',
+            'participator_2_id' => 'nullable|ulid',
             // 'slug' => 'nullable|string',
         ];
     }

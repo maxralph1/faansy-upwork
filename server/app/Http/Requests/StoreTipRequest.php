@@ -22,9 +22,9 @@ class StoreTipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'creator_id' => 'required|string',
-            'subscriber_id' => 'required|string',
-            'amount' => 'required|string',
+            'recipient_id' => 'required|ulid',
+            'donor_id' => 'required|ulid',
+            'amount' => 'required|numeric',
         ];
     }
 }

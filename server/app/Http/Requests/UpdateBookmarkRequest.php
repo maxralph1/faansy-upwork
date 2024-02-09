@@ -22,8 +22,8 @@ class UpdateBookmarkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'nullable|string',
-            'post_id' => 'nullable|string',
+            'user_id' => 'nullable|ulid',
+            'post_id' => 'nullable|ulid',
         ];
     }
 }

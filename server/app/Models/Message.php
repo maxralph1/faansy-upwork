@@ -16,7 +16,7 @@ class Message extends Model
         'user_id',
         'chat_id',
         'body',
-        'read',
+        // 'read',
     ];
 
     public function user(): BelongsTo

@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('beneficiary_id')->references('id')->on('users')->nullable();
+            $table->foreignUlid('transactor_id')->references('id')->on('users');
+            $table->enum('transaction_type', ['pay_per_view', 'subscription', 'tip', 'stream_tips', 'commission', 'vat']);
+            $table->unsignedInteger('amount');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

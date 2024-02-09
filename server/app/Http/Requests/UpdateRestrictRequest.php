@@ -22,8 +22,8 @@ class UpdateRestrictRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'restrictor_id' => 'nullable|string',
-            'restrictee_id' => 'nullable|string',
+            'restrictor_id' => 'nullable|ulid',
+            'restrictee_id' => 'nullable|ulid',
         ];
     }
 }

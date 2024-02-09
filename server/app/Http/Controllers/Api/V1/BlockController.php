@@ -12,7 +12,6 @@ class BlockController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('auth:api', ['except' => ['index', 'register']]);
         $this->middleware('auth:api');
     }
 
@@ -21,7 +20,7 @@ class BlockController extends Controller
      */
     public function index()
     {
-        $blocks = Block::withTrashed()->latest()->paginate();
+        $blocks = Block::where('blocker_id', auth()->id)->latest()->paginate();
 
         return BlockResource::collection($blocks);
     }

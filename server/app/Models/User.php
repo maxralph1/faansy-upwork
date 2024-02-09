@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -34,6 +35,7 @@ class User extends Authenticatable implements JWTSubject
         'user_background_image_url',
         'show_activity_status',
         'free_subscription',
+        'subscription_amount',
         'show_subscription_offers',
         'passport_image_url',
         'verified',
@@ -82,19 +84,80 @@ class User extends Authenticatable implements JWTSubject
     /** 
      * Model Relationships
      */
+
+    public function blocks(): HasMany
+    {
+        return $this->hasMany(Block::class);
+    }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    public function cards(): HasMany
+    {
+        return $this->hasMany(Card::class);
+    }
+
+    public function chats(): HasMany
+    {
+        return $this->hasMany(Chat::class);
+    }
+
+    public function livestreams(): HasMany
+    {
+        return $this->hasMany(Livestream::class);
+    }
+
+    public function livestreamcomments(): HasMany
+    {
+        return $this->hasMany(Livestreamcomment::class);
+    }
+
+    public function livestreamguests(): HasMany
+    {
+        return $this->hasMany(Livestreamguest::class);
+    }
+
+    public function livestreamlikes(): HasMany
+    {
+        return $this->hasMany(Livestreamlike::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function polls(): HasMany
+    {
+        return $this->hasMany(Poll::class);
+    }
+
+    public function postcomments(): HasMany
+    {
+        return $this->hasMany(Postcomment::class);
+    }
+
+    public function postlikes(): HasMany
+    {
+        return $this->hasMany(Postlike::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
     }
 
-    public function userlikers(): HasMany
+    public function restricts(): HasMany
     {
-        return $this->hasMany(Userlike::class, 'liker_id');
-    }
-
-    public function userliked(): HasMany
-    {
-        return $this->hasMany(Userlike::class, 'liked_id');
+        return $this->hasMany(Restrict::class);
     }
 
     public function role(): BelongsTo
@@ -117,68 +180,32 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Tip::class);
     }
 
-    public function wallets(): HasMany
+    public function userlikers(): HasMany
+    {
+        return $this->hasMany(Userlike::class, 'liker_id');
+    }
+
+    public function userliked(): HasMany
+    {
+        return $this->hasMany(Userlike::class, 'liked_id');
+    }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function walletfundings(): HasMany
     {
         return $this->hasMany(Wallet::class);
     }
 
-    public function posts(): HasMany
+    // Atrributes Casts
+    public function subscription_amount(): Attribute
     {
-        return $this->hasMany(Post::class);
-    }
-
-    public function postcomments(): HasMany
-    {
-        return $this->hasMany(Postcomment::class);
-    }
-
-    public function postlikes(): HasMany
-    {
-        return $this->hasMany(Postlike::class);
-    }
-
-    public function bookmarks(): HasMany
-    {
-        return $this->hasMany(Bookmark::class);
-    }
-
-    public function cards(): HasMany
-    {
-        return $this->hasMany(Card::class);
-    }
-
-    public function chats(): HasMany
-    {
-        return $this->hasMany(Chat::class);
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(Message::class);
-    }
-
-    public function streams(): HasMany
-    {
-        return $this->hasMany(Stream::class);
-    }
-
-    public function streamcomments(): HasMany
-    {
-        return $this->hasMany(Streamcomment::class);
-    }
-
-    public function streamlikes(): HasMany
-    {
-        return $this->hasMany(Streamlike::class);
-    }
-
-    public function blocks(): HasMany
-    {
-        return $this->hasMany(Block::class);
-    }
-
-    public function restricts(): HasMany
-    {
-        return $this->hasMany(Restrict::class);
+        return Attribute::make(
+            get: fn ($value) => $value / 100,
+            set: fn ($value) => $value * 100
+        );
     }
 }

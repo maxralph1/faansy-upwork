@@ -11,7 +11,7 @@ class UpdateWalletfundingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateWalletfundingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'nullable|ulid',
+            'wallet_id' => 'nullable|ulid',
+            'amount_funded' => 'nullable|numeric',
         ];
     }
 }

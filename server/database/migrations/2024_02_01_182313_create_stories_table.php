@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stories', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained();
+            $table->string('body');
+            $table->string('video_url')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -49,14 +49,15 @@ export default function Index() {
                 <div className="mt-4 d-flex flex-column px-5 row-gap-3">
                     <span><a href="" className="btn btn-dark rounded-pill fw-bold py-2 text-uppercase text-decoration-none text-light w-100"><small>Sign in with Twitter</small></a></span>
                     <span><a href="" className="btn btn-primary rounded-pill fw-bold py-2 text-uppercase text-decoration-none text-light w-100"><small>Sign in with Google</small></a></span>
-                    <span><a href="" className="btn btn-faansy-red opacity-75 rounded-pill fw-bold py-2 text-uppercase text-decoration-none text-light w-100">
-                        <small>
-                            <Link 
-                                to={ route('passwordless-signin-request') } 
-                                className="text-decoration-none text-light">
+                    <span>
+                        <Link 
+                            to={ route('passwordless-signin-request') }  
+                            className="btn btn-faansy-red opacity-75 rounded-pill fw-bold py-2 text-uppercase text-decoration-none text-light w-100">
+                                <small>
                                     Passwordless Sign In
-                            </Link>
-                        </small></a></span>
+                                </small>
+                        </Link>
+                    </span>
                 </div>
             </div>
         </Layout>

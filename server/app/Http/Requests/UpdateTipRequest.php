@@ -22,9 +22,9 @@ class UpdateTipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'creator_id' => 'nullable|string',
-            'subscriber_id' => 'nullable|string',
-            'amount' => 'nullable|string',
+            'recipient_id' => 'nullable|ulid',
+            'donor_id' => 'nullable|ulid',
+            'amount' => 'nullable|numeric',
         ];
     }
 }

@@ -11,7 +11,7 @@ class StoreWalletfundingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreWalletfundingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|ulid',
+            'wallet_id' => 'required|ulid',
+            'amount_funded' => 'required|numeric',
         ];
     }
 }

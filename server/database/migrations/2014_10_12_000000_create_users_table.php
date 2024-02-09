@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('user_background_image_url')->nullable();
             $table->timestamp('last_seen')->nullable();
             $table->boolean('show_activity_status')->default(true);
+            $table->boolean('users_must_be_subscribed_to_view_my_content')->default(false);
             $table->boolean('free_subscription')->default(true);
             $table->unsignedInteger('subscription_amount')->nullable();
             $table->boolean('show_subscription_offers')->default(true);

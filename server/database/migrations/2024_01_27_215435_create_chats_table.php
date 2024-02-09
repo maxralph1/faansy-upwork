@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('chats', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('initiator_id')->references('id')->on('users');
-            $table->foreignUlid('responder_id')->references('id')->on('users');
+            $table->foreignUlid('participator_1_id')->references('id')->on('users');
+            $table->foreignUlid('participator_2_id')->references('id')->on('users');
             $table->string('slug')->unique();
             // $table->string('chat_alias')->unique();
             $table->timestamps();

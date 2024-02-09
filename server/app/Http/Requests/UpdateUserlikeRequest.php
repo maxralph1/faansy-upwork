@@ -22,8 +22,8 @@ class UpdateUserlikeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'liked_id' => 'nullable|string',
-            'liker_id' => 'nullable|string',
+            'liked_id' => 'nullable|ulid',
+            'liker_id' => 'nullable|ulid',
         ];
     }
 }

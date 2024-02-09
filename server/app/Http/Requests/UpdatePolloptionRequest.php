@@ -11,7 +11,7 @@ class UpdatePolloptionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdatePolloptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'poll_id' => 'required|ulid',
+            'user_id' => 'required|ulid',
+            'option' => 'required|string',
         ];
     }
 }

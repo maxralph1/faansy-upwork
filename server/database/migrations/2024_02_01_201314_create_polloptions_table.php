@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('polloptions', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('poll_id')->constrained();
+            $table->foreignUlid('user_id')->constrained();
+            $table->string('option');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

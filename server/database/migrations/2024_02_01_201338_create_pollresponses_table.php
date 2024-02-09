@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pollresponses', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('poll_id')->constrained();
+            $table->foreignUlid('polloption_id')->constrained()->nullable();
+            $table->foreignUlid('user_id')->constrained();
+            $table->string('text_response');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

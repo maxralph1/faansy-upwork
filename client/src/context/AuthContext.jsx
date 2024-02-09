@@ -104,7 +104,7 @@ export const AuthProvider = ({children}) => {
     }
 
 
-    const passwordlessSignin = async (email, password, token) => {
+    const passwordlessSignin = async (username, token) => {
         const response = await fetch(`http://127.0.0.1:8000/api/passwordless-signin/${ username }/${ token }`, {
             method: 'POST', 
             headers: {
@@ -117,12 +117,20 @@ export const AuthProvider = ({children}) => {
             // })
         })
 
+        const data = await response.json()
+        console.log(data)
+
         if (response.status == 200) {
-            console.log('Password reset.');
+            console.log('Logged in');
+            setAuthTokens(data);
+            setUser(jwtDecode(data.authorization.token));
+            localStorage.setItem('authTokens', JSON.stringify(data));
             navigate(route('home.index'));
+            console.log('Login successful');
         } else {
-            console.log(response.status);
-            console.log(response);
+            console.log(error);
+            console.log('Something went wrong!');
+            console.log('Username or password does not exist!');
             // console.log('Something went wrong!');
             // console.log(`'An Error Occured ' + ${response.status} + ': Check the password (ensure alphanumeric password not less than 15 characters). You should also check the other details you entered.'`)
         }

@@ -15,7 +15,7 @@ class RestrictController extends Controller
      */
     public function index()
     {
-        $restricts = Restrict::withTrashed()->latest()->paginate();
+        $restricts = Restrict::where('restrictor_id', auth()->id)->latest()->paginate();
 
         return RestrictResource::collection($restricts);
     }
@@ -25,6 +25,19 @@ class RestrictController extends Controller
      */
     public function store(StoreRestrictRequest $request)
     {
+        $already_restricted = Restrict::where([
+            'restrictor_id' => $request->restrictor_id,
+            'restrictee_id' => $request->restrictee_id,
+        ])->first();
+
+        if ($already_restricted) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Conflict: Already Restricted!',
+            ], 409);
+            // abort('409', 'Conflict: Already Restricted!');
+        }
+
         $restrict = Restrict::create($request->validated());
 
         return new RestrictResource($restrict);

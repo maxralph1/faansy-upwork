@@ -22,8 +22,8 @@ class UpdateBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'blocker_id' => 'nullable|string',
-            'blocked_id' => 'nullable|string',
+            'blocker_id' => 'nullable|ulid',
+            'blocked_id' => 'nullable|ulid',
         ];
     }
 }

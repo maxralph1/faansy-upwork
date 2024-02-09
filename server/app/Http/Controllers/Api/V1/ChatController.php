@@ -15,7 +15,10 @@ class ChatController extends Controller
      */
     public function index()
     {
-        $chats = Chat::withTrashed()->latest()->paginate();
+        $chats = Chat::where('participator_1_id', auth()->id)
+            ->orWhere('participator_2_id', auth()->id)
+            ->latest()
+            ->paginate();
 
         return ChatResource::collection($chats);
     }
@@ -43,9 +46,9 @@ class ChatController extends Controller
      */
     public function update(UpdateChatRequest $request, Chat $chat)
     {
-        $chat->update($request->validated());
+        // $chat->update($request->validated());
 
-        return new ChatResource($chat);
+        // return new ChatResource($chat);
     }
 
     /**

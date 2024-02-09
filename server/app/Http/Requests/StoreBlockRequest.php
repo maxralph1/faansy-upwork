@@ -22,8 +22,8 @@ class StoreBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'blocker_id' => 'required|string',
-            'blocked_id' => 'required|string',
+            'blocker_id' => 'required|ulid',
+            'blocked_id' => 'required|ulid',
         ];
     }
 }

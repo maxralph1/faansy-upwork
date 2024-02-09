@@ -7,14 +7,15 @@ dayjs.extend(utc);
 import { Link } from 'react-router-dom';
 import { route } from '@/routes';
 import Constants from '@/utils/Constants.jsx';
-import { usePosts } from '@/hooks/usePosts.jsx';
+import { useFeaturedPosts } from '@/hooks/useFeaturedPosts.jsx';
+import Loading from '@/components/Loading.jsx';
 import Logo from '@/assets/images/logo.png';
 import MissingImage from '@/assets/images/name_non-transparent.png';
 // import Video from '@/assets/videos/spicy_tofu(720p).mp4';
 
 
 export default function FeaturedPosts() {
-    const { posts, getPosts } = usePosts();
+    const { posts, getPosts } = useFeaturedPosts();
     console.log(posts?.data);
     console.log(posts);
     const pageNumber = (posts?.meta?.current_page + 1 > posts?.meta?.last_page) ? posts?.meta?.last_page : posts?.meta?.current_page + 1;
@@ -22,7 +23,9 @@ export default function FeaturedPosts() {
 
     return (
         <section className="text-bg-light">
-            <h2 className="container fw-normal px-5 pt-5 pb-0">Featured Posts</h2>
+            { (posts?.data?.length > 0) && 
+                <h2 className="container fw-normal px-5 pt-5 pb-0">Featured Posts</h2>
+            }
 
             {(posts?.data?.length > 0) ? posts?.data?.map(post => {
                 return (
@@ -34,7 +37,9 @@ export default function FeaturedPosts() {
                                         <div className="rounded-circle">
                                             <img src={ Logo } alt="" width="65" />
                                         </div>
-                                        <div className="d-flex flex-column">
+                                        <Link 
+                                            to={ route('home.users.show', { username: 'faansy' })}
+                                            className="d-flex flex-column text-body-secondary text-decoration-none">
                                             <h3 className="card-title fs-5 d-flex align-items-center column-gap-1">
                                                 <span>Faansy</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -46,7 +51,7 @@ export default function FeaturedPosts() {
                                                 </svg>
                                             </h3>
                                             <span className="text-body-secondary">@faansy</span>
-                                        </div>
+                                        </Link>
                                     </div>
 
                                     <div>
@@ -65,8 +70,8 @@ export default function FeaturedPosts() {
                                         
                                             <source src={ post.video_url } type="video/mp4" />
                                         
-                                            Download the
-                                            <a href="/media/cc0-videos/flower.webm">WEBM</a>
+                                            Or download the
+                                            <a href={ post.video_url }>WEBM</a>
                                             or
                                             <a href={ post.video_url }>MP4</a>
                                             video.
@@ -78,23 +83,26 @@ export default function FeaturedPosts() {
                         </div>
                     </article>
                 )}) : (
-                <div className="d-flex justify-content-center align-items-center my-5">
-                    <div className="" role="status">
-                        <span className="">No posts yet.</span>
-                    </div>
-                </div>
+                    <>
+                        <section className='vh-50 py-5'>
+                            <Loading />
+                        </section>
+                    </>
             )}
 
-            <div className="d-flex justify-content-center pb-5 text-bg-light">
-                <button 
-                    type="button"
-                    onClick={ async () => {
-                        await getPosts(pageNumber)
-                    } }
-                    className="btn btn-outline-secondary py-1 px-3 rounded-pill text-faansy-red text-uppercase fw-semibold show-more">
-                        Show More
-                </button>
-            </div>
+            { ((posts?.data?.length > 0) && ((posts?.meta?.current_page < posts?.meta?.last_page))) 
+                &&
+                    <div className="d-flex justify-content-center pb-5 text-bg-light">
+                        <button 
+                            type="button"
+                            onClick={ async () => {
+                                await getPosts(pageNumber)
+                            } }
+                            className="btn btn-outline-secondary py-1 px-3 rounded-pill text-faansy-red text-uppercase fw-semibold show-more">
+                                Show More
+                        </button>
+                    </div>
+            }
         </section>
     )
 }

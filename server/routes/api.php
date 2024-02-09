@@ -2,15 +2,26 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TodoController;
+use App\Http\Controllers\Api\V1\TipController;
 use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\PostController;
-use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\BlockController;
 use App\Http\Controllers\Api\V1\BookmarkController;
-use App\Http\Controllers\Api\V1\PostlikeController;
+use App\Http\Controllers\Api\V1\CardController;
+use App\Http\Controllers\Api\V1\ChatController;
+use App\Http\Controllers\Api\V1\PollController;
+use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\MessageController;
+use App\Http\Controllers\Api\V1\PolloptionController;
 use App\Http\Controllers\Api\V1\PostcommentController;
+use App\Http\Controllers\Api\V1\PostlikeController;
+use App\Http\Controllers\Api\V1\PollresponseController;
+use App\Http\Controllers\Api\V1\RestrictController;
+use App\Http\Controllers\Api\V1\StoryController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
+use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\UserlikeController;
+use App\Http\Controllers\Api\V1\WalletController;
+use App\Http\Controllers\Api\V1\WalletfundingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,18 +45,122 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('refresh', 'refresh');
     Route::post('password-reset-request', 'resetPasswordRequest');
     Route::post('password-reset', 'resetPassword');
-    Route::post('passwordless-signin-request', 'passwordlessSigninRequest');
+    Route::post(
+        'passwordless-signin-request',
+        'passwordlessSigninRequest'
+    );
     Route::post('passwordless-signin/{username}/{token}', 'passwordlessSignin');
 });
 
-Route::controller(TodoController::class)->group(function () {
-    Route::get('todos', 'index');
-    Route::post('todo', 'store');
-    Route::get('todo/{id}', 'show');
-    Route::put('todo/{id}', 'update');
-    Route::delete('todo/{id}', 'destroy');
+// Block
+Route::controller(BlockController::class)->group(function () {
+    Route::patch('blocks/{block}/restore', 'restore');
+    Route::delete('blocks/{block}/delete', 'forceDestroy');
 });
+Route::apiResource('blocks', BlockController::class);
 
+// Bookmark
+Route::controller(BookmarkController::class)->group(function () {
+    Route::patch('bookmarks/{bookmark}/restore', 'restore');
+    Route::delete('bookmarks/{bookmark}/delete', 'forceDestroy');
+});
+Route::apiResource('bookmarks', BookmarkController::class);
+
+// Card
+Route::controller(CardController::class)->group(function () {
+    Route::patch('cards/{card}/restore', 'restore');
+    Route::delete('cards/{card}/delete', 'forceDestroy');
+});
+Route::apiResource('cards', CardController::class);
+
+// Chat
+Route::controller(ChatController::class)->group(function () {
+    Route::patch('chats/{chat}/restore', 'restore');
+    Route::delete('chats/{chat}/delete', 'forceDestroy');
+});
+Route::apiResource('chats', ChatController::class);
+
+// Message
+Route::controller(MessageController::class)->group(function () {
+    Route::patch('messages/{message}/restore', 'restore');
+    Route::delete('messages/{message}/delete', 'forceDestroy');
+});
+Route::apiResource('messages', MessageController::class);
+
+// Poll
+Route::controller(PollController::class)->group(function () {
+    Route::patch('polls/{poll}/restore', 'restore');
+    Route::delete('polls/{poll}/delete', 'forceDestroy');
+});
+Route::apiResource('polls', PollController::class);
+
+// Polloption
+Route::controller(PolloptionController::class)->group(function () {
+    Route::patch('polloptions/{polloption}/restore', 'restore');
+    Route::delete('polloptions/{polloption}/delete', 'forceDestroy');
+});
+Route::apiResource('polloptions', PolloptionController::class);
+
+// Pollresponse
+Route::controller(PollresponseController::class)->group(function () {
+    Route::patch('pollresponses/{pollresponse}/restore', 'restore');
+    Route::delete('pollresponses/{pollresponse}/delete', 'forceDestroy');
+});
+Route::apiResource('pollresponses', PollresponseController::class);
+
+// Postcomment
+Route::controller(PostcommentController::class)->group(function () {
+    Route::patch('postcomments/{postcomment}/restore', 'restore');
+    Route::delete('postcomments/{postcomment}/delete', 'forceDestroy');
+});
+Route::apiResource('postcomments', PostcommentController::class);
+
+// Post
+Route::controller(PostController::class)->group(function () {
+    Route::post('posts/{post}/repost', 'repost');
+    Route::get('posts/featured-posts', 'featuredPosts');
+    Route::patch('posts/featured-posts', 'makePostFeatured');
+    Route::get('posts/{post}/my-posts', 'myPosts');
+    Route::patch('posts/{post}/pin-post', 'pinPost');
+});
+Route::apiResource('posts', PostController::class);
+
+// Postlikes
+Route::controller(PostlikeController::class)->group(function () {
+    Route::patch('postlikes/{postlike}/restore', 'restore');
+    Route::delete('postlikes/{postlike}/delete', 'forceDestroy');
+});
+Route::apiResource('postlikes', PostlikeController::class);
+
+// Restricts
+Route::controller(RestrictController::class)->group(function () {
+    Route::patch('restricts/{restrict}/restore', 'restore');
+    Route::delete('restricts/{restrict}/delete', 'forceDestroy');
+});
+Route::apiResource('restricts', RestrictController::class);
+
+// Stories
+Route::controller(StoryController::class)->group(function () {
+    Route::patch('storys/{story}/restore', 'restore');
+    Route::delete('storys/{story}/delete', 'forceDestroy');
+});
+Route::apiResource('storys', StoryController::class);
+
+// Subscription
+Route::controller(SubscriptionController::class)->group(function () {
+    Route::patch('subscriptions/{subscription}/restore', 'restore');
+    Route::delete('subscriptions/{subscription}/delete', 'forceDestroy');
+});
+Route::apiResource('subscriptions', SubscriptionController::class);
+
+// Tip
+Route::controller(TipController::class)->group(function () {
+    Route::patch('tips/{tip}/restore', 'restore');
+    Route::delete('tips/{tip}/delete', 'forceDestroy');
+});
+Route::apiResource('tips', TipController::class);
+
+// Users
 Route::apiResource('users', UserController::class);
 Route::controller(UserController::class)->group(function () {
     Route::get('creators', 'creators');
@@ -53,18 +168,25 @@ Route::controller(UserController::class)->group(function () {
     Route::put('creators/{user:username}/verify', 'verifyCreator');
 });
 
-Route::apiResource('posts', PostController::class);
-Route::controller(PostController::class)->group(function () {
-    Route::get('posts/{post}/repost', 'repost');
-    Route::get('posts/featured-posts', 'featuredPosts');
+// Userlike
+Route::controller(UserlikeController::class)->group(function () {
+    Route::patch('userlikes/{userlike}/restore', 'restore');
+    Route::delete('userlikes/{userlike}/delete', 'forceDestroy');
 });
+Route::apiResource('userlikes', UserlikeController::class);
 
-Route::apiResource('postcomments', PostcommentController::class);
-Route::apiResource('postlikes', PostlikeController::class);
-Route::apiResource('subscriptions', SubscriptionController::class);
-Route::apiResource('bookmarks', BookmarkController::class);
-Route::apiResource('blocks', BlockController::class);
-Route::controller(BlockController::class)->group(function () {
-    Route::patch('blocks/{block}/restore', 'restore');
-    Route::delete('blocks/{block}/delete', 'forceDestroy');
+// Wallet
+Route::controller(WalletController::class)->group(function () {
+    Route::patch('wallets/{wallet}/restore', 'restore');
+    Route::delete('wallets/{wallet}/delete', 'forceDestroy');
+    Route::get('wallets/my-wallet', 'myWallet');
 });
+Route::apiResource('wallets', WalletController::class);
+
+// Walletfunding
+Route::controller(WalletfundingController::class)->group(function () {
+    Route::patch('walletfundings/{walletfunding}/restore', 'restore');
+    Route::delete('walletfundings/{walletfunding}/delete', 'forceDestroy');
+    Route::get('walletfundings/my-walletfunding', 'myWalletfunding');
+});
+Route::apiResource('walletfundings', WalletfundingController::class);

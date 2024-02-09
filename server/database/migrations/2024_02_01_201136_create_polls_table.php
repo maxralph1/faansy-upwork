@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('polls', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained();
+            $table->string('questionnaire');
+            $table->timestamp('close_time')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

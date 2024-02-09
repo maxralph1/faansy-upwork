@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Pollresponse;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PollresponseResource;
 use App\Http\Requests\StorePollresponseRequest;
 use App\Http\Requests\UpdatePollresponseRequest;
 
@@ -14,15 +15,9 @@ class PollresponseController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $pollresponses = Pollresponse::latest()->paginate();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return PollresponseResource::collection($pollresponses);
     }
 
     /**
@@ -30,7 +25,9 @@ class PollresponseController extends Controller
      */
     public function store(StorePollresponseRequest $request)
     {
-        //
+        $pollresponse = Pollresponse::create($request->validated());
+
+        return new PollresponseResource($pollresponse);
     }
 
     /**
@@ -38,15 +35,7 @@ class PollresponseController extends Controller
      */
     public function show(Pollresponse $pollresponse)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pollresponse $pollresponse)
-    {
-        //
+        return new PollresponseResource($pollresponse);
     }
 
     /**
@@ -54,7 +43,9 @@ class PollresponseController extends Controller
      */
     public function update(UpdatePollresponseRequest $request, Pollresponse $pollresponse)
     {
-        //
+        $pollresponse->update($request->validated());
+
+        return new PollresponseResource($pollresponse);
     }
 
     /**
@@ -62,6 +53,22 @@ class PollresponseController extends Controller
      */
     public function destroy(Pollresponse $pollresponse)
     {
-        //
+        $pollresponse->delete();
+    }
+
+    /**
+     * Restore the specified deleted resource.
+     */
+    public function restore(Pollresponse $pollresponse)
+    {
+        $pollresponse->restore();
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDestroy(Pollresponse $pollresponse)
+    {
+        $pollresponse->forceDelete();
     }
 }

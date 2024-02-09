@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('wallets', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('user_id')->constrained();
-            $table->enum('transaction_type', ['subscription', 'tip', 'stream_tips', 'commission', 'vat']);
-            $table->unsignedInteger('amount');
+            $table->unsignedInteger('balance');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -22,17 +22,17 @@ class UpdateCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'nullable|string',
+            'user_id' => 'required|ulid',
             'country' => 'nullable|string',
             'state_province' => 'nullable|string',
             'address' => 'nullable|string',
             'city' => 'nullable|string',
-            'email' => 'nullable|string',
-            'card_number' => 'nullable|string',
+            'email' => 'nullable|email:rfc,dns',
+            'card_number' => 'nullable|numeric',
             'name_on_card' => 'nullable|string',
             'expiration' => 'nullable|string',
             'cvc' => 'nullable|string',
-            'legal_age' => 'nullable|string',
+            'legal_age' => 'nullable|boolean',
         ];
     }
 }

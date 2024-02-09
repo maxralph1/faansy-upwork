@@ -22,8 +22,8 @@ class StoreChatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'initiator_id' => 'required|string',
-            'responder_id' => 'required|string',
+            'participator_1_id' => 'required|ulid',
+            'participator_2_id' => 'required|ulid',
             // 'slug' => 'required|string',
         ];
     }

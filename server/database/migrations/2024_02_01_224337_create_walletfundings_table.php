@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('walletfundings', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained();
+            $table->foreignUlid('wallet_id')->constrained();
+            $table->unsignedInteger('amount_funded');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

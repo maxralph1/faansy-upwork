@@ -22,9 +22,9 @@ class StoreSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subscribed_id' => 'required|string',
-            'subscriber_id' => 'required|string',
-            'amount_paid' => 'required|string',
+            'subscribed_id' => 'required|ulid',
+            'subscriber_id' => 'required|ulid',
+            // 'subscription_amount_paid' => 'required|numeric',
         ];
     }
 }

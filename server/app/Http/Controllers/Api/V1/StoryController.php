@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Story;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\StoryResource;
 use App\Http\Requests\StoreStoryRequest;
 use App\Http\Requests\UpdateStoryRequest;
 
@@ -14,15 +15,9 @@ class StoryController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $stories = Story::latest()->paginate();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return StoryResource::collection($stories);
     }
 
     /**
@@ -30,7 +25,9 @@ class StoryController extends Controller
      */
     public function store(StoreStoryRequest $request)
     {
-        //
+        $story = Story::create($request->validated());
+
+        return new StoryResource($story);
     }
 
     /**
@@ -38,15 +35,7 @@ class StoryController extends Controller
      */
     public function show(Story $story)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Story $story)
-    {
-        //
+        return new StoryResource($story);
     }
 
     /**
@@ -54,7 +43,9 @@ class StoryController extends Controller
      */
     public function update(UpdateStoryRequest $request, Story $story)
     {
-        //
+        $story->update($request->validated());
+
+        return new StoryResource($story);
     }
 
     /**
@@ -62,6 +53,22 @@ class StoryController extends Controller
      */
     public function destroy(Story $story)
     {
-        //
+        $story->delete();
+    }
+
+    /**
+     * Restore the specified deleted resource.
+     */
+    public function restore(Story $story)
+    {
+        $story->restore();
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDestroy(Story $story)
+    {
+        $story->forceDelete();
     }
 }

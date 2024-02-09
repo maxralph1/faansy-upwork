@@ -11,7 +11,7 @@ class StoreTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'beneficiary_id' => 'required|ulid',
+            'transactor_id' => 'required|ulid',
+            'transaction_type' => 'nullable|in:pay_per_view,subscription,tip,stream_tips,commission,vat',
+            'amount' => 'required|numeric',
         ];
     }
 }

@@ -22,7 +22,7 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|unique:users',
+            'user_id' => 'required|unique:users|ulid',
             'address' => 'nullable|max:255',
             'bio' => 'nullable|max:255',
             'phone_number' => 'nullable|max:255',

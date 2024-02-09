@@ -10,12 +10,19 @@ use App\Http\Requests\UpdateWalletRequest;
 
 class WalletController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $wallets = Wallet::withTrashed()->latest()->paginate();
+        $wallets = Wallet::withTrashed()
+            ->latest()
+            ->paginate();
 
         return WalletResource::collection($wallets);
     }
@@ -70,5 +77,22 @@ class WalletController extends Controller
     public function forceDestroy(Wallet $wallet)
     {
         $wallet->forceDelete();
+    }
+
+
+    /**
+     * Additional Methods
+     */
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function myWallet()
+    {
+        $wallet = Wallet::where('user_id', auth()->id)
+            ->latest()
+            ->paginate();
+
+        return WalletResource::collection($wallet);
     }
 }

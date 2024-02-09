@@ -15,9 +15,9 @@ class MessageController extends Controller
      */
     public function index()
     {
-        $messages = Message::withTrashed()->latest()->paginate();
+        // $messages = Message::latest()->paginate();
 
-        return MessageResource::collection($messages);
+        // return MessageResource::collection($messages);
     }
 
     /**

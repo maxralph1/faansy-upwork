@@ -121,6 +121,10 @@ a:hover {
     animation: zoominoutlivestream 1s infinite;
 }
 
+.loading-animation {
+    animation: zoominoutlivestream 1s infinite;
+}
+
 
 /* Card styles */
 :root {

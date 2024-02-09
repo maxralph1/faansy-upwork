@@ -10,12 +10,20 @@ use App\Http\Requests\UpdateUserlikeRequest;
 
 class UserlikeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $userlikes = Userlike::withTrashed()->latest()->paginate();
+        $userlikes = Userlike::where('liker_id', auth()->id)
+            ->orWhere('liked_id', auth()->id)
+            ->latest()
+            ->paginate();
 
         return UserlikeResource::collection($userlikes);
     }
@@ -25,6 +33,19 @@ class UserlikeController extends Controller
      */
     public function store(StoreUserlikeRequest $request)
     {
+        $already_liked = Userlike::where([
+            'liker_id' => $request->liker_id,
+            'liked_id' => $request->liked_id,
+        ])->first();
+
+        if ($already_liked) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Conflict: Already Liked!',
+            ], 409);
+            // abort('409', 'Conflict: Already Liked!');
+        }
+
         $userlike = Userlike::create($request->validated());
 
         return new UserlikeResource($userlike);

@@ -22,9 +22,8 @@ class UpdateWalletRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'nullable|string',
-            'transaction_type' => 'nullable|string',
-            'amount' => 'nullable|string',
+            'user_id' => 'nullable|ulid',
+            'balance' => 'nullable|numeric',
         ];
     }
 }

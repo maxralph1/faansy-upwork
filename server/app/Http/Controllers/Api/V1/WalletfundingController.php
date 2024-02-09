@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Models\Walletfunding;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\WalletfundingResource;
 use App\Http\Requests\StoreWalletfundingRequest;
 use App\Http\Requests\UpdateWalletfundingRequest;
 
@@ -14,15 +15,11 @@ class WalletfundingController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $walletfundings = Walletfunding::withTrashed()
+            ->latest()
+            ->paginate();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return WalletfundingResource::collection($walletfundings);
     }
 
     /**
@@ -30,7 +27,9 @@ class WalletfundingController extends Controller
      */
     public function store(StoreWalletfundingRequest $request)
     {
-        //
+        $walletfunding = Walletfunding::create($request->validated());
+
+        return new WalletfundingResource($walletfunding);
     }
 
     /**
@@ -38,15 +37,7 @@ class WalletfundingController extends Controller
      */
     public function show(Walletfunding $walletfunding)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Walletfunding $walletfunding)
-    {
-        //
+        return new WalletfundingResource($walletfunding);
     }
 
     /**
@@ -54,7 +45,9 @@ class WalletfundingController extends Controller
      */
     public function update(UpdateWalletfundingRequest $request, Walletfunding $walletfunding)
     {
-        //
+        $walletfunding->update($request->validated());
+
+        return new WalletfundingResource($walletfunding);
     }
 
     /**
@@ -62,6 +55,39 @@ class WalletfundingController extends Controller
      */
     public function destroy(Walletfunding $walletfunding)
     {
-        //
+        $walletfunding->delete();
+    }
+
+    /**
+     * Restore the specified deleted resource.
+     */
+    public function restore(Walletfunding $walletfunding)
+    {
+        $walletfunding->restore();
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDestroy(Walletfunding $walletfunding)
+    {
+        $walletfunding->forceDelete();
+    }
+
+
+    /**
+     * Additional Methods
+     */
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function myWalletfunding()
+    {
+        $walletfunding = Walletfunding::where('user_id', auth()->id)
+            ->latest()
+            ->paginate();
+
+        return WalletfundingResource::collection($walletfunding);
     }
 }

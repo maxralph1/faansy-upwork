@@ -24,8 +24,11 @@ class StorePostRequest extends FormRequest
         return [
             'user_id' => 'required|ulid',
             'body' => 'required|string',
-            'image_url' => 'mimes:jpg,jpeg,bmp,png|nullable',
-            'video_url' => 'nullable|mimetypes:video/avi,video/mp4,video/mpeg,video/quicktime'
+            'image_url' => 'nullable|mimes:jpg,jpeg,bmp,png',
+            'video_url' => 'nullable|mimetypes:video/avi,video/mp4,video/mpeg,video/quicktime',
+            'scheduled_live_time' => 'nullable|date_format',
+            'repost_original_id' => 'nullable|ulid',
+            'repost_body' => 'nullable|string',
         ];
     }
 }

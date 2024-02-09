@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Tip;
+use App\Models\Transaction;
+use App\Models\Notification;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\TipResource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTipRequest;
@@ -10,12 +13,20 @@ use App\Http\Requests\UpdateTipRequest;
 
 class TipController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $tips = Tip::withTrashed()->latest()->paginate();
+        $tips = Tip::where('recipient_id', auth()->id)
+            ->orWhere('donor_id', auth()->id)
+            ->latest()
+            ->paginate();
 
         return TipResource::collection($tips);
     }

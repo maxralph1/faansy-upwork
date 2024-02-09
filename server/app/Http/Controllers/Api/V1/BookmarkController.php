@@ -20,7 +20,7 @@ class BookmarkController extends Controller
      */
     public function index()
     {
-        $bookmarks = Bookmark::withTrashed()->latest()->paginate();
+        $bookmarks = Bookmark::where('user_id', auth()->id)->latest()->paginate();
 
         return BookmarkResource::collection($bookmarks);
     }

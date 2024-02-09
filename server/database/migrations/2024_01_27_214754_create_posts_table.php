@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamp('pinned_at')->nullable();
             $table->boolean('featured')->default(false);
             $table->boolean('repost')->default(false);
-            $table->string('repost_original_id')->nullable();
+            $table->ulid('repost_original_id')->nullable();
             $table->string('repost_body')->nullable();
             $table->timestamp('repost_original_post_timestamp')->nullable();
             $table->timestamps();
