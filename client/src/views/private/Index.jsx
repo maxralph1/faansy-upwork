@@ -29,9 +29,6 @@ export default function Index() {
     const { tip, createTip, destroyTip } = useTip();
     const { bookmark, createBookmark, destroyBookmark } = useBookmark();
 
-    /* Post state */
-    // const [postBody, setPostBody] = useState();
-
     /* Post comment state*/
     const [postCommentBody, setPostCommentBody] = useState();
 
@@ -81,16 +78,6 @@ export default function Index() {
         const amount = event.target.amount.value;
 
         await createTip(creator_id, subscriber_id, amount);
-        await getPosts();
-    }
-
-    async function addBookmark(event) {
-        event.preventDefault();
-
-        const user_id = event.target.user_id.value;
-        const post_id = event.target.post_id.value;
-
-        createBookmark(user_id, post_id);
         await getPosts();
     }
 
@@ -200,9 +187,9 @@ export default function Index() {
                     </section>
                     
                     <section className="border-top">
-                        {(posts.length > 0) ? posts.map(post => {
+                        {(posts?.data?.length > 0) ? posts?.data.map(post => {
                             return (
-                                <article key={ post.id } className="card border-0 border-top border-bottom pb-3">
+                                <article key={ post?.id } className="card border-0 border-top border-bottom pb-3">
                                     { post.repost == true 
                                         &&                                        
                                             <div className="d-flex justify-content-between card-body">
@@ -221,11 +208,11 @@ export default function Index() {
                                                     </small>
                                                     {/* <span className="text-body-secondary">9 hours ago</span> */}
                                                     <span>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
+                                                        {/* <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
                                                             viewBox="0 0 16 16">
                                                             <path
                                                                 d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-                                                        </svg>
+                                                        </svg> */}
                                                     </span>
                                                 </div>
                                             </div>
@@ -263,11 +250,11 @@ export default function Index() {
                                                 </span>
                                                 {/* <span className="text-body-secondary">9 hours ago</span> */}
                                                 <span>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
+                                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
                                                         viewBox="0 0 16 16">
                                                         <path
                                                             d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-                                                    </svg>
+                                                    </svg> */}
                                                 </span>
                                             </div>
                                         </div>
@@ -322,7 +309,7 @@ export default function Index() {
                                                 <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
                                                     <span className="bg-secondary opacity-50 px-1 rounded z-2"><small>Free</small></span>
                                                     <span className="mb-1">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                                                             className="bi bi-three-dots-vertical" viewBox="0 0 16 16">
                                                             <path
                                                                 d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
@@ -350,7 +337,7 @@ export default function Index() {
                                                 <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
                                                     <span className="bg-secondary opacity-50 px-1 rounded z-2"><small>Free</small></span>
                                                     <span className="mb-1">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                                                             className="bi bi-three-dots-vertical" viewBox="0 0 16 16">
                                                             <path
                                                                 d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
@@ -379,25 +366,30 @@ export default function Index() {
                                         <div className="mb-2 d-flex justify-content-start align-items-center column-gap-3">
 
                                             <span className='like-section'>
-                                                <button 
-                                                    href="" 
-                                                    type='button' 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target={`#likeModal${ post?.id }`} 
-                                                    data-bs-body='' 
-                                                    className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
-
-                                                    {(post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id)
-                                                        ? 
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
-                                                            <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                                                        </svg>
-                                                        :
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart mt-1" viewBox="0 0 16 16">
-                                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-                                                        </svg>
-                                                    }
-                                                </button>
+                                                {(post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id)
+                                                    ? 
+                                                    <button 
+                                                        onClick={ async () => {
+                                                            await destroyPostlike((post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id));
+                                                            await getPosts();
+                                                        } }
+                                                        className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
+                                                                <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                                            </svg>
+                                                    </button>
+                                                    :
+                                                    <button 
+                                                        onClick={ async () => {
+                                                            await createPostlike(user?.id, post?.id);
+                                                            await getPosts();
+                                                        } }
+                                                        className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart mt-1" viewBox="0 0 16 16">
+                                                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                                            </svg>
+                                                    </button>
+                                                }
 
                                                 <div 
                                                     className="modal fade" 
@@ -410,7 +402,7 @@ export default function Index() {
                                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div className="modal-body">
-                                                                <form onSubmit={ likePost }>
+                                                                {/* <form onSubmit={ likePost }>
                                                                     <div className="d-none">
                                                                         <input 
                                                                             type="text" 
@@ -429,13 +421,42 @@ export default function Index() {
                                                                         <button 
                                                                             type="submit" 
                                                                             className="bg-transparent border-0 text-faansy-red pe-1">
-                                                                                Like Post&nbsp;
+                                                                                
+                                                                                Unlike Post&nbsp;
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#820303" className="bi bi-heart mt-1" viewBox="0 0 16 16">
                                                                                     <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
                                                                                 </svg>
                                                                         </button>
                                                                     </div>
-                                                                </form>
+                                                                </form> */}
+                                                                <div className="d-flex justify-content-end">
+                                                                    {(post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id)
+                                                                        ? 
+                                                                        <button 
+                                                                            onClick={ async () => {
+                                                                                await destroyPostlike((post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id));
+                                                                                await getPosts();
+                                                                            } }
+                                                                            className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent gap-2">
+                                                                                <span className='text-faansy-red'>Unlike post</span>
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
+                                                                                    <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                                                                </svg>
+                                                                        </button>
+                                                                        :
+                                                                        <button 
+                                                                            onClick={ async () => {
+                                                                                await createPostlike(user?.id, post?.id);
+                                                                                await getPosts();
+                                                                            } }
+                                                                            className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent gap-2">
+                                                                                <span className='text-faansy-red'>Like post</span>
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart mt-1" viewBox="0 0 16 16">
+                                                                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                                                                </svg>
+                                                                        </button>
+                                                                    }
+                                                                </div>
                                                             </div>
 
                                                             <hr />
@@ -626,45 +647,46 @@ export default function Index() {
                                         </div>
 
                                         <div>
-                                            <form onSubmit={ addBookmark }>
-                                                <input 
-                                                    type="text" 
-                                                    name="user_id" 
-                                                    id="user_id" 
-                                                    defaultValue={ user?.id } 
-                                                    hidden="hidden" />
-                                                <input 
-                                                    type="text" 
-                                                    name="post_id" 
-                                                    id="post_id" 
-                                                    defaultValue={ post?.id } 
-                                                    hidden="hidden" />
+                                            {(post?.bookmarks?.length > 0) && post.bookmarks?.find(foundBookmark => foundBookmark?.user?.id == user?.id)
+                                                ? 
+                                                    <button 
+                                                        onClick={ async () => {
+                                                            await destroyBookmark((post?.bookmarks?.length > 0) && post.bookmarks?.find(foundBookmark => foundBookmark?.user?.id == user?.id));
+                                                            await getPosts();
+                                                        } }
+                                                        className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-bookmark-fill" viewBox="0 0 16 16">
+                                                                <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2"/>
+                                                            </svg>
+                                                    </button>
+                                                :
                                                 <button 
-                                                    type='submit'
-                                                    href="" 
+                                                    onClick={ async () => {
+                                                        await createBookmark(user?.id, post?.id);
+                                                        await getPosts();
+                                                    } }
                                                     className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
-                                                    
-
-                                                    {(post?.bookmarks?.length > 0) && post.bookmarks?.find(foundBookmark => foundBookmark?.user?.id == user?.id)
-                                                        ? 
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#820303" className="bi bi-bookmark-fill" viewBox="0 0 16 16">
-                                                            <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2"/>
-                                                        </svg>
-                                                        :
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-bookmark"
                                                         viewBox="0 0 16 16">
                                                             <path
                                                                 d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
                                                         </svg>
-                                                    }
                                                 </button>
-                                            </form>
+                                            }
                                         </div>
                                     </section>
 
                                     <section className="px-3 d-flex gap-3">
-                                        <span><span className="fw-semibold">{ post?.likes?.length }</span>{ (post?.likes?.length > 1) ? ' likes' : ' like' }</span>
-                                        <span><span className="fw-semibold">{ post?.comments?.length }</span>{ (post?.comments?.length > 1) ? ' comments' : ' comment' }</span>
+                                        <span 
+                                            type='button' 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target={`#likeModal${ post?.id }`} 
+                                            data-bs-body=''><span className="fw-semibold">{ post?.likes?.length }</span>{ (post?.likes?.length > 1) ? ' likes' : ' like' }</span>
+                                        <span 
+                                            type='button' 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target={`#commentModal${ post?.id }`} 
+                                            data-bs-body=''><span className="fw-semibold">{ post?.comments?.length }</span>{ (post?.comments?.length > 1) ? ' comments' : ' comment' }</span>
                                     </section>
                                 </article>
                             )
@@ -678,7 +700,13 @@ export default function Index() {
                         
                     </section>
                 </div>
-
+{/* <button 
+                                                    href="" 
+                                                    type='button' 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target={`#likeModal${ post?.id }`} 
+                                                    data-bs-body='' 
+                                                    className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent"></button> */}
             </section>
         </Layout>
     )

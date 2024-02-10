@@ -6,7 +6,7 @@ import axios from 'axios'
 import useAxios from '@/utils/useAxios'
 
 
-export function useBookmark(id = null) {
+export function useWallet(id = null) {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
@@ -17,17 +17,17 @@ export function useBookmark(id = null) {
     useEffect(() => {
         if (id !== null) {
             const controller = new AbortController();
-            getBookmark(id, { signal: controller.signal })
+            getWallet(id, { signal: controller.signal })
             return () => controller.abort();
         }
     }, [id]);
 
-    async function createBookmark(user_id, post_id) {
+    async function createWallet(user_id, post_id) {
         setLoading(true);
         setErrors({});
 
         console.log(user_id, post_id)
-        return axiosInstance.post('bookmarks', {user_id, post_id})
+        return axiosInstance.post('wallets', {user_id, post_id})
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
@@ -41,20 +41,20 @@ export function useBookmark(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function getBookmark(id, { signal } = {}) {
+    async function getWallet(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`${ Constants.serverURL }/api/bookmarks/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/wallets/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
     }
 
-    async function updateBookmark(bookmark) {
+    async function updateWallet(wallet) {
         setLoading(true);
         setErrors({});
 
-        return axiosInstance.put(`bookmarks/${bookmark.id}`, bookmark)
+        return axiosInstance.put(`wallets/${wallet.id}/`, wallet)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -64,8 +64,8 @@ export function useBookmark(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function destroyBookmark(bookmark) {
-        return axiosInstance.delete(`bookmarks/${bookmark.id}`)
+    async function destroyWallet(wallet) {
+        return axiosInstance.delete(`wallets/${wallet.id}/`)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -76,10 +76,10 @@ export function useBookmark(id = null) {
     }
 
     return {
-        bookmark: { data, setData, errors, loading }, 
-        getBookmark, 
-        createBookmark, 
-        updateBookmark, 
-        destroyBookmark
+        wallet: { data, setData, errors, loading }, 
+        getWallet, 
+        createWallet, 
+        updateWallet, 
+        destroyWallet
     }
 }

@@ -246,4 +246,12 @@ class PostController extends Controller
 
         return new PostResource($post);
     }
+
+    /**
+     * Find the specified resource.
+     */
+    public function searchPost($search_key)
+    {
+        //
+    }
 }

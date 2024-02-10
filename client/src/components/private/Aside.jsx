@@ -15,9 +15,9 @@ export default function Aside() {
     // const { creator, createCreator, destroyCreator } = useCreator();
 
     return (
-        <aside className="d-none d-md-block col-md-4 vh-100 position-sticky top-0 end-0 card rounded-0 d-flex flex-column row-gap-4 align-items-center py-4 px-3 overflow-y-auto">
+        <aside className="d-none d-md-block col-md-4 vh-100 position-sticky top-0 end-0 card rounded-0 d-flex flex-column row-gap-4 align-items-center pt-3 pb-4 px-3 overflow-y-auto">
             <section className="d-flex flex-column">
-                <input className="form-control py-2 mb-4" type="text" placeholder="Search posts" aria-label="Search posts" />
+                {/* <input className="form-control py-2 mb-4" type="text" placeholder="Search posts" aria-label="Search posts" /> */}
 
                 <div className="d-flex align-items-center justify-content-between">
                     <h3 className="text-uppercase text-secondary fs-6"><small>Suggestions</small></h3>
@@ -37,7 +37,7 @@ export default function Aside() {
                                 </svg>
                             </button>
                         </span>
-                        <span>
+                        {/* <span>
                             <a href="" className="text-decoration-none text-secondary">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left-short"
                                     viewBox="0 0 16 16">
@@ -54,13 +54,13 @@ export default function Aside() {
                                         d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8" />
                                 </svg>
                             </a>
-                        </span>
+                        </span> */}
                     </div>
                 </div>
             </section>
 
             <section className="d-flex flex-column row-gap-2">
-                {(creators.length > 0) ? creators.map(creator => {
+                {(creators?.data?.length > 0) ? creators?.data?.map(creator => {
                     return (
                         <article key={ creator.id } className="card text-bg-dark border-0 rounded">
                             <Link to={ route('home.users.show', { username: creator.username }) }>
@@ -69,11 +69,11 @@ export default function Aside() {
                                     <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
                                         <span className="bg-secondary text-light opacity-75 px-1 rounded z-2" style={{ boxShadow: '3px 3px 5px #000000', textShadow: '7px 7px 10px #000000' }}><small>{ creator.free_subscription == true ? 'Free' : 'Paid' }</small></span>
                                         <span className="mb-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
+                                            {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
                                                 viewBox="0 0 16 16">
                                                 <path
                                                     d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                                            </svg>
+                                            </svg> */}
                                         </span>
                                     </div>
                                     

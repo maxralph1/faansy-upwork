@@ -36,11 +36,12 @@ class BookmarkController extends Controller
         ])->first();
 
         if ($already_bookmarked) {
+            // $already_bookmarked->delete();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Conflict: Already Bookmarked!',
             ], 409);
-            // abort('409', 'Conflict: Already Blocked!');
+            abort('409', 'Conflict: Already Blocked!');
         }
 
         $bookmark = Bookmark::create($request->validated());

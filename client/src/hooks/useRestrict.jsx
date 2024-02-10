@@ -6,7 +6,7 @@ import axios from 'axios'
 import useAxios from '@/utils/useAxios'
 
 
-export function useBookmark(id = null) {
+export function useRestrict(id = null) {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
@@ -17,17 +17,17 @@ export function useBookmark(id = null) {
     useEffect(() => {
         if (id !== null) {
             const controller = new AbortController();
-            getBookmark(id, { signal: controller.signal })
+            getRestrict(id, { signal: controller.signal })
             return () => controller.abort();
         }
     }, [id]);
 
-    async function createBookmark(user_id, post_id) {
+    async function createRestrict(user_id, post_id) {
         setLoading(true);
         setErrors({});
 
         console.log(user_id, post_id)
-        return axiosInstance.post('bookmarks', {user_id, post_id})
+        return axiosInstance.post('restricts', {user_id, post_id})
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
@@ -41,20 +41,20 @@ export function useBookmark(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function getBookmark(id, { signal } = {}) {
+    async function getRestrict(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`${ Constants.serverURL }/api/bookmarks/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/restricts/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
     }
 
-    async function updateBookmark(bookmark) {
+    async function updateRestrict(restrict) {
         setLoading(true);
         setErrors({});
 
-        return axiosInstance.put(`bookmarks/${bookmark.id}`, bookmark)
+        return axiosInstance.put(`restricts/${restrict.id}/`, restrict)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -64,8 +64,8 @@ export function useBookmark(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function destroyBookmark(bookmark) {
-        return axiosInstance.delete(`bookmarks/${bookmark.id}`)
+    async function destroyRestrict(restrict) {
+        return axiosInstance.delete(`restricts/${restrict.id}/`)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -76,10 +76,10 @@ export function useBookmark(id = null) {
     }
 
     return {
-        bookmark: { data, setData, errors, loading }, 
-        getBookmark, 
-        createBookmark, 
-        updateBookmark, 
-        destroyBookmark
+        restrict: { data, setData, errors, loading }, 
+        getRestrict, 
+        createRestrict, 
+        updateRestrict, 
+        destroyRestrict
     }
 }

@@ -6,7 +6,7 @@ import axios from 'axios'
 import useAxios from '@/utils/useAxios'
 
 
-export function useBookmark(id = null) {
+export function useChat(id = null) {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
@@ -17,17 +17,17 @@ export function useBookmark(id = null) {
     useEffect(() => {
         if (id !== null) {
             const controller = new AbortController();
-            getBookmark(id, { signal: controller.signal })
+            getChat(id, { signal: controller.signal })
             return () => controller.abort();
         }
     }, [id]);
 
-    async function createBookmark(user_id, post_id) {
+    async function createChat(user_id, post_id) {
         setLoading(true);
         setErrors({});
 
         console.log(user_id, post_id)
-        return axiosInstance.post('bookmarks', {user_id, post_id})
+        return axiosInstance.post('chats', {user_id, post_id})
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
@@ -41,20 +41,20 @@ export function useBookmark(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function getBookmark(id, { signal } = {}) {
+    async function getChat(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`${ Constants.serverURL }/api/bookmarks/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/chats/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
     }
 
-    async function updateBookmark(bookmark) {
+    async function updateChat(chat) {
         setLoading(true);
         setErrors({});
 
-        return axiosInstance.put(`bookmarks/${bookmark.id}`, bookmark)
+        return axiosInstance.put(`chats/${chat.id}/`, chat)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -64,8 +64,8 @@ export function useBookmark(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function destroyBookmark(bookmark) {
-        return axiosInstance.delete(`bookmarks/${bookmark.id}`)
+    async function destroyChat(chat) {
+        return axiosInstance.delete(`chats/${chat.id}/`)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -76,10 +76,10 @@ export function useBookmark(id = null) {
     }
 
     return {
-        bookmark: { data, setData, errors, loading }, 
-        getBookmark, 
-        createBookmark, 
-        updateBookmark, 
-        destroyBookmark
+        chat: { data, setData, errors, loading }, 
+        getChat, 
+        createChat, 
+        updateChat, 
+        destroyChat
     }
 }

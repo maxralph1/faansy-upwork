@@ -75,7 +75,7 @@ export default function CreateAccount() {
                           id="password2" 
                           type="password" 
                           className="form-control py-2 mb-4" 
-                          placeholder="Password2" 
+                          placeholder="Repeat Password" 
                           aria-label="Password2" 
                           onChange={e => setPassword2(e.target.value)} />
                         <button className="btn btn-sm btn-faansy-red text-light rounded-pill fw-bold py-2">SIGN UP</button>

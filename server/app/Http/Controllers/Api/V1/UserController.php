@@ -86,7 +86,7 @@ class UserController extends Controller
     {
         $creator_role = Role::where('title', 'creator')->first();
 
-        $creators = User::where('role_id', $creator_role->id)->latest()
+        $creators = User::where('role_id', $creator_role->id)->inRandomOrder()
             ->get();
 
         // return UserCollection::collection($creators);

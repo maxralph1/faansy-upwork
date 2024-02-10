@@ -16,7 +16,7 @@ export function useCreators() {
     async function getCreators({ signal } = {}) {
         return axios.get(`${ Constants.serverURL }/api/creators`, { signal })
         // return axiosInstance.get(`creators`, { signal })
-            .then(response => setCreators(response.data.data))
+            .then(response => setCreators(response.data))
             .catch((error) => {console.log(error)});
     }
 

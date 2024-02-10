@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert2';
 import { route } from '@/routes';
 
 const AuthContext = createContext();
@@ -9,6 +10,8 @@ export default AuthContext;
 
 
 export const AuthProvider = ({children}) => {
+    // localStorage.clear();
+
     const [authTokens, setAuthTokens] = useState(() => 
         localStorage.getItem('authTokens') 
             ? JSON.parse(localStorage.getItem('authTokens')) 
@@ -70,7 +73,15 @@ export const AuthProvider = ({children}) => {
             setUser(jwtDecode(data.authorization.token));
             localStorage.setItem('authTokens', JSON.stringify(data));
             navigate(route('home.index'));
-            console.log('Login successful');
+            // console.log('Login successful');
+            swal.fire({
+                // title: 'Login Successful',
+                text: 'Login Successful',
+                // width: '50%',
+                color: "#820303",
+                position: 'top-end',
+                showConfirmButton: false,
+            })
         } else {
             // console.log(response.status);
             // console.log(response);
