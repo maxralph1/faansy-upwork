@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
-import axios from 'axios'
-import useAxios from '@/utils/useAxios'
+import axios from 'axios';
+import useAxios from '@/utils/useAxios';
 
 
-export function useTip(id = null) {
+export function useNotification(id = null) {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
@@ -17,17 +17,17 @@ export function useTip(id = null) {
     useEffect(() => {
         if (id !== null) {
             const controller = new AbortController();
-            getTip(id, { signal: controller.signal })
+            getNotification(id, { signal: controller.signal })
             return () => controller.abort();
         }
     }, [id]);
 
-    async function createTip(recipient_id, donor_id, amount) {
+    async function createNotification(user_id, post_id) {
         setLoading(true);
         setErrors({});
 
-        console.log(recipient_id, donor_id, amount)
-        return axiosInstance.post('tips', {recipient_id, donor_id, amount})
+        console.log(user_id, post_id)
+        return axiosInstance.post('notifications', {user_id, post_id})
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error.response);
@@ -41,20 +41,20 @@ export function useTip(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function getTip(id, { signal } = {}) {
+    async function getNotification(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`${ Constants.serverURL }/api/tips/${id}`, { signal })
+        return axios.get(`${ Constants.serverURL }/api/notifications/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
     }
 
-    async function updateTip(tip) {
+    async function updateNotification(notification) {
         setLoading(true);
         setErrors({});
 
-        return axiosInstance.put(`tips/${tip.id}/`, tip)
+        return axiosInstance.put(`notifications/${notification.id}`, notification)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -64,8 +64,19 @@ export function useTip(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function destroyTip(tip) {
-        return axiosInstance.delete(`tips/${tip.id}/`)
+    async function markAsReadNotification(notification) {
+        return axiosInstance.put(`notifications/${notification.id}/mark-as-read`)
+            .then(() => {console.log(notification.id)})
+            .catch(error => {
+                console.log(error);
+                setErrors(error.response);
+                // swalUnauthAlert(error);
+            })
+            .finally(() => setLoading(false));
+    }
+
+    async function destroyNotification(notification) {
+        return axiosInstance.delete(`notifications/${notification.id}`)
             .then(() => navigate(route('home.index')))
             .catch(error => {
                 console.log(error);
@@ -76,10 +87,11 @@ export function useTip(id = null) {
     }
 
     return {
-        tip: { data, setData, errors, loading }, 
-        getTip, 
-        createTip, 
-        updateTip, 
-        destroyTip
+        notification: { data, setData, errors, loading }, 
+        getNotification, 
+        createNotification, 
+        updateNotification, 
+        markAsReadNotification,
+        destroyNotification
     }
 }

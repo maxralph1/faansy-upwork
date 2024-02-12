@@ -4,23 +4,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\TipController;
 use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\BlockController;
-use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\CardController;
 use App\Http\Controllers\Api\V1\ChatController;
 use App\Http\Controllers\Api\V1\PollController;
 use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\BlockController;
+use App\Http\Controllers\Api\V1\StoryController;
+use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\WalletController;
 use App\Http\Controllers\Api\V1\MessageController;
+use App\Http\Controllers\Api\V1\BookmarkController;
+use App\Http\Controllers\Api\V1\PostlikeController;
+use App\Http\Controllers\Api\V1\RestrictController;
+use App\Http\Controllers\Api\V1\UserlikeController;
 use App\Http\Controllers\Api\V1\PolloptionController;
 use App\Http\Controllers\Api\V1\PostcommentController;
-use App\Http\Controllers\Api\V1\PostlikeController;
 use App\Http\Controllers\Api\V1\PollresponseController;
-use App\Http\Controllers\Api\V1\RestrictController;
-use App\Http\Controllers\Api\V1\StoryController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
-use App\Http\Controllers\Api\V1\UserController;
-use App\Http\Controllers\Api\V1\UserlikeController;
-use App\Http\Controllers\Api\V1\WalletController;
 use App\Http\Controllers\Api\V1\WalletfundingController;
 
 /*
@@ -60,10 +61,10 @@ Route::controller(BlockController::class)->group(function () {
 Route::apiResource('blocks', BlockController::class);
 
 // Bookmark
-Route::controller(BookmarkController::class)->group(function () {
-    Route::patch('bookmarks/{bookmark}/restore', 'restore');
-    Route::delete('bookmarks/{bookmark}/delete', 'forceDestroy');
-});
+// Route::controller(BookmarkController::class)->group(function () {
+//     // Route::patch('bookmarks/{bookmark}/restore', 'restore');
+//     // Route::delete('bookmarks/{bookmark}/delete', 'forceDestroy');
+// });
 Route::apiResource('bookmarks', BookmarkController::class);
 
 // Card
@@ -86,6 +87,14 @@ Route::controller(MessageController::class)->group(function () {
     Route::delete('messages/{message}/delete', 'forceDestroy');
 });
 Route::apiResource('messages', MessageController::class);
+
+// Notification
+Route::controller(NotificationController::class)->group(function () {
+    Route::patch('notifications/{notification}/restore', 'restore');
+    Route::delete('notifications/{notification}/delete', 'forceDestroy');
+    Route::put('notifications/{notification}/mark-as-read', 'markAsRead');
+});
+Route::apiResource('notifications', NotificationController::class);
 
 // Poll
 Route::controller(PollController::class)->group(function () {

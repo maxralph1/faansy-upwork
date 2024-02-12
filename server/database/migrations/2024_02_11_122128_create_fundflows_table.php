@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('fundflows', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('beneficiary_id')->references('id')->on('users');
             $table->foreignUlid('transactor_id')->references('id')->on('users');
             $table->enum('transaction_type', ['pay_per_view', 'subscription', 'tip', 'stream_tip', 'commission', 'vat']);
-            $table->integer('amount');
+            $table->unsignedInteger('amount');
             $table->ulid('reference_id_to_resource');
             $table->timestamps();
             $table->softDeletes();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('fundflows');
     }
 };

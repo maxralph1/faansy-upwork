@@ -8,7 +8,7 @@ export default function Layout({ children }) {
         <>
             <Header />
 
-            <main className="position-relative d-flex">
+            <main className="position-relative d-flex w-100">
                 <SideBar />
 
                 { children }

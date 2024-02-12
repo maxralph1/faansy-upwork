@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Models\Profile;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -178,6 +179,16 @@ class AuthController extends Controller
 
         $role = Role::where('title', 'generic-user')->first();
 
+        // use Illuminate\Support\Facades\DB;
+
+        // DB::transaction(function () use ($user, $request): void {
+        //     $user = User::create([
+        //         'email' => $request->email,
+        //     ]);
+
+        //     $user->roles()->attach(Role::where('name', 'general')->first());
+        // });
+
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -189,6 +200,11 @@ class AuthController extends Controller
 
         $profile = Profile::create([
             'user_id' => $user->id
+        ]);
+
+        $wallet = Wallet::create([
+            'user_id' => $user->id,
+            'balance' => 0
         ]);
 
         $token = Auth::claims([

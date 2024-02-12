@@ -11,6 +11,7 @@ import { usePosts } from '@/hooks/usePosts.jsx';
 import { usePostcomment } from '@/hooks/usePostcomment.jsx';
 import { usePostlikes } from '@/hooks/usePostlikes.jsx';
 import { usePostlike } from '@/hooks/usePostlike.jsx';
+import { useBookmarks } from '@/hooks/useBookmarks.jsx';
 import { useBookmark } from '@/hooks/useBookmark.jsx';
 import { useTip } from '@/hooks/useTip.jsx';
 import Layout from '@/components/private/Layout.jsx';
@@ -25,13 +26,14 @@ export default function Index() {
   const { postcomment, createPostcomment, destroyPostcomment } = usePostcomment();
   const { postlike, createPostlike, destroyPostlike } = usePostlike();
   const { tip, createTip, destroyTip } = useTip();
+  const { bookmarks, getBookmarks } = useBookmarks();
   const { bookmark, createBookmark, destroyBookmark } = useBookmark();
 
   /* Post comment state*/
   const [postCommentBody, setPostCommentBody] = useState();
 
-  console.log(user);
-  console.log(posts);
+//   console.log(user);
+  console.log(bookmarks?.data);
 
   async function commentOnPost(event) {
       event.preventDefault();
@@ -45,16 +47,6 @@ export default function Index() {
       await getPosts();
   }
 
-  async function likePost(event) {
-      event.preventDefault();
-
-      const user_id = event.target.user_id.value;
-      const post_id = event.target.post_id.value;
-
-      await createPostlike(user_id, post_id);
-      await getPosts();
-  }
-
   async function sendTip(event) {
       event.preventDefault();
 
@@ -63,16 +55,6 @@ export default function Index() {
       const amount = event.target.amount.value;
 
       await createTip(creator_id, subscriber_id, amount);
-      await getPosts();
-  }
-
-  async function addBookmark(event) {
-      event.preventDefault();
-
-      const user_id = event.target.user_id.value;
-      const post_id = event.target.post_id.value;
-
-      createBookmark(user_id, post_id);
       await getPosts();
   }
     

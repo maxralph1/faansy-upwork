@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wallets', function (Blueprint $table) {
+        Schema::create('internaltransactions', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('user_id')->constrained();
-            $table->unsignedInteger('balance')->default(0);
+            $table->enum('transaction_type', ['commission_on_pay_per_view', 'commission_on_subscription', 'commission_on_stream_tip', 'commission_on_tip', 'commission_on_vat']);
+            $table->unsignedInteger('amount');
+            $table->ulid('reference_id_to_resource');
+            $table->ulid('reference_id_to_transaction');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wallets');
+        Schema::dropIfExists('internaltransactions');
     }
 };

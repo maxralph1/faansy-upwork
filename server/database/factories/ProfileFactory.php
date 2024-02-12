@@ -19,7 +19,7 @@ class ProfileFactory extends Factory
     {
         return [
             // 'user_id' => User::all()->uniqid()->id,
-            // // 'image_url' => fake()->imageUrl(rand(50, 500), rand(50, 500), 'meals', true, 'Faker'),
+            // // 'image_url' => fake()->imageUrl(rand(50, 500), rand(50, 500), 'users', true, 'Faker'),
             // 'address' => fake()->address(),
             // 'bio' => fake()->text(100),
             // 'website_url' => fake()->url(),

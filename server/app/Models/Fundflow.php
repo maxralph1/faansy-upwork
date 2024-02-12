@@ -9,22 +9,21 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Notification extends Model
+class Fundflow extends Model
 {
-    use HasFactory, HasUlids;
-    // use HasFactory, HasUlids, SoftDeletes;
+    use HasFactory, HasUlids, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
-        'notification_type',
-        'monies_if_any',
-        'reference_id_to_resource',
+        'beneficiary_id',
         'transactor_id',
+        'transaction_type',
+        'amount',
+        'reference_id_to_resource'
     ];
 
-    public function user(): BelongsTo
+    public function beneficiary(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'beneficiary_id');
     }
 
     public function transactor(): BelongsTo
@@ -32,7 +31,7 @@ class Notification extends Model
         return $this->belongsTo(User::class, 'transactor_id');
     }
 
-    public function monies_if_any(): Attribute
+    public function amount(): Attribute
     {
         return Attribute::make(
             get: fn ($value) => $value / 100,

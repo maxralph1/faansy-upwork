@@ -2,8 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\ProfileResource;
 use Illuminate\Http\Request;
+use App\Http\Resources\PostResource;
+use App\Http\Resources\ProfileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -51,7 +52,8 @@ class UserResource extends JsonResource
             ],
             'userlikers' => $this->userlikers,
             'subscribers' => $this->subscribers,
-            'posts' => $this->posts,
+            // 'posts' => $this->posts,
+            'posts' => PostResource::collection($this->posts),
             'postcomments' => $this->postcomments,
             'postlikes' => $this->postlikes,
             'streams' => $this?->streams,

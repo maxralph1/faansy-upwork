@@ -5,25 +5,20 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import { Link, useParams } from 'react-router-dom';
 import { route } from '@/routes';
-import Constants from '@/utils/Constants.jsx';
-import { useCreator } from '@/hooks/useCreator';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useNotification } from '@/hooks/useNotification';
 import Layout from '@/components/private/Layout.jsx';
-import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
-import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
+import Loading from '@/components/Loading.jsx';
+
 
 export default function Index() {
   const { user } = useContext(AuthContext);
-
-  const addMessage = e => {
-      e.preventDefault();
-      // send state to server with e.g. `window.fetch`
-      console.log('submitted')
-  }
+  const { notifications, getNotifications } = useNotifications();
+  const { notification, markAsReadNotification, destroyNotification } = useNotification();
 
   return (
     <Layout>
-      <section className="col-sm-10 col-md-5 card rounded-0">
+      <section className="col-sm-10 col-md-5 card rounded-0 mid-body">
         <div className="position-sticky top-0 d-flex justify-content-between align-items-center pt-3 pb-2 px-3 bg-white border-bottom z-3">
             <h2 className="text-uppercase fs-5 fw-bold">Notifications</h2>
             <span className="mb-2">
@@ -37,49 +32,107 @@ export default function Index() {
 
         <div>
             <section className="border-top">
-                <article className='card rounded-0 chat-item'>
-                    <div 
-                      type="button" 
-                      data-bs-toggle="modal" 
-                      data-bs-target="#exampleModal" 
-                      data-bs-whatever="@mdo"
-                      className="card-body d-flex flex-column">
-                        <h2 className='card-text fs-6 fw-semibold'>New Message</h2>
-                        <div className='column-gap-2'>
-                            <p className='card-text fs-6'>John sent you a message</p>
-                        </div>
-                    </div>
-
-                    <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div className="modal-dialog">
-                        <div className="modal-content position-relative">
-                          <div className="modal-header">
-                            <h3 className="modal-title fs-5" id="exampleModalLabel">New Message</h3>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div className="modal-body">
-                            <div className="messages overflow-y-auto d-flex flex-column row-gap-2" style={{ maxHeight: '50vh' }}>
-                              <div className='w-100 rounded' style={{ backgroundColor: '#82030324' }}>
-                                <div className="d-flex align-items-center p-2">
-                                  <span className='card-text fs-6 fw-semibold'><span>James says:&nbsp;</span><small className='fst-italic'>This is the last message from me james. Do well to pay me my money.</small></span>
-                                </div>
+              {(notifications?.data?.length > 0) ? notifications?.data?.map(notification => {
+                if (notification.user.id == user.id) {
+                  return (
+                      <article key={ notification?.id } className='card rounded-0 chat-item'>
+                        <div 
+                            onClick={ async () => {
+                                await markAsReadNotification(notification);
+                                await getNotifications();
+                            } }
+                            type='button'>
+                              <div 
+                                // onClick={ async () => {
+                                //   await markAsReadNotification(notification);
+                                //   await getNotifications();
+                                // } }
+                                type="button" 
+                                data-bs-toggle="modal" 
+                                data-bs-target={`#notificationModal${ notification?.id }`}
+                                data-bs-whatever="@mdo"
+                                className="card-body d-flex flex-column">
+                                  <div className='d-flex justify-content-between'>
+                                    <h2 className='card-text fs-6 fw-semibold'>
+                                      {
+                                        notification.notification_type == 'tip' 
+                                        ? 'Tip Notification' 
+                                        : 'New Message'
+                                      }
+                                    </h2>
+                                    <span 
+                                        className="bg-secondary text-light opacity-75 px-1 py-0 rounded z-2 fs-6">
+                                          <small>{ notification.read == true ? 'Read' : 'Unread' }</small>
+                                    </span>
+                                  </div>
+                                  <div className='column-gap-2'>
+                                      <p className='card-text fs-6'>
+                                        {
+                                          notification.notification_type == 'tip'
+                                            ? `You received a tip of $${(notification.monies_if_any / 100).toFixed(2)}` 
+                                            : 'New Message'
+                                        } 
+                                      </p>
+                                  </div>
                               </div>
-                              
-                            </div>
+                        </div>
 
-                            <hr />
-                            
-                            <div className='d-flex justify-content-end'>
-                              <a 
-                                href={ route('home.chats.index') } className="btn btn-sm btn-faansy-red text-light align-self-end text-decoration-none">Go to messages to respond to them</a>
+                          <div 
+                            className="modal fade" 
+                            id={`notificationModal${ notification?.id }`} 
+                            tabIndex="-1" aria-labelledby="exampleModalLabel" 
+                            aria-hidden="true">
+                            <div className="modal-dialog">
+                              <div className="modal-content position-relative">
+                                <div className="modal-header">
+                                  <h3 className="modal-title fs-5" id="exampleModalLabel">
+                                      {
+                                          notification.notification_type == 'tip' 
+                                              ? 'Tip Notification' 
+                                              : 'New Message'
+                                      }
+                                  </h3>
+                                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div className="modal-body">
+                                  <div className="messages overflow-y-auto d-flex flex-column row-gap-2" style={{ maxHeight: '50vh' }}>
+                                    <div className='w-100 rounded' style={{ backgroundColor: '#82030324' }}>
+                                      <div className="d-flex align-items-center p-2">
+                                        {
+                                            notification.notification_type == 'tip' 
+                                                ? <span className='card-text fs-6 fw-semibold'><small className='fst-italic'>You received a tip of ${(notification.monies_if_any / 100).toFixed(2)} from&nbsp;
+                                                  <a 
+                                                    href={ route('home.users.show', {username: notification.transactor.username})}
+                                                    className='text-dark'>
+                                                        { `${notification.transactor.first_name} ${notification.transactor.last_name}`}
+                                                  </a>.</small></span>
+                                                : <span className='card-text fs-6 fw-semibold'><span>James says:&nbsp;</span><small className='fst-italic'>This is the last message from me james. Do well to pay me my money.</small></span>
+                                        } 
+                                      </div>
+                                    </div>
+                                    
+                                  </div>
+
+                                  <hr />
+{/*                                   
+                                  <div className='d-flex justify-content-end'>
+                                    <a 
+                                      href={ route('home.chats.index') } className="btn btn-sm btn-faansy-red text-light align-self-end text-decoration-none">Go to messages to respond to them</a>
+                                  </div> */}
+                                </div>
+                                {/* <div className="modal-footer">
+                                </div> */}
+                              </div>
                             </div>
                           </div>
-                          {/* <div className="modal-footer">
-                          </div> */}
-                        </div>
-                      </div>
-                    </div>
-                </article>
+                      </article>
+                  )}}) : (
+                      <>
+                          <section className='vh-50 pt-5 mt-2'>
+                              <Loading />
+                          </section>
+                      </>
+                  )}
 
                 {/* <div className='card rounded-0 chat-item'>
                     <div className="card-body d-flex flex-column">

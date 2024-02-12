@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Tip;
+use App\Models\Wallet;
 use App\Models\Transaction;
 use App\Models\Notification;
+use App\Models\Internaltransaction;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\TipResource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTipRequest;
 use App\Http\Requests\UpdateTipRequest;
+use App\Models\Fundflow;
 
 class TipController extends Controller
 {
@@ -36,9 +39,73 @@ class TipController extends Controller
      */
     public function store(StoreTipRequest $request)
     {
-        $tip = Tip::create($request->validated());
+        // check donor wallet balance, if they do not have enough balance, abort!
+        $donor_sufficient_fund = auth()->user()->wallet->balance >= $request->amount;
 
-        return new TipResource($tip);
+        // if they have enough wallet balance, charge the donor
+        if ($donor_sufficient_fund && $request->amount > 0) {
+            $donor_wallet = Wallet::where('user_id', $request->donor_id)->first();
+            $recipient_wallet = Wallet::where('user_id', $request->recipient_id)->first();
+
+            DB::transaction(function () use ($donor_wallet, $recipient_wallet, $request) {
+                // DB::beginTransaction();
+
+                $tip = Tip::create($request->validated());
+
+                $donor_wallet->update([
+                    'balance' => $donor_wallet->balance - $tip->amount
+                ]);
+
+                // $total_amount_credited_to_recipient = (96 / ($tip->amount)) * 100;
+                $recipient_wallet->update([
+                    'balance' => $recipient_wallet->balance + (($tip->amount) * (96 / 100))
+                ]);
+
+                Transaction::create([
+                    'beneficiary_id' => $tip->recipient_id,
+                    'transactor_id' => $tip->donor_id,
+                    'transaction_type' => 'tip',
+                    'amount' => $tip->amount * 100,
+                    'reference_id_to_resource' => $tip->id,
+                ]);
+
+                $transaction = Transaction::create([
+                    'beneficiary_id' => $tip->recipient_id,
+                    'transactor_id' => $tip->donor_id,
+                    'transaction_type' => 'commission',
+                    'amount' => - ($tip->amount * 100) * (4 / 100),
+                    'reference_id_to_resource' => $tip->id,
+                ]);
+
+                Notification::create([
+                    'user_id' => $recipient_wallet->user->id,
+                    'notification_type' => 'tip',
+                    'monies_if_any' => $tip->amount * 100,
+                    'reference_id_to_resource' => $tip->id,
+                    'transactor_id' => $tip->donor_id,
+                ]);
+
+                Internaltransaction::create([
+                    'transaction_type' => 'commission_on_tip',
+                    'amount' => ($tip->amount * 100) * (4 / 100),
+                    'reference_id_to_resource' => $tip->id,
+                    'reference_id_to_transaction' => $transaction->id,
+                ]);
+
+                return new TipResource($tip);
+
+                // DB::commit();
+            });
+        } elseif (!$donor_sufficient_fund) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized. You must have sufficient funds in order to view this content.',
+            ], 403);
+        }
+
+        // $tip = Tip::create($request->validated());
+
+        // return new TipResource($tip);
     }
 
     /**

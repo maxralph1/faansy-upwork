@@ -1,23 +1,28 @@
 import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
-// import axiosInstance from '@/utils/axios';
+import axiosInstance from '@/utils/useAxios';
 import axios from 'axios';
 
 
-export function useBookmarks() {
+export function useBookmarks(page = 1) {
     const [bookmarks, setBookmarks] = useState([]);
 
     useEffect(() => {
-        const controller = new AbortController();
-        getBookmarks({ signal: controller.signal });
-        return () => { controller.abort() };
-    }, []);
+        if (page !== null) {
+            const controller = new AbortController();
+            getBookmarks({ signal: controller.signal });
+            return () => { controller.abort() };
+        }
+    }, [page]);
 
-    async function getBookmarks({ signal } = {}) {
-        return axios.get(`${ Constants.serverURL }/api/bookmarks`, { signal })
+    async function getBookmarks(page, { signal } = {}) {
+        return axios.get(`${ Constants.serverURL }/api/bookmarks?page=${page}`, { signal })
         // return axiosInstance.get(`bookmarks`, { signal })
-            .then(response => setBookmarks(response.data.data))
-            .catch(() => {});
+            .then(response => {
+                console.log(response);
+                setBookmarks(response.data);
+            })
+            .catch((error) => {console.log(error)});
     }
 
     return { bookmarks, getBookmarks }

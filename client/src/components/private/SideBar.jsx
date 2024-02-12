@@ -22,7 +22,7 @@ export default function SideBar() {
                     <span className="text-bg-dark text-light rounded-circle py-1 px-2">{ user.first_name.slice(0, 1) }</span>
                 </div>
             </span>
-
+{/* 
             { user.verified != true &&
             <span className="sidebar-item border border-success rounded ps-1 pe-2 py-1" title='Verify your ID'>
                 <Link to={ route('home.my-profile') + '#verify-id' } className="text-decoration-none text-secondary d-flex align-items-center column-gap-1">
@@ -32,7 +32,7 @@ export default function SideBar() {
                     <span className="d-none d-md-block fs-6 fw-bold">Verify Your ID</span>
                 </Link>
             </span>
-            }
+            } */}
         </div>
             
             <span className="sidebar-item">

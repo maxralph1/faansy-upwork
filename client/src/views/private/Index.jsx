@@ -16,6 +16,7 @@ import { usePostlikes } from '@/hooks/usePostlikes.jsx';
 import { usePostlike } from '@/hooks/usePostlike.jsx';
 import { useTip } from '@/hooks/useTip.jsx';
 import Layout from '@/components/private/Layout.jsx';
+import Loading from '@/components/Loading.jsx';
 import Logo from '@/assets/images/logo.png';
 import MissingImage from '@/assets/images/name_non-transparent.png';
 
@@ -32,8 +33,8 @@ export default function Index() {
     /* Post comment state*/
     const [postCommentBody, setPostCommentBody] = useState();
 
-    console.log(user);
-    console.log(posts);
+    // console.log(user);
+    // console.log(posts);
 
     async function submitPost(event) {
         event.preventDefault();
@@ -60,24 +61,14 @@ export default function Index() {
         await getPosts();
     }
 
-    async function likePost(event) {
-        event.preventDefault();
-
-        const user_id = event.target.user_id.value;
-        const post_id = event.target.post_id.value;
-
-        await createPostlike(user_id, post_id);
-        await getPosts();
-    }
-
     async function sendTip(event) {
         event.preventDefault();
 
-        const creator_id = event.target.creator_id.value;
-        const subscriber_id = event.target.subscriber_id.value;
+        const recipient_id = event.target.recipient_id.value;
+        const donor_id = event.target.donor_id.value;
         const amount = event.target.amount.value;
 
-        await createTip(creator_id, subscriber_id, amount);
+        await createTip(recipient_id, donor_id, amount);
         await getPosts();
     }
 
@@ -93,7 +84,7 @@ export default function Index() {
 
     return (
         <Layout>
-            <section className="col-sm-10 col-md-5 card rounded-0">
+            <section className="col-sm-10 col-md-5 card rounded-0 mid-body">
                 <div className="position-sticky top-0 d-flex justify-content-between align-items-center pt-3 pb-2 px-3 bg-white border-bottom z-3">
                     <h1 className="text-uppercase fs-5 fw-bold">Home</h1>
                     <span className="mb-2">
@@ -168,7 +159,7 @@ export default function Index() {
                         </form>
                     </div>
 
-                    <section className="mb-1 border px-3 py-2 d-flex column-gap-1">
+                    {/* <section className="mb-1 border px-3 py-2 d-flex column-gap-1">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#820303" className="bi bi-dark-circle"
                                 viewBox="0 0 16 16">
@@ -184,7 +175,7 @@ export default function Index() {
                             <p>The key updates include more information about:</p>
                             <p>- the personal data we collect, why we collect it and why we share it.</p>
                         </div>
-                    </section>
+                    </section> */}
                     
                     <section className="border-top">
                         {(posts?.data?.length > 0) ? posts?.data.map(post => {
@@ -219,27 +210,31 @@ export default function Index() {
                                         }
                                     <div className={ `card-body ${ post.repost == true && 'px-5' }` }>
                                         <div className="d-flex justify-content-between mb-3">
-                                            <div className="d-flex justify-content-start align-items-center column-gap-2">
-                                                <div className="rounded-circle">
-                                                    <img src={ post.user.user_image_url ? `${ Constants.serverURL }/${ post.user.user_image_url }` : Logo } alt="" width="65" />
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <h3 className="card-title fs-5">
-                                                        <span>{ `${ post.user.first_name } ${ post.user.last_name }` }</span>
-                                                        { post.user.verified == true
-                                                            && 
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                            className="bi bi-patch-check mb-1" viewBox="0 0 16 16">
-                                                            <path fillRule="evenodd"
-                                                                d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0" />
-                                                            <path
-                                                                d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z" />
-                                                        </svg>
-                                                        }
-                                                    </h3>
-                                                    <span className="text-body-secondary">@{ post.user.username }</span>
-                                                </div>
-                                            </div>
+                                            {/* <div className="d-flex justify-content-start align-items-center column-gap-2"> */}
+                                                <Link 
+                                                    to={ route('home.users.show', {'username': post.user.username})}
+                                                    className="d-flex justify-content-start align-items-center column-gap-2 text-decoration-none">
+                                                    <div className="rounded-circle">
+                                                        <img src={ post.user.user_image_url ? `${ Constants.serverURL }/${ post.user.user_image_url }` : Logo } alt="" width="65" />
+                                                    </div>
+                                                    <div className="d-flex flex-column">
+                                                        <h3 className="card-title fs-5 text-dark">
+                                                            <span>{ `${ post.user.first_name } ${ post.user.last_name }` }</span>
+                                                            { post.user.verified == true
+                                                                && 
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                                className="bi bi-patch-check mb-1" viewBox="0 0 16 16">
+                                                                <path fillRule="evenodd"
+                                                                    d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                                                                <path
+                                                                    d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z" />
+                                                            </svg>
+                                                            }
+                                                        </h3>
+                                                        <span className="text-body-secondary">@{ post.user.username }</span>
+                                                    </div>
+                                                </Link>
+                                            {/* </div> */}
                             
                                             <div className="d-flex column-gap-3">
                                                 {/* <span className="text-body-secondary">{dayjs.utc(post.created_at).format('MMM D, YYYY HH:mm')}</span> */}
@@ -402,33 +397,6 @@ export default function Index() {
                                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div className="modal-body">
-                                                                {/* <form onSubmit={ likePost }>
-                                                                    <div className="d-none">
-                                                                        <input 
-                                                                            type="text" 
-                                                                            name="user_id" 
-                                                                            id="user_id" 
-                                                                            defaultValue={ user?.id } 
-                                                                            hidden="hidden" />
-                                                                        <input 
-                                                                            type="text" 
-                                                                            name="post_id" 
-                                                                            id="post_id" 
-                                                                            defaultValue={ post?.id } 
-                                                                            hidden="hidden" />
-                                                                    </div>
-                                                                    <div className="d-flex justify-content-end">
-                                                                        <button 
-                                                                            type="submit" 
-                                                                            className="bg-transparent border-0 text-faansy-red pe-1">
-                                                                                
-                                                                                Unlike Post&nbsp;
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#820303" className="bi bi-heart mt-1" viewBox="0 0 16 16">
-                                                                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-                                                                                </svg>
-                                                                        </button>
-                                                                    </div>
-                                                                </form> */}
                                                                 <div className="d-flex justify-content-end">
                                                                     {(post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id)
                                                                         ? 
@@ -595,8 +563,8 @@ export default function Index() {
                                                     href="" 
                                                     type='button' 
                                                     data-bs-toggle="modal" 
-                                                    data-bs-target="#tipModal" 
-                                                    data-bs-body={ `@${post.user.username}` }
+                                                    data-bs-target={`#tipModal${ post?.id }`}
+                                                    data-bs-body={ `@${post?.user?.id}` }
                                                     className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-currency-dollar" viewBox="0 0 16 16">
                                                         <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73z"/>
@@ -604,7 +572,7 @@ export default function Index() {
                                                     <span className="text-uppercase">Send Tip</span>
                                                 </button>
 
-                                                <div className="modal fade" id="tipModal" tabIndex="-1" aria-labelledby="tipModalLabel" aria-hidden="true">
+                                                <div className="modal fade" id={`tipModal${ post?.id }`} tabIndex="-1" aria-labelledby="tipModalLabel" aria-hidden="true">
                                                     <div className="modal-dialog">
                                                         <div className="modal-content">
                                                             <div className="modal-header">
@@ -616,14 +584,14 @@ export default function Index() {
                                                                     <div className="d-none">
                                                                         <input 
                                                                             type="text" 
-                                                                            name="creator_id" 
-                                                                            id="creator_id" 
-                                                                            defaultValue={ post.user?.id } 
+                                                                            name="recipient_id" 
+                                                                            id="recipient_id" 
+                                                                            defaultValue={ post?.user?.id } 
                                                                             hidden="hidden" />
                                                                         <input 
                                                                             type="text" 
-                                                                            name="subscriber_id" 
-                                                                            id="subscriber_id" 
+                                                                            name="donor_id" 
+                                                                            id="donor_id" 
                                                                             defaultValue={ user?.id } 
                                                                             hidden="hidden" />
                                                                     </div>
@@ -691,11 +659,11 @@ export default function Index() {
                                 </article>
                             )
                         }) : (
-                            <div className="d-flex justify-content-center my-5">
-                                <div className="spinner-border" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
+                            <>
+                                <section className='vh-50 pt-5 mt-2'>
+                                    <Loading />
+                                </section>
+                            </>
                         )}
                         
                     </section>

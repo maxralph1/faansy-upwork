@@ -6,6 +6,7 @@ import { route } from '@/routes';
 import Constants from '@/utils/Constants.jsx';
 import { useCreators } from '@/hooks/useCreators.jsx';
 // import { useCreator } from '@/hooks/useCreator.jsx';
+import Loading from '@/components/Loading.jsx';
 import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
 import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 
@@ -107,9 +108,14 @@ export default function Aside() {
                     )
                     
                 }) : (
-                    <div>
-                        <span className='text-center'>No creators yet</span>
-                    </div>
+                    // <div>
+                    //     <span className='text-center'>No creators yet</span>
+                    // </div>
+                    <>
+                        <section className='vh-50 pt-5 mt-2'>
+                            <Loading />
+                        </section>
+                    </>
                 )}
             </section>
             

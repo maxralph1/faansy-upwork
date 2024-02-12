@@ -8,6 +8,11 @@ html {
 
 body {
     font-family: 'Comfortaa', sans-serif;
+    /* min-width: 600px; */
+}
+
+.mid-body {
+    min-width: 385px;
 }
 
 .form-control:focus {

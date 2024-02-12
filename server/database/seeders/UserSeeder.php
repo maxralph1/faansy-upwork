@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Wallet;
 use App\Models\Profile;
 use Illuminate\Database\Seeder;
 
@@ -54,9 +55,6 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
         ]);
-        $profile2 = Profile::create([
-            'user_id' => $creator2->id
-        ]);
 
         $creator3 = User::create([
             'username' => 'creator3',
@@ -66,9 +64,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
-        ]);
-        $profile3 = Profile::create([
-            'user_id' => $creator3->id
         ]);
 
         $creator4 =  User::create([
@@ -80,9 +75,6 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
         ]);
-        $profile4 = Profile::create([
-            'user_id' => $creator4->id
-        ]);
 
         $creator5 = User::create([
             'username' => 'creator5',
@@ -92,9 +84,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
-        ]);
-        $profile5 = Profile::create([
-            'user_id' => $creator5->id
         ]);
 
         $creator6 = User::create([
@@ -106,9 +95,6 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
         ]);
-        $profile6 = Profile::create([
-            'user_id' => $creator6->id
-        ]);
 
         $creator7 = User::create([
             'username' => 'creator7',
@@ -118,9 +104,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
-        ]);
-        $profile7 = Profile::create([
-            'user_id' => $creator7->id
         ]);
 
         $creator8 = User::create([
@@ -132,9 +115,6 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
         ]);
-        $profile8 = Profile::create([
-            'user_id' => $creator8->id
-        ]);
 
         $creator9 = User::create([
             'username' => 'creator9',
@@ -144,9 +124,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
-        ]);
-        $profile9 = Profile::create([
-            'user_id' => $creator9->id
         ]);
 
         $creator10 = User::create([
@@ -158,8 +135,55 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'role_id' => Role::where('title', 'creator')->first()->id,
         ]);
-        $profile10 = Profile::create([
-            'user_id' => $creator10->id
+
+        $creator11 = User::create([
+            'username' => 'creator11',
+            'first_name' => 'Eleventh',
+            'last_name' => 'Creator',
+            'email' => 'creator11@creator11.com',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'role_id' => Role::where('title', 'creator')->first()->id,
+        ]);
+
+        $creator12 = User::create([
+            'username' => 'creator12',
+            'first_name' => 'Twelfth',
+            'last_name' => 'Creator',
+            'email' => 'creator12@creator12.com',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'role_id' => Role::where('title', 'creator')->first()->id,
+        ]);
+
+        $creator13 = User::create([
+            'username' => 'creator13',
+            'first_name' => 'Tirteenth',
+            'last_name' => 'Creator',
+            'email' => 'creator13@creator13.com',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'role_id' => Role::where('title', 'creator')->first()->id,
+        ]);
+
+        $creator14 = User::create([
+            'username' => 'creator14',
+            'first_name' => 'Fourteenth',
+            'last_name' => 'Creator',
+            'email' => 'creator14@creator14.com',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'role_id' => Role::where('title', 'creator')->first()->id,
+        ]);
+
+        $creator15 = User::create([
+            'username' => 'creator15',
+            'first_name' => 'Fifteenth',
+            'last_name' => 'Creator',
+            'email' => 'creator15@creator15.com',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'role_id' => Role::where('title', 'creator')->first()->id,
         ]);
 
         User::create([

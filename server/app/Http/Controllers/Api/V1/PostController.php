@@ -90,20 +90,31 @@ class PostController extends Controller
                     ]);
 
                     $subscribed_wallet->update([
-                        'balance' => $subscribed_wallet->balance + $post->pay_per_view_amount
+                        'balance' => $subscribed_wallet->balance + ((96 / $post->pay_per_view_amount) * 100)
                     ]);
 
                     Transaction::create([
-                        'beneficiary_id' => $subscriber_wallet->user->id,
+                        'beneficiary_id' => $subscribed_wallet->user->id,
                         'transactor_id' => auth()->id,
                         'transaction_type' => 'pay_per_view',
                         'amount' => $post->pay_per_view_amount,
+                        'reference_id_to_resource' => $post->id,
+                    ]);
+
+                    Transaction::create([
+                        'beneficiary_id' => $subscribed_wallet->user->id,
+                        'transactor_id' => auth()->id,
+                        'transaction_type' => 'commission',
+                        'amount' => (4 / $post->pay_per_view_amount) * 100,
+                        'reference_id_to_resource' => $post->id,
                     ]);
 
                     Notification::create([
                         'user_id' => $post->user->id,
-                        'title' => 'Pay-Per-View Notification',
-                        'body' => 'You have received a pay-per-view of $' . $post->pay_per_view_amount / 100 . '.',
+                        'notification_type' => 'pay_per_view',
+                        'monies_if_any' => $post->pay_per_view_amount,
+                        'reference_id_to_resource' => $post->id,
+                        'transactor_id' => auth()->id,
                     ]);
                 });
 

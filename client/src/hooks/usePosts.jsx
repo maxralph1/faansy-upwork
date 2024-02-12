@@ -19,7 +19,7 @@ export function usePosts(page = 1) {
         return axios.get(`${ Constants.serverURL }/api/posts?page=${page}`, { signal })
         // return axiosInstance.get(`posts`, { signal })
             .then(response => {
-                console.log(response)
+                // console.log(response);
                 setPosts(response.data);
                 // setPosts(response?.data?.data);
                 // const [array,setArray] = useState([]);

@@ -4,23 +4,25 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Bookmark;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\BookmarkResource;
 use App\Http\Requests\StoreBookmarkRequest;
 use App\Http\Requests\UpdateBookmarkRequest;
 
 class BookmarkController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['index', 'show']]);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
+    // }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $bookmarks = Bookmark::where('user_id', auth()->id)->latest()->paginate();
+        $bookmarks = Bookmark::latest()->paginate();
+        // $bookmarks = Bookmark::where('user_id', $user_id)->latest()->paginate();
 
         return BookmarkResource::collection($bookmarks);
     }
