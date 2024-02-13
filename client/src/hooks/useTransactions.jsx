@@ -11,12 +11,12 @@ export function useTransactions(page = 1) {
     useEffect(() => {
         if (page !== null) {
             const controller = new AbortController();
-            getTransactions({ signal: controller.signal });
+            getTransactions(page, { signal: controller.signal });
             return () => { controller.abort() };
         }
     }, [page]);
 
-    async function getTransactions({ signal } = {}) {
+    async function getTransactions(page, { signal } = {}) {
         // return axios.get(`${ Constants.serverURL }/api/transactions`, { signal })
         return axiosInstance.get(`transactions?page=${page}`, { signal })
             .then(response => {

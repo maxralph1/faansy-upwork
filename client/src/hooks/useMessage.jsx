@@ -22,13 +22,33 @@ export function useMessage(id = null) {
         }
     }, [id]);
 
-    async function createMessage(user_id, post_id) {
+    async function createNewMessage(body, participator_1_id, participator_2_id) {
         setLoading(true);
         setErrors({});
 
-        console.log(user_id, post_id)
-        return axiosInstance.post('messages', {user_id, post_id})
-            .then(() => navigate(route('home.index')))
+        console.log(body, participator_1_id, participator_2_id)
+        return axiosInstance.post('messages/new-message', {body, participator_1_id, participator_2_id})
+            // .then(() => navigate(route('home.chats.index')))
+            .then(() => window.location.href = (route('home.chats.index')))
+            .catch(error => {
+                console.log(error.response);
+                // console.log(error.response.data.errors);
+                setErrors(error.response);
+
+                if (error.response.status == 401) {
+                    navigate(route('index'))
+                }
+            })
+            .finally(() => setLoading(false));
+    }
+
+    async function createMessage(body, chat_id, user_id) {
+        setLoading(true);
+        setErrors({});
+
+        console.log(body, chat_id, user_id)
+        return axiosInstance.post('messages', {body, chat_id, user_id})
+            .then((response) => {console.log(response)})
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);
@@ -78,6 +98,7 @@ export function useMessage(id = null) {
     return {
         message: { data, setData, errors, loading }, 
         getMessage, 
+        createNewMessage, 
         createMessage, 
         updateMessage, 
         destroyMessage

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import Constants from '@/utils/Constants.jsx';
-// import axiosInstance from '@/utils/axios';
-import axios from 'axios';
+// import Constants from '@/utils/Constants.jsx';
+// import axios from 'axios';
+import useAxios from '@/utils/useAxios.jsx';
 
 
 export function useMyPosts(page = 1) {
+    const axiosInstance = useAxios();
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
@@ -16,8 +17,8 @@ export function useMyPosts(page = 1) {
     }, [page]);
 
     async function getPosts(page, { signal } = {}) {
-        return axios.get(`${ Constants.serverURL }/api/posts/my-posts?page=${page}`, { signal })
-        // return axiosInstance.get(`posts`, { signal })
+        // return axios.get(`${ Constants.serverURL }/api/posts/my-posts?page=${page}`, { signal })
+        return axiosInstance.get(`posts/my-posts?page=${page}`, { signal })
             .then(response => {
                 console.log(response?.data)
                 setPosts(response?.data);

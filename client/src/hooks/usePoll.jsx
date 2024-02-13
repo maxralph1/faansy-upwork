@@ -22,13 +22,13 @@ export function usePoll(id = null) {
         }
     }, [id]);
 
-    async function createPoll(user_id, post_id) {
+    async function createPoll(user_id, questionnaire, close_time) {
         setLoading(true);
         setErrors({});
 
-        console.log(user_id, post_id)
-        return axiosInstance.post('polls', {user_id, post_id})
-            .then(() => navigate(route('home.index')))
+        console.log(user_id, questionnaire, close_time)
+        return axiosInstance.post('polls', {user_id, questionnaire, close_time})
+            .then(response => setData(response.data))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);

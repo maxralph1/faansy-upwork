@@ -11,12 +11,12 @@ export function useChats(page = 1) {
     useEffect(() => {
         if (page !== null) {
             const controller = new AbortController();
-            getChats({ signal: controller.signal });
+            getChats(page, { signal: controller.signal });
             return () => { controller.abort() };
         }
     }, [page]);
 
-    async function getChats({ signal } = {}) {
+    async function getChats(page, { signal } = {}) {
         // return axios.get(`${ Constants.serverURL }/api/chats`, { signal })
         return axiosInstance.get(`chats?page=${page}`, { signal })
             .then(response => {

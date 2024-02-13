@@ -3,17 +3,34 @@ import AuthContext from '@/context/AuthContext.jsx';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"; 
 dayjs.extend(relativeTime);
-import { Link, useParams } from 'react-router-dom';
-import { route } from '@/routes';
-import Constants from '@/utils/Constants.jsx';
-import { useCreator } from '@/hooks/useCreator';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useCards } from '@/hooks/useCards.jsx';
+import { useCard } from '@/hooks/useCard.jsx';
 import Layout from '@/components/private/Layout.jsx';
-import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
-import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 
 export default function Index() {
   const { user } = useContext(AuthContext);
+  const { cards, getCards } = useCards();
+  const { card, createCard, destroyCard } = useCard();
+
+  console.log(cards)
+
+  async function addCard (event) {
+      event.preventDefault();
+      const address = event.target.address.value;
+      const city = event.target.city.value;
+      const state_province = event.target.state_province.value;
+      const country = event.target.country.value;
+      const card_number = event.target.card_number.value;
+      const expiration = event.target.expiration.value;
+      const cvc = event.target.cvc.value;
+      const name_on_card = event.target.name_on_card.value;
+      const email = event.target.email.value;
+      const user_id = user.id;
+
+      console.log(address, city, state_province, country, card_number, expiration, cvc, name_on_card, email, user_id);
+      await createCard(address, city, state_province, country, card_number, expiration, cvc, name_on_card, email, user_id);
+      await getCards();
+    }
 
   return (
     <Layout>
@@ -30,7 +47,7 @@ export default function Index() {
         </div>
 
         <div>
-            <section className="mb-1 border px-3 py-2 column-gap-1 default-card">
+            {/* <section className="mb-1 border px-3 py-2 column-gap-1 default-card">
                 <div className="card">
                   <div className="credit-card">
                     <div className="card__reader">
@@ -55,49 +72,128 @@ export default function Index() {
                     <p>Designed by <a href="https://github.com/maxralph1" target="_blank">Maximillian Raphaels</a></p>
                   </div>
                 </div>
-            </section>
+            </section> */}
             
             <section className="border-top">
-                <h3 className='fw-bold pt-4 pb-2 ps-3 fs-4'>Cards List</h3>
-                <article className='card rounded-0 chat-item'>
-                    <div 
-                      type="button" 
-                      data-bs-toggle="modal" 
-                      data-bs-target="#exampleModal" 
-                      data-bs-whatever="@mdo"
-                      className="card-body d-flex flex-column">
-                        <h4 className='card-text fs-6 fw-semibold'>Default</h4>
-                        <div className='column-gap-2'>
-                            <p className='card-text fs-6'>Card number: <span className='fw-semibold'>1234 5678 9101 123</span></p>
-                        </div>
-                    </div>
+                <section className='d-flex justify-content-between align-items-center px-3'>
+                    <h3 className='fw-bold pt-4 pb-2 fs-4'>Cards List</h3>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#cardAddModal" data-bs-whatever="@mdo" className='btn btn-sm btn-faansy-red text-light'>Add Card</button>
+                </section>
 
-                    <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div className="modal-dialog">
-                        <div className="modal-content position-relative">
-                          <div className="modal-header">
-                            <h5 className="modal-title fs-5" id="exampleModalLabel">Card Details</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <section className="modal fade" id="cardAddModal" tabIndex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+                  <div className="modal-dialog">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h4 className="modal-title fs-5" id="cardModalLabel">New Card</h4>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form onSubmit={addCard}>
+                        <div className="modal-body">
+                          <div className="mb-2 row gap-2">
+                            <div className='col-md'>
+                              <input name="address" id="address" type="text" className="form-control" placeholder="Address" />
+                            </div>
                           </div>
-                          <div className="modal-body">
-                            <div className="messages overflow-y-auto d-flex flex-column row-gap-2" style={{ maxHeight: '50vh' }}>
-                              <div className='w-100 rounded' style={{ backgroundColor: '#82030324' }}>
-                                <div className="d-flex align-items-center p-2">
-                                  <span className='card-text fs-6 fw-semibold'><small className=''>You paid $2.00 to view content on @shakira's page. You can <a href="#" className='text-decoration-none text-faansy-red'>View content again</a>.</small></span>
+                          <div className="mb-2 row gap-2">
+                            <div className='col-md'>
+                              <input name="city" id="city" type="text" className="form-control" placeholder="City" />
+                            </div>
+                          </div>
+                          <div className="mb-2 row gap-2">
+                            <div className='col-md'>
+                              <input name="state_province" id="state_province" type="text" className="form-control" placeholder="State/Province" />
+                            </div>
+                          </div>
+                          <div className="mb-2 row gap-2">
+                            <div className='col-md'>
+                              <input name="country" id="country" type="text" className="form-control" placeholder="Country" />
+                            </div>
+                          </div>
+                          <div className="mb-2 row">
+                            <div className='col-7'>
+                              <input name="card_number" id="card_number" type="text" className="form-control" placeholder="Card Number" />
+                            </div>
+                            <div className='col-3'>
+                              <input name="expiration" id="expiration" type="text" className="form-control" placeholder="Expiry" />
+                            </div>
+                            <div className='col-2'>
+                              <input name="cvc" id="cvc" type="text" className="form-control" placeholder="CVC" />
+                            </div>
+                          </div>
+                          <div className="mb-2 row">
+                            <div className='col-md'>
+                              <input name="name_on_card" id="name_on_card" type="text" className="form-control" placeholder="Name on Card" />
+                            </div>
+                          </div>
+                          <div className="mb-2 row">
+                            <div className='col-md'>
+                              <input name="email" id="email" type="email" className="form-control" placeholder="Email" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="modal-footer">
+                          <button type="button" className="btn btn-sm btn-dark" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" className="btn btn-sm btn-faansy-red text-light">Add Card</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  {(cards?.data?.length > 0) ? cards?.data?.map(card => {
+                    return (
+                        <article key={ card?.id } className='card rounded-0 chat-item'>
+                            <div 
+                              type="button" 
+                              data-bs-toggle="modal" 
+                              data-bs-target={`#cardModal${card?.id}`} 
+                              data-bs-whatever=""
+                              className="card-body d-flex flex-column">
+                                <span className='card-text fs-6 fw-semibold mb-1'>Default</span>
+                                <div className='column-gap-2'>
+                                    <p className='card-text fs-6'>Card number: <span className='fw-semibold'> { card.card_number} </span></p>
                                 </div>
-                              </div>
-                              
                             </div>
 
-                            <hr />
+                            <div className="modal fade" id={`cardModal${card?.id}`} tabIndex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+                              <div className="modal-dialog">
+                                <div className="modal-content position-relative">
+                                  <div className="modal-header">
+                                    <h5 className="modal-title fs-5" id="cardModalLabel">Card Details</h5>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div className="modal-body">
+                                    <div className="messages overflow-y-auto d-flex flex-column row-gap-2" style={{ maxHeight: '50vh' }}>
+                                      <div className='w-100 rounded' style={{ backgroundColor: '#82030324' }}>
+                                        <div className="d-flex flex-column row-gap-2 p-2">
+                                          <span className='card-text fs-6'>Card Number:&nbsp;<span className='fw-semibold'>{ card.card_number }</span></span>
+                                          <span className='card-text fs-6'>Name on Card:&nbsp;<span className='fw-semibold'>{ card.name_on_card }</span></span>
+                                          <span className='card-text fs-6'>Expiry:&nbsp;<span className='fw-semibold'>{ card.expiration }</span></span>
+                                          <span className='card-text fs-6'>CVC:&nbsp;<span className='fw-semibold'>{ card.cvc }</span></span>
+                                          <span className='card-text fs-6'>Email:&nbsp;<span className='fw-semibold'>{ card.email }</span></span>
+                                          <span className='card-text fs-6'>Address:&nbsp;<span className='fw-semibold'>{ card.address }</span></span>
+                                          <span className='card-text fs-6'>City:&nbsp;<span className='fw-semibold'>{ card.city }</span></span>
+                                          <span className='card-text fs-6'>State/Province:&nbsp;<span className='fw-semibold'>{ card.state_province }</span></span>
+                                          <span className='card-text fs-6'>Country:&nbsp;<span className='fw-semibold'>{ card.country }</span></span>
+                                        </div>
+                                      </div>
+                                      
+                                    </div>
 
-                          </div>
-                          {/* <div className="modal-footer">
-                          </div> */}
-                        </div>
-                      </div>
-                    </div>
-                </article>
+                                    <hr />
+
+                                  </div>
+                                  {/* <div className="modal-footer">
+                                  </div> */}
+                                </div>
+                              </div>
+                            </div>
+                        </article>
+                    )
+                  }) : (<></>)}
+                </section>
+                
 
                 {/* <div className='card rounded-0 chat-item'>
                     <div className="card-body d-flex flex-column">

@@ -29,6 +29,7 @@ export function useTip(id = null) {
         console.log(recipient_id, donor_id, amount)
         return axiosInstance.post('tips', {recipient_id, donor_id, amount})
             .then(() => navigate(route('home.index')))
+            // .then(() => window.location.href = (route('home.stats.index')))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);

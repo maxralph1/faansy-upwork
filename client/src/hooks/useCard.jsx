@@ -22,13 +22,13 @@ export function useCard(id = null) {
         }
     }, [id]);
 
-    async function createCard(user_id, post_id) {
+    async function createCard(address, city, state_province, country, card_number, expiration, cvc, name_on_card, email, user_id) {
         setLoading(true);
         setErrors({});
 
-        console.log(user_id, post_id)
-        return axiosInstance.post('cards', {user_id, post_id})
-            .then(() => navigate(route('home.index')))
+        console.log(address, city, state_province, country, card_number, expiration, cvc, name_on_card, email, user_id)
+        return axiosInstance.post('cards', {address, city, state_province, country, card_number, expiration, cvc, name_on_card, email, user_id})
+            .then((response) => console.log(response))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);
@@ -55,7 +55,7 @@ export function useCard(id = null) {
         setErrors({});
 
         return axiosInstance.put(`cards/${card.id}/`, card)
-            .then(() => navigate(route('home.index')))
+            .then((response) => console.log(response))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

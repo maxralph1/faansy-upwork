@@ -232,7 +232,7 @@ export const AuthProvider = ({children}) => {
 
 
     useEffect(() => {
-        if (authTokens) setUser(jwtDecode(authTokens.authorization.token));
+        if (authTokens?.authorization) setUser(jwtDecode(authTokens?.authorization?.token));
         setLoading(false)
     }, [authTokens, loading])
 

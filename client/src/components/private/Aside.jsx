@@ -8,7 +8,7 @@ import { route } from '@/routes';
 import Constants from '@/utils/Constants.jsx';
 import { useCreators } from '@/hooks/useCreators.jsx';
 import { useSubscription } from '@/hooks/useSubscription.jsx';
-import { useChat } from '@/hooks/useChat.jsx';
+// import { useChat } from '@/hooks/useChat.jsx';
 import Loading from '@/components/Loading.jsx';
 import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
 import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
@@ -17,8 +17,8 @@ import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 export default function Aside() {
     const { user } = useContext(AuthContext);
     const { creators, getCreators } = useCreators();
-    const { subscription, createSubscription, destroySubscription } = useSubscription();
-    const { chat, createChat } = useChat();
+    const { createSubscription } = useSubscription();
+    // const { createChat } = useChat();
 
     return (
         <aside className="d-none d-md-block col-md-4 vh-100 position-sticky top-0 end-0 card rounded-0 d-flex flex-column row-gap-4 align-items-center pt-3 pb-4 px-3 overflow-y-auto">
@@ -94,7 +94,7 @@ export default function Aside() {
                                                         // onMouseOut ="this.style.color='blue'" 
                                                         href="#subscribe"><small>Subscribe</small></button>
                                                 </li>
-                                                <li>
+                                                {/* <li>
                                                     <button 
                                                         onClick={ async () => {
                                                             await createChat(user?.id, creator?.id);
@@ -102,7 +102,7 @@ export default function Aside() {
                                                         } }
                                                         type='button' 
                                                         className="dropdown-item fw-bold" href="#send-direct-message"><small>Send Direct Message</small></button>
-                                                </li>
+                                                </li> */}
                                             </ul>
                                         </span>
                                     </div>
