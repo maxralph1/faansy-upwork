@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
-import axios from 'axios'
-import useAxios from '@/utils/useAxios'
+import axios from 'axios';
+import useAxios from '@/utils/useAxios.jsx';
 
 
 export function usePost(id = null) {

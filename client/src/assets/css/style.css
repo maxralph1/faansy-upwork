@@ -108,6 +108,20 @@ a:hover {
     opacity: 0.75;
 }
 
+.nav {
+    --bs-nav-link-padding-x: 1rem;
+    --bs-nav-link-padding-y: 0.5rem;
+    --bs-nav-link-font-weight: ;
+    --bs-nav-link-color: #820303;
+    --bs-nav-link-hover-color: #820303a5;
+    --bs-nav-link-disabled-color: #0000003b;
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
 @keyframes zoominoutlivestream {
     0% {
         transform: scale(1, 1);

@@ -22,15 +22,19 @@ export function useChat(id = null) {
         }
     }, [id]);
 
-    async function createChat(user_id, post_id) {
+    async function createChat(participator_1_id, participator_2_id) {
         setLoading(true);
         setErrors({});
 
-        console.log(user_id, post_id)
-        return axiosInstance.post('chats', {user_id, post_id})
-            .then(() => navigate(route('home.index')))
+        console.log(participator_1_id, participator_2_id)
+        return axiosInstance.post('chats', {participator_1_id, participator_2_id})
+            .then((response) => {
+                setData(response.data)
+                console.log(response.data);
+                navigate(route('home.chats.index'))
+            })
             .catch(error => {
-                console.log(error.response);
+                console.log(error);
                 // console.log(error.response.data.errors);
                 setErrors(error.response);
 

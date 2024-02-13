@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
-import axiosInstance from '@/utils/useAxios';
+import useAxios from '@/utils/useAxios'
 import axios from 'axios';
 
 
 export function useBookmarks(page = 1) {
+    const axiosInstance = useAxios();
     const [bookmarks, setBookmarks] = useState([]);
 
     useEffect(() => {
@@ -16,8 +17,8 @@ export function useBookmarks(page = 1) {
     }, [page]);
 
     async function getBookmarks(page, { signal } = {}) {
-        return axios.get(`${ Constants.serverURL }/api/bookmarks?page=${page}`, { signal })
-        // return axiosInstance.get(`bookmarks`, { signal })
+        // return axios.get(`${ Constants.serverURL }/api/bookmarks?page=${page}`, { signal })
+        return axiosInstance.get(`bookmarks?page=${page}`, { signal })
             .then(response => {
                 console.log(response);
                 setBookmarks(response.data);

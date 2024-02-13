@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
-import axios from 'axios'
-import useAxios from '@/utils/useAxios'
+// import axios from 'axios';
+import useAxios from '@/utils/useAxios.jsx';
 
 
 export function useBookmark(id = null) {
@@ -44,7 +44,7 @@ export function useBookmark(id = null) {
     async function getBookmark(id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`${ Constants.serverURL }/api/bookmarks/${id}`, { signal })
+        return axiosInstance.get(`${ Constants.serverURL }/api/bookmarks/${id}`, { signal })
             .then(response => setData(response.data))
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -66,7 +66,7 @@ export function useBookmark(id = null) {
 
     async function destroyBookmark(bookmark) {
         return axiosInstance.delete(`bookmarks/${bookmark.id}`)
-            .then(() => navigate(route('home.index')))
+            .then(() => {})
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

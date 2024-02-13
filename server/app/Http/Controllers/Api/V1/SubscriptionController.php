@@ -20,8 +20,8 @@ class SubscriptionController extends Controller
      */
     public function index()
     {
-        $subscriptions = Subscription::where('subscriber_id', auth()->id)
-            ->orWhere('subscribed_id', auth()->id)
+        $subscriptions = Subscription::where('subscriber_id', auth()->user()->id)
+            ->orWhere('subscribed_id', auth()->user()->id)
             ->latest()
             ->paginate();
 
@@ -45,7 +45,23 @@ class SubscriptionController extends Controller
             ], 409);
         }
 
-        $subscription = Subscription::create($request->validated());
+        $subscription = new Subscription();
+
+        $validated = $request->validated();
+
+        if ($request->subscriber_id == auth()->user()->id) {
+
+            if ($request->subscription_amount_paid == null) {
+                $subscription['subscription_amount_paid'] = 0;
+            }
+
+            $subscription['subscribed_id'] = $validated['subscribed_id'];
+            $subscription['subscriber_id'] = $validated['subscriber_id'];
+        }
+
+        $subscription->save();
+
+        // $subscription = Subscription::create($request->validated());
 
         return new SubscriptionResource($subscription);
     }

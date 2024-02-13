@@ -9,18 +9,18 @@ use App\Http\Resources\NotificationResource;
 
 class NotificationController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api');
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $notifications = Notification::latest()->paginate();
-        // $notifications = Notification::where('user_id', auth()->id())->latest()->paginate();
+        // $notifications = Notification::latest()->paginate();
+        $notifications = Notification::where('user_id', auth()->user()->id)->latest()->paginate();
 
         return NotificationResource::collection($notifications);
     }

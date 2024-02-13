@@ -3,23 +3,18 @@ import AuthContext from '@/context/AuthContext.jsx';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"; 
 dayjs.extend(relativeTime);
-import { Link, useParams } from 'react-router-dom';
-import { route } from '@/routes';
-import Constants from '@/utils/Constants.jsx';
-import { useCreator } from '@/hooks/useCreator';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useWallet } from '@/hooks/useWallet.jsx';
+import { useTransactions } from '@/hooks/useTransactions.jsx';
+import { useTransaction } from '@/hooks/useTransaction.jsx';
 import Layout from '@/components/private/Layout.jsx';
-import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
-import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 
 export default function Index() {
   const { user } = useContext(AuthContext);
+  const { wallet, getWallet } = useWallet(user.id);
+  const { transactions, getTransactions } = useTransactions();
+  const { transaction, createTransaction, destroyTransaction } = useTransaction();
 
-  const addMessage = e => {
-      e.preventDefault();
-      // send state to server with e.g. `window.fetch`
-      console.log('submitted')
-  }
+  console.log(wallet?.data)
 
   return (
     <Layout>
@@ -41,13 +36,13 @@ export default function Index() {
                   <div className="card-body d-flex justify-content-end">
                     <div className='d-flex flex-column align-items-end'>
                       <span className='d-flex align-items-center column-gap-1'>
-                        <span>Wallet Balance: </span><span className='fw-bold fs-4 text-success'>$20.00</span>
+                        <span>Wallet Balance:&nbsp;</span><span className='fw-bold fs-4 text-success'>{ wallet?.data?.balance }$</span>
                       </span>
                       <small className='d-flex align-items-center column-gap-1'>
-                        <span>Total Expenditure: </span><span className='fw-semibold text-danger'>-$13.50</span>
+                        <span>Total In-flow:&nbsp;</span><span className='fw-semibold text-success'>{ wallet?.data?.total_inflow }$</span>
                       </small>
                       <small className='d-flex align-items-center column-gap-1'>
-                        <span>Total In-flow: </span><span className='fw-semibold text-success'>$6.50</span>
+                        <span>Total Expenditure:&nbsp;</span><span className='fw-semibold text-danger'>{ wallet?.data?.total_expenditure }$</span>
                       </small>
                     </div>
                   </div>
@@ -56,70 +51,90 @@ export default function Index() {
             
             <section className="border-top">
                 <h3 className='fw-bold pt-4 pb-2 ps-3 fs-4'>Transactions</h3>
-                <article className='card rounded-0 chat-item'>
-                    <div 
-                      type="button" 
-                      data-bs-toggle="modal" 
-                      data-bs-target="#exampleModal" 
-                      data-bs-whatever="@mdo"
-                      className="card-body d-flex flex-column">
-                        <h4 className='card-text fs-6 fw-semibold'>Pay-per-View</h4>
-                        <div className='column-gap-2'>
-                            <p className='card-text fs-6'>You paid $2.00 for content viewing.</p>
-                        </div>
-                    </div>
-
-                    <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div className="modal-dialog">
-                        <div className="modal-content position-relative">
-                          <div className="modal-header">
-                            <h5 className="modal-title fs-5" id="exampleModalLabel">Pay-per-View</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div className="modal-body">
-                            <div className="messages overflow-y-auto d-flex flex-column row-gap-2" style={{ maxHeight: '50vh' }}>
-                              <div className='w-100 rounded' style={{ backgroundColor: '#82030324' }}>
-                                <div className="d-flex align-items-center p-2">
-                                  <span className='card-text fs-6 fw-semibold'><small className=''>You paid $2.00 to view content on @shakira's page. You can <a href="#" className='text-decoration-none text-faansy-red'>View content again</a>.</small></span>
-                                </div>
-                              </div>
-                              
+                {(transactions?.data?.length > 0) ? transactions?.data?.map(transaction => {
+                  return (
+                    <article key={ transaction.id } className='card rounded-0 chat-item'>
+                        <div 
+                          type="button" 
+                          data-bs-toggle="modal" 
+                          data-bs-target={ `#transactionModal${ transaction?.id }` } 
+                          data-bs-whatever="@mdo"
+                          className="card-body d-flex flex-column">
+                            <h4 className='card-text fs-6 fw-semibold'>
+                              { transaction.transaction_type == 'tip' 
+                                  ? 'Tip' 
+                                  : transaction.transaction_type == 'commission_on_tip' 
+                                  ? 'Commission (on Tip)' 
+                                  : transaction.transaction_type == 'commission' 
+                                  ? 'Commission' 
+                                  : 'Transaction' }
+                            </h4>
+                            <div className='column-gap-2'>
+                                <p className='card-text fs-6'>
+                                  { transaction.beneficiary.id == user.id && transaction.transaction_type == 'tip'
+                                    ? `You received ${transaction.amount}$ in tip money.` 
+                                    : transaction.beneficiary.id == user.id && transaction.transaction_type == 'commission' 
+                                    ? `You were charged ${transaction.amount}$ in tip money commission.`  
+                                    : transaction.transactor.id == user.id && transaction.transaction_type == 'tip' 
+                                    ? `You paid ${transaction.amount}$ in tip.` 
+                                    : transaction.transactor.id == user.id && transaction.transaction_type == 'commission' 
+                                    ? `${transaction.amount}$ in tip commission was deducted from the creator you gave a tip.` 
+                                    : 'Transaction' }
+                                </p>
                             </div>
+                        </div>
 
-                            <hr />
+                        <div className="modal fade" id={ `transactionModal${ transaction?.id }` } tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div className="modal-dialog">
+                            <div className="modal-content position-relative">
+                              <div className="modal-header">
+                                <h5 className="modal-title fs-5" id="exampleModalLabel">
+                                  { transaction.transaction_type == 'tip' 
+                                      ? 'Tip' 
+                                      : transaction.transaction_type == 'commission_on_tip' 
+                                      ? 'Commission (on Tip)' 
+                                      : transaction.transaction_type == 'commission' 
+                                      ? 'Commission' 
+                                      : 'Unnamed Transaction' }  
+                                </h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div className="modal-body">
+                                <div className="messages overflow-y-auto d-flex flex-column row-gap-2" style={{ maxHeight: '50vh' }}>
+                                  <div className='w-100 rounded' style={{ backgroundColor: '#82030324' }}>
+                                    <div className="d-flex align-items-center p-2">
+                                      <span className='card-text fs-6 fw-semibold'>
+                                        <small className=''>
+                                          { transaction.beneficiary.id == user.id && transaction.transaction_type == 'tip'
+                                            ? `You received ${transaction.amount}$ in tip money from ${transaction.transactor.first_name} ${transaction.transactor.last_name}.` 
 
+                                            : transaction.beneficiary.id == user.id && transaction.transaction_type == 'commission' 
+                                              ? `You were charged ${transaction.amount}$ in tip money commission.`  
+                                            
+                                            : transaction.transactor.id == user.id && transaction.transaction_type == 'tip' 
+                                              ? `You paid ${transaction.amount}$ in tip money to ${transaction.beneficiary.first_name} ${transaction.beneficiary.last_name}` 
+
+                                            : transaction.transactor.id == user.id && transaction.transaction_type == 'commission' 
+                                              ? `${transaction.amount}$ in tip commission was deducted from the creator you gave a tip.` 
+                                            
+                                            : 'Unnamed Transaction' }
+                                        </small>
+                                      </span>
+                                    </div>
+                                  </div>
+                                  
+                                </div>
+
+                                <hr />
+
+                              </div>
+                            </div>
                           </div>
-                          {/* <div className="modal-footer">
-                          </div> */}
                         </div>
-                      </div>
-                    </div>
-                </article>
-
-                {/* <div className='card rounded-0 chat-item'>
-                    <div className="card-body d-flex flex-column">
-                        <h2 className='card-text fs-6 fw-semibold'>James John</h2>
-                        <div className='d-flex flex-row column-gap-2'>
-                            <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-check" viewBox="0 0 16 16">
-                                  <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
-                              </svg>
-                            </span>
-                            <p className='card-text fs-6'>This is the last message from me james. Do well to pay me my money.</p>
-                        </div>
-                        
-                    </div>
-                </div>
-
-                <div className='card rounded-0 chat-item'>
-                    <div className="card-body d-flex flex-column">
-                        <h2 className='card-text fs-6 fw-semibold'>James John</h2>
-                        <div className='d-flex flex-row column-gap-2'>
-                            <p className='card-text fs-6'>This is the last message from me james. Do well to pay me my money.</p>
-                        </div>
-                        
-                    </div>
-                </div> */}
+                    </article>
+                )}) : (
+                  <></>
+                )}
             </section>
         </div>
 

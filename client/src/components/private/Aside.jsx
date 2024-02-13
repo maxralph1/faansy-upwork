@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import AuthContext from '@/context/AuthContext.jsx';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"; 
 dayjs.extend(relativeTime);
@@ -5,15 +7,18 @@ import { Link } from 'react-router-dom';
 import { route } from '@/routes';
 import Constants from '@/utils/Constants.jsx';
 import { useCreators } from '@/hooks/useCreators.jsx';
-// import { useCreator } from '@/hooks/useCreator.jsx';
+import { useSubscription } from '@/hooks/useSubscription.jsx';
+import { useChat } from '@/hooks/useChat.jsx';
 import Loading from '@/components/Loading.jsx';
 import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
 import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 
 
 export default function Aside() {
+    const { user } = useContext(AuthContext);
     const { creators, getCreators } = useCreators();
-    // const { creator, createCreator, destroyCreator } = useCreator();
+    const { subscription, createSubscription, destroySubscription } = useSubscription();
+    const { chat, createChat } = useChat();
 
     return (
         <aside className="d-none d-md-block col-md-4 vh-100 position-sticky top-0 end-0 card rounded-0 d-flex flex-column row-gap-4 align-items-center pt-3 pb-4 px-3 overflow-y-auto">
@@ -63,18 +68,42 @@ export default function Aside() {
             <section className="d-flex flex-column row-gap-2">
                 {(creators?.data?.length > 0) ? creators?.data?.map(creator => {
                     return (
-                        <article key={ creator.id } className="card text-bg-dark border-0 rounded">
+                        <article key={ creator.id } className="card border-0 rounded">
                             <Link to={ route('home.users.show', { username: creator.username }) }>
                                 <img src={ creator.user_background_image_url ? `${ Constants.serverURL }/storage/${creator.user_background_image_url}` : MissingUserBackgroundImage } className="card-img object-fit-cover" style={{ maxHeight: '125px' }} alt="..." />
                                 <div className="card-img-overlay">
                                     <div className="d-flex justify-content-between align-items-start px-2 pt-2 h-50">
                                         <span className="bg-secondary text-light opacity-75 px-1 rounded z-2" style={{ boxShadow: '3px 3px 5px #000000', textShadow: '7px 7px 10px #000000' }}><small>{ creator.free_subscription == true ? 'Free' : 'Paid' }</small></span>
-                                        <span className="mb-1">
-                                            {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
-                                                viewBox="0 0 16 16">
+                                        <span className="mb-1 dropdown z-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#820303" className="bi bi-three-dots-vertical"
+                                                viewBox="0 0 16 16" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <path
                                                     d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                                            </svg> */}
+                                            </svg>
+                                            <ul className="dropdown-menu px-0">
+                                                <li>
+                                                    <button 
+                                                        onClick={ async () => {
+                                                            await createSubscription(user.id, creator.id, creator.subscription_amount);
+                                                            // await createSubscription(user.id, creator.id, (creator.subscription_amount == null ? 0 : creator.subscription_amount));
+                                                            // await getPosts();
+                                                        } }
+                                                        type='button' 
+                                                        className="dropdown-item fw-bold" 
+                                                        // onMouseOver="this.style.color='red'" 
+                                                        // onMouseOut ="this.style.color='blue'" 
+                                                        href="#subscribe"><small>Subscribe</small></button>
+                                                </li>
+                                                <li>
+                                                    <button 
+                                                        onClick={ async () => {
+                                                            await createChat(user?.id, creator?.id);
+                                                            // await getPosts();
+                                                        } }
+                                                        type='button' 
+                                                        className="dropdown-item fw-bold" href="#send-direct-message"><small>Send Direct Message</small></button>
+                                                </li>
+                                            </ul>
                                         </span>
                                     </div>
                                     
@@ -82,7 +111,7 @@ export default function Aside() {
                                         <div className="d-flex align-items-end">
                                             <img src={ creator.user_image_url ? `${ Constants.serverURL }/storage/${creator.user_image_url}` : MissingUserImage } alt="" width="70" height="70" className="z-1 object-fit-cover border border-light border-3 rounded-circle" />
                                             { (dayjs().diff(dayjs(creator?.last_seen)) < 7200000) &&
-                                            <span className="z-3 bg-success p-1 border border-light border-1 rounded-circle" style={{ width: '10px', height: '10px', marginLeft: '-17px', marginBottom: '5px' }}></span> }
+                                            <span className="z-2 bg-success p-1 border border-light border-1 rounded-circle" style={{ width: '10px', height: '10px', marginLeft: '-17px', marginBottom: '5px' }}></span> }
                                         </div>
                                         <div className="text-light d-flex flex-column justify-content-center">
                                             <div className='d-flex align-items-center column-gap-1'>

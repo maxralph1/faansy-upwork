@@ -3,10 +3,10 @@ import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
 import axios from 'axios'
-import useAxios from '@/utils/useAxios'
+import useAxios from '@/utils/useAxios.jsx';
 
 
-export function useWallet(id = null) {
+export function useWallet(user_id = null) {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
@@ -15,37 +15,19 @@ export function useWallet(id = null) {
 
 
     useEffect(() => {
-        if (id !== null) {
+        if (user_id !== null) {
             const controller = new AbortController();
-            getWallet(id, { signal: controller.signal })
+            getWallet(user_id, { signal: controller.signal })
             return () => controller.abort();
         }
-    }, [id]);
+    }, [user_id]);
 
-    async function createWallet(user_id, post_id) {
-        setLoading(true);
-        setErrors({});
-
-        console.log(user_id, post_id)
-        return axiosInstance.post('wallets', {user_id, post_id})
-            .then(() => navigate(route('home.index')))
-            .catch(error => {
-                console.log(error.response);
-                // console.log(error.response.data.errors);
-                setErrors(error.response);
-
-                if (error.response.status == 401) {
-                    navigate(route('index'))
-                }
-            })
-            .finally(() => setLoading(false));
-    }
-
-    async function getWallet(id, { signal } = {}) {
+    async function getWallet(user_id, { signal } = {}) {
         setLoading(true);
 
-        return axios.get(`${ Constants.serverURL }/api/wallets/${id}`, { signal })
-            .then(response => setData(response.data))
+        // return axios.get(`${ Constants.serverURL }/api/wallets/${user_id}`, { signal })
+        return axiosInstance.get(`wallets/${user_id}`, { signal })
+            .then(response => setData(response.data.data))
             .catch(() => {})
             .finally(() => setLoading(false));
     }
@@ -54,8 +36,8 @@ export function useWallet(id = null) {
         setLoading(true);
         setErrors({});
 
-        return axiosInstance.put(`wallets/${wallet.id}/`, wallet)
-            .then(() => navigate(route('home.index')))
+        return axiosInstance.put(`wallets/${wallet.user_id}/`, wallet)
+            .then(response => setData(response.data))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -65,8 +47,8 @@ export function useWallet(id = null) {
     }
 
     async function destroyWallet(wallet) {
-        return axiosInstance.delete(`wallets/${wallet.id}/`)
-            .then(() => navigate(route('home.index')))
+        return axiosInstance.delete(`wallets/${wallet.user_id}/`)
+            .then(response => setData(response.data))
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -78,7 +60,6 @@ export function useWallet(id = null) {
     return {
         wallet: { data, setData, errors, loading }, 
         getWallet, 
-        createWallet, 
         updateWallet, 
         destroyWallet
     }

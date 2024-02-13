@@ -33,7 +33,7 @@ export default function Index() {
         <div>
             <section className="border-top">
               {(notifications?.data?.length > 0) ? notifications?.data?.map(notification => {
-                if (notification.user.id == user.id) {
+                
                   return (
                       <article key={ notification?.id } className='card rounded-0 chat-item'>
                         <div 
@@ -126,7 +126,7 @@ export default function Index() {
                             </div>
                           </div>
                       </article>
-                  )}}) : (
+                  )}) : (
                       <>
                           <section className='vh-50 pt-5 mt-2'>
                               <Loading />

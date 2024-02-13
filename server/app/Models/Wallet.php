@@ -16,6 +16,8 @@ class Wallet extends Model
     protected $fillable = [
         'user_id',
         'balance',
+        'total_inflow',
+        'total_expenditure',
     ];
 
     public function user(): BelongsTo
@@ -24,6 +26,22 @@ class Wallet extends Model
     }
 
     public function balance(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value / 100,
+            set: fn ($value) => $value * 100
+        );
+    }
+
+    public function total_inflow(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value / 100,
+            set: fn ($value) => $value * 100
+        );
+    }
+
+    public function total_expenditure(): Attribute
     {
         return Attribute::make(
             get: fn ($value) => $value / 100,

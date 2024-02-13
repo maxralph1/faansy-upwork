@@ -1,23 +1,29 @@
 import { useState, useEffect } from 'react';
-import Constants from '@/utils/Constants.jsx';
-// import axiosInstance from '@/utils/axios';
-import axios from 'axios';
+// import Constants from '@/utils/Constants.jsx';
+// import axios from 'axios';
+import useAxios from '@/utils/useAxios.jsx';
 
 
-export function useTransactions() {
+export function useTransactions(page = 1) {
+    const axiosInstance = useAxios();
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
-        const controller = new AbortController();
-        getTransactions({ signal: controller.signal });
-        return () => { controller.abort() };
-    }, []);
+        if (page !== null) {
+            const controller = new AbortController();
+            getTransactions({ signal: controller.signal });
+            return () => { controller.abort() };
+        }
+    }, [page]);
 
     async function getTransactions({ signal } = {}) {
-        return axios.get(`${ Constants.serverURL }/api/transactions`, { signal })
-        // return axiosInstance.get(`transactions`, { signal })
-            .then(response => setTransactions(response.data.data))
-            .catch(() => {});
+        // return axios.get(`${ Constants.serverURL }/api/transactions`, { signal })
+        return axiosInstance.get(`transactions?page=${page}`, { signal })
+            .then(response => {
+                setTransactions(response.data);
+                console.log(response)
+            })
+            .catch((error) => {console.log(error)});
     }
 
     return { transactions, getTransactions }

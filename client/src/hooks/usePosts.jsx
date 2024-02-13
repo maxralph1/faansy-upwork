@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
-// import axiosInstance from '@/utils/axios';
 import axios from 'axios';
+// import useAxios from '@/utils/useAxios.jsx';
 
 
 export function usePosts(page = 1) {

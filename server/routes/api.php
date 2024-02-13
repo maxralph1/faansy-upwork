@@ -11,7 +11,6 @@ use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\BlockController;
 use App\Http\Controllers\Api\V1\StoryController;
-use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\WalletController;
 use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\BookmarkController;
@@ -20,6 +19,8 @@ use App\Http\Controllers\Api\V1\RestrictController;
 use App\Http\Controllers\Api\V1\UserlikeController;
 use App\Http\Controllers\Api\V1\PolloptionController;
 use App\Http\Controllers\Api\V1\PostcommentController;
+use App\Http\Controllers\Api\V1\TransactionController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PollresponseController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\WalletfundingController;
@@ -162,6 +163,13 @@ Route::controller(SubscriptionController::class)->group(function () {
 });
 Route::apiResource('subscriptions', SubscriptionController::class);
 
+// Transaction
+Route::controller(TransactionController::class)->group(function () {
+    Route::patch('transactions/{transaction}/restore', 'restore');
+    Route::delete('transactions/{transaction}/delete', 'forceDestroy');
+});
+Route::apiResource('transactions', TransactionController::class);
+
 // Tip
 Route::controller(TipController::class)->group(function () {
     Route::patch('tips/{tip}/restore', 'restore');
@@ -185,12 +193,13 @@ Route::controller(UserlikeController::class)->group(function () {
 Route::apiResource('userlikes', UserlikeController::class);
 
 // Wallet
-Route::controller(WalletController::class)->group(function () {
-    Route::patch('wallets/{wallet}/restore', 'restore');
-    Route::delete('wallets/{wallet}/delete', 'forceDestroy');
-    Route::get('wallets/my-wallet', 'myWallet');
-});
-Route::apiResource('wallets', WalletController::class);
+// Route::controller(WalletController::class)->group(function () {
+//     Route::patch('wallets/{wallet}/restore', 'restore');
+//     Route::delete('wallets/{wallet}/delete', 'forceDestroy');
+//     Route::get('wallets/my-wallet', 'myWallet');
+// });
+// Route::apiResource('wallets', WalletController::class);
+Route::get('wallets/{wallet:user_id}', [WalletController::class, 'show']);
 
 // Walletfunding
 Route::controller(WalletfundingController::class)->group(function () {

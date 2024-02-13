@@ -6,14 +6,16 @@ dayjs.extend(relativeTime);
 import { Link, useParams } from 'react-router-dom';
 import { route } from '@/routes';
 import Constants from '@/utils/Constants.jsx';
-import { useCreator } from '@/hooks/useCreator';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useChats } from '@/hooks/useChats.jsx';
+import { useChat } from '@/hooks/useChat.jsx';
 import Layout from '@/components/private/Layout.jsx';
 import MissingUserBackgroundImage from '@/assets/images/logo_non_transparent.png';
 import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 
 export default function Index() {
     const { user } = useContext(AuthContext);
+    const { chats, getChats } = useChats();
+    const { chat, createChat, destroyChat } = useChat();
 
     const addMessage = e => {
       e.preventDefault();
@@ -38,7 +40,7 @@ export default function Index() {
                 <div>
                     <section className="border-top">
 
-                        <div className='card rounded-0 chat-item'>
+                        <article className='card rounded-0 chat-item'>
                             <div 
                               type="button" 
                               data-bs-toggle="modal" 
@@ -143,7 +145,7 @@ export default function Index() {
                                 </div>
                               </div>
                             </div>
-                        </div>
+                        </article>
 
                         {/* <div className='card rounded-0 chat-item'>
                             <div className="card-body d-flex flex-column">

@@ -15,12 +15,6 @@ import MissingUserImage from '@/assets/images/faansy_icon_non_transparent.png';
 export default function Index() {
   const { user } = useContext(AuthContext);
 
-  const addMessage = e => {
-      e.preventDefault();
-      // send state to server with e.g. `window.fetch`
-      console.log('submitted')
-  }
-
   return (
     <Layout>
       <section className="col-sm-10 col-md-5 card rounded-0">

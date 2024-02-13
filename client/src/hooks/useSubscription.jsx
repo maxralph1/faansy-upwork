@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
-import axios from 'axios'
-import useAxios from '@/utils/useAxios'
+import axios from 'axios';
+import useAxios from '@/utils/useAxios.jsx';
 
 
 export function useSubscription(id = null) {
@@ -22,15 +22,16 @@ export function useSubscription(id = null) {
         }
     }, [id]);
 
-    async function createSubscription(subscriber_id, subscribed_id, amount_paid) {
+    async function createSubscription(subscriber_id, subscribed_id, subscription_amount_paid) {
         setLoading(true);
         setErrors({});
 
-        console.log(subscriber_id, subscribed_id, amount_paid)
-        return axiosInstance.post('subscriptions', {subscriber_id, subscribed_id, amount_paid})
+        console.log(subscriber_id, subscribed_id, subscription_amount_paid)
+        return axiosInstance.post('subscriptions', {subscriber_id, subscribed_id, subscription_amount_paid})
             .then(() => {})
             .catch(error => {
-                console.log(error.response);
+                // console.log(error.response);
+                console.log(error);
                 // console.log(error.response.data.errors);
                 setErrors(error.response);
 
@@ -66,7 +67,7 @@ export function useSubscription(id = null) {
 
     async function destroySubscription(subscription) {
         return axiosInstance.delete(`subscriptions/${subscription.id}/`)
-            .then(() => navigate(route('home.index')))
+            .then(() => {})
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

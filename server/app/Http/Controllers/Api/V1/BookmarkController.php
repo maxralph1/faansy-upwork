@@ -11,18 +11,18 @@ use App\Http\Requests\UpdateBookmarkRequest;
 
 class BookmarkController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api');
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $bookmarks = Bookmark::latest()->paginate();
-        // $bookmarks = Bookmark::where('user_id', $user_id)->latest()->paginate();
+        // $bookmarks = Bookmark::latest()->paginate();
+        $bookmarks = Bookmark::where('user_id', auth()->user()->id)->latest()->paginate();
 
         return BookmarkResource::collection($bookmarks);
     }

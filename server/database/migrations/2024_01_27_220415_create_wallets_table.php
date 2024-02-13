@@ -15,6 +15,8 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('user_id')->constrained();
             $table->unsignedInteger('balance')->default(0);
+            $table->unsignedInteger('total_inflow')->default(0);
+            $table->integer('total_expenditure')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
