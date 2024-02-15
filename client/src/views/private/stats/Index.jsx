@@ -5,7 +5,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import { Link, useParams } from 'react-router-dom';
 import { route } from '@/routes';
-import CanvasJSReact from '@canvasjs/react-charts';
 import Constants from '@/utils/Constants.jsx';
 import { useCreator } from '@/hooks/useCreator';
 import { useTransactions } from '@/hooks/useTransactions.jsx';
@@ -19,10 +18,10 @@ export default function Index() {
 
   console.log(transactions)
 
-  const payPerViewTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'pay_per_view');
-  const subscriptionTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'subscription');
-  const streamTipTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'stream_tip');
-  const tipTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'tip');
+  const payPerViewTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'pay_per_view' && transaction?.transactor.id == user.id);
+  const subscriptionTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'subscription' && transaction?.transactor.id == user.id);
+  const streamTipTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'stream_tip' && transaction?.transactor.id == user.id);
+  const tipTransactions = transactions?.data?.filter((transaction) => transaction?.transaction_type == 'tip' && transaction?.transactor.id == user.id);
 
   const payPerViewSum = payPerViewTransactions?.reduce(
     (accumulator, currentValue) => accumulator + currentValue.amount,
@@ -53,34 +52,9 @@ export default function Index() {
 
   // console.log(tipSum);
 
-  
-  const CanvasJS = CanvasJSReact.CanvasJS;
-  const CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
   // setTimeout(() => {
   //   console.log("this is the first message");
   // }, 5000);
-
-  const options = {
-    animationEnabled: true, 
-    animationDuration: 5000,
-    interactivityEnabled: true,
-    title: {
-      // text: "Basic Column Chart in React"
-    },
-    data: [{
-      // Change type to "column", "doughnut", "line", "splineArea", "bar", "pie", etc.
-      type: "column",
-      color: "#820303",
-      dataPoints: [
-        { label: "Pay-Per-View", y: payPerViewSum },
-        // { label: "Commissions", y: -25  },
-        { label: "Subscription", y: subscriptionSum },
-        { label: "Stream Tip", y: streamTipSum },
-        { label: "Tip", y: tipSum },
-      ]
-    }]
-  };
 
   return (
     <Layout>
@@ -100,15 +74,9 @@ export default function Index() {
             <section className="border-top">
                 <div className='row p-5'>
                   <div className='col-sm-12 col-md-6 d-flex flex-column align-items-end row-gap-1'>
-                    <CanvasJSChart options = {options}
-                      /* onRef = {ref => this.chart = ref} */
-                    />
                     <small><small>Detailed Expenses (in USD)</small></small>
                   </div>
                   <div className='col-sm-12 col-md-6'>
-                    <CanvasJSChart options = {options}
-                      /* onRef = {ref => this.chart = ref} */
-                    />
                   </div>
                 </div>
             </section>
@@ -206,7 +174,7 @@ export default function Index() {
                       {(streamTipTransactions?.map(transaction => {
                         return (
                           <article key={ transaction.id } className='bg-faansy-red mb-2'>
-                            {`${transaction.amount}$ paid to subscribe to ${transaction.beneficiary.first_name} ${transaction.beneficiary.last_name}.`}
+                            {`${transaction.amount}$ paid to ${transaction.beneficiary.first_name} ${transaction.beneficiary.last_name} in stream tip.`}
                           </article>
                         )
                       }))}
@@ -229,7 +197,7 @@ export default function Index() {
                       {(tipTransactions?.map(transaction => {
                         return (
                           <article key={ transaction.id } className='bg-faansy-red mb-2'>
-                            {`${transaction.amount}$ paid to subscribe to ${transaction.beneficiary.first_name} ${transaction.beneficiary.last_name}.`}
+                            {`${transaction.amount}$ paid to ${transaction.beneficiary.first_name} ${transaction.beneficiary.last_name} in tip.`}
                           </article>
                         )
                       }))}

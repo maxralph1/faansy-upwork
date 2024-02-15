@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import Constants from '@/utils/Constants.jsx';
-// import axiosInstance from '@/utils/axios';
-import axios from 'axios';
+import useAxios from '@/utils/useAxios.jsx';
 
 
 export function useCreators() {
+    const axiosInstance = useAxios();
     const [creators, setCreators] = useState([]);
 
     useEffect(() => {
@@ -14,7 +14,7 @@ export function useCreators() {
     }, []);
 
     async function getCreators({ signal } = {}) {
-        return axios.get(`${ Constants.serverURL }/api/creators`, { signal })
+        return axiosInstance.get(`${ Constants.serverURL }/api/creators`, { signal })
         // return axiosInstance.get(`creators`, { signal })
             .then(response => setCreators(response.data))
             .catch((error) => {console.log(error)});

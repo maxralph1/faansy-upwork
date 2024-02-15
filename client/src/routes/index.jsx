@@ -13,8 +13,6 @@ const routeNames = {
     'home.posts.index': '/home/posts',
     'home.post-comments.edit': '/home/post-comments/:id/edit',
     'home.post-comments.index': '/home/post-comments',
-    'home.post-likes.edit': '/home/post-likes/:id/edit',
-    'home.post-likes.index': '/home/post-likes',
     'home.bookmarks.index': '/home/bookmarks',
     'home.subscriptions.edit': '/home/subscriptions/:id/edit',
     'home.subscriptions.index': '/home/subscriptions',

@@ -35,9 +35,6 @@ import PrivatePostsIndex from '@/views/private/posts/Index.jsx';
 import PrivatePostCommentEdit from '@/views/private/postcomments/Edit.jsx';
 import PrivatePostCommentsIndex from '@/views/private/postcomments/Index.jsx';
 
-import PrivatePostLikeEdit from '@/views/private/postlikes/Edit.jsx';
-import PrivatePostLikesIndex from '@/views/private/postlikes/Index.jsx';
-
 import PrivateBookmarksIndex from '@/views/private/bookmarks/Index.jsx';
 
 import PrivateSubscriptionEdit from '@/views/private/subscriptions/Edit.jsx';
@@ -49,7 +46,7 @@ import PrivateTipsIndex from '@/views/private/tips/Index.jsx';
 import PrivateCardEdit from '@/views/private/cards/Edit.jsx';
 import PrivateCardsIndex from '@/views/private/cards/Index.jsx';
 
-import PrivateChatShow from '@/views/private/chats/show.jsx';
+import PrivateChatShow from '@/views/private/chats/Show.jsx';
 import PrivateChatsIndex from '@/views/private/chats/Index.jsx';
 
 import PrivateNotificationEdit from '@/views/private/notifications/Edit.jsx';
@@ -100,9 +97,6 @@ function App() {
 
             <Route element={<PrivatePostCommentEdit />} path={ route('home.post-comments.edit') } />
             <Route element={<PrivatePostCommentsIndex />} path={ route('home.post-comments.index') } />
-
-            <Route element={<PrivatePostLikeEdit />} path={ route('home.post-likes.edit') } />
-            <Route element={<PrivatePostLikesIndex />} path={ route('home.post-likes.index') } />
 
             <Route element={<PrivateBookmarksIndex />} path={ route('home.bookmarks.index') } />
 

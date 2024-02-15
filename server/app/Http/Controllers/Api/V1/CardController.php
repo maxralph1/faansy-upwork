@@ -10,12 +10,23 @@ use App\Http\Requests\UpdateCardRequest;
 
 class CardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $cards = Card::where('user_id', auth()->id)->latest()->paginate();
+        $cards = Card::with([
+            'user',
+            'walletfunding'
+        ])
+            ->where('user_id', auth()->user()->id)
+            ->latest()
+            ->paginate();
 
         return CardResource::collection($cards);
     }

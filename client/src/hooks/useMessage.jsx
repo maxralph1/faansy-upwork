@@ -28,8 +28,9 @@ export function useMessage(id = null) {
 
         console.log(body, participator_1_id, participator_2_id)
         return axiosInstance.post('messages/new-message', {body, participator_1_id, participator_2_id})
+            .then(() => {})
             // .then(() => navigate(route('home.chats.index')))
-            .then(() => window.location.href = (route('home.chats.index')))
+            // .then(() => window.location.href = (route('home.chats.index')))
             .catch(error => {
                 console.log(error.response);
                 // console.log(error.response.data.errors);
