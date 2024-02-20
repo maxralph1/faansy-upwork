@@ -3,7 +3,7 @@ import AuthContext from '@/context/AuthContext.jsx';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime"; 
 dayjs.extend(relativeTime);
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { route } from '@/routes';
 import Constants from '@/utils/Constants.jsx';
 import { useSubscriptions } from '@/hooks/useSubscriptions.jsx';
@@ -19,6 +19,7 @@ export default function Index() {
   const { subscription, createSubscription, destroySubscription } = useSubscription();
 
   console.log(subscriptions);
+  console.log(user);
 
   return (
     <Layout>
@@ -26,11 +27,11 @@ export default function Index() {
             <div className="position-sticky top-0 d-flex justify-content-between align-items-center pt-3 pb-2 px-3 bg-white border-bottom z-3">
                 <h2 className="text-uppercase fs-5 fw-bold">Subscriptions</h2>
                 <span className="mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
+                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
                         viewBox="0 0 16 16">
                         <path
                             d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                    </svg>
+                    </svg> */}
                 </span>
             </div>
 
@@ -53,18 +54,18 @@ export default function Index() {
 
                         <ul className="nav nav-tabs d-flex justify-content-between" id="myTab" role="tablist">
                             <li className="nav-item" role="presentation">
-                                <button className="nav-link active" id="subscribers-tab" data-bs-toggle="tab" data-bs-target="#subscribers-tab-pane" type="button" role="tab" aria-controls="subscribers-tab-pane" aria-selected="false">Subscribers</button>
+                                <button className={ `nav-link ${ (user.role.title == 'creator') && 'active'}` } id="subscribers-tab" data-bs-toggle="tab" data-bs-target="#subscribers-tab-pane" type="button" role="tab" aria-controls="subscribers-tab-pane" aria-selected="false">Subscribers</button>
                             </li>
                             <li className="nav-item" role="presentation">
-                                <button className="nav-link" id="subscribed-tab" data-bs-toggle="tab" data-bs-target="#subscribed-tab-pane" type="button" role="tab" aria-controls="subscribed-tab-pane" aria-selected="true">Subscriptions</button>
+                                <button className={ `nav-link ${ (user.role.title != 'creator') && 'active'}` } id="subscribed-tab" data-bs-toggle="tab" data-bs-target="#subscribed-tab-pane" type="button" role="tab" aria-controls="subscribed-tab-pane" aria-selected="true">Subscriptions</button>
                             </li>
                         </ul>
                         <div className="tab-content" id="myTabContent">
-                            <div className="tab-pane fade" id="subscribers-tab-pane" role="tabpanel" aria-labelledby="subscribers-tab" tabIndex="0">
+                            <div className={ `tab-pane fade ${ (user.role.title == 'creator') && 'show active'}` } id="subscribers-tab-pane" role="tabpanel" aria-labelledby="subscribers-tab" tabIndex="0">
                                 {(subscriptions?.data?.length > 0) ? subscriptions?.data?.map(subscription => {
                                     if (subscription?.subscribed.id == user.id) {
                                         return (
-                                            <article key={ subscription.id } className="card text-bg-dark border-0 rounded-0 my-3">
+                                            <article key={ subscription.id } className="card text-bg-dark rounded-0 my-3">
                                                 <Link to={ route('home.users.show', { username: subscription?.subscriber?.username }) }>
                                                 <div>
                                                     <img src={ subscription?.subscriber?.user_image_url ? `${ Constants.serverURL }/storage/${subscription?.subscriber?.user_image_url}` : MissingUserBackgroundImage } className="card-img object-fit-cover rounded-0" style={{ maxHeight: '125px' }} alt="..." />
@@ -110,19 +111,18 @@ export default function Index() {
                                             </article>
                                                 )
                                                 
-                                        }}) : (
-                                            // <div>
-                                            //     <span className='text-center'>No subscriptions yet</span>
-                                            // </div>
-                                            <>
-                                                <section className='vh-50 pt-5 mt-2'>
-                                                    <Loading />
-                                                </section>
-                                            </>
+                                        }}) : (subscriptions?.data?.length < 1) ? (
+                                            <section className='vh-100 d-flex justify-content-center align-items-center px-5'>
+                                                <span className='h-50 text-center fw-semibold px-5'>You have no subscribers yet</span>
+                                            </section>
+                                        ) : (
+                                            <section className='vh-50 pt-5 mt-2'>
+                                                <Loading />
+                                            </section>
                                         )}
                             </div>
 
-                            <div className="tab-pane fade show active" id="subscribed-tab-pane" role="tabpanel" aria-labelledby="subscribed-tab" tabIndex="0">
+                            <div className={ `tab-pane fade ${ (user.role.title != 'creator') && 'show active'}` } id="subscribed-tab-pane" role="tabpanel" aria-labelledby="subscribed-tab" tabIndex="0">
                                 {(subscriptions?.data?.length > 0) ? subscriptions?.data?.map(subscription => {
                                     if (subscription?.subscriber.id == user.id) {
                                         return (
@@ -185,15 +185,16 @@ export default function Index() {
                                             </article>
                                                 )
                                                 
-                                        }}) : (
-                                            // <div>
-                                            //     <span className='text-center'>No subscriptions yet</span>
-                                            // </div>
-                                            <>
-                                                <section className='vh-50 pt-5 mt-2'>
+                                        }}) : (subscriptions?.data?.length < 1) ? (
+                                            <section className='vh-100 d-flex justify-content-center align-items-center px-5'>
+                                                <span className='h-50 text-center fw-semibold px-5'>You have no subscriptions yet</span>
+                                            </section>
+                                        ) : (
+                                            <section className='vh-100 pt-5 mt-2 px-5'>
+                                                <div className='h-50 px-5'>
                                                     <Loading />
-                                                </section>
-                                            </>
+                                                </div>
+                                            </section>
                                         )}
                             </div>
                         </div>

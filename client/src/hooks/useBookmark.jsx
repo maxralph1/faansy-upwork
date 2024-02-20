@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
+import Constants from '@/utils/Constants.jsx';
 import { route } from '@/routes';
-// import axios from 'axios';
+import swal from 'sweetalert2';
 import useAxios from '@/utils/useAxios.jsx';
 
 
@@ -22,15 +22,23 @@ export function useBookmark(id = null) {
         }
     }, [id]);
 
-    async function createBookmark(user_id, post_id) {
+    async function createBookmark(post_id) {
         setLoading(true);
         setErrors({});
 
-        console.log(user_id, post_id)
-        return axiosInstance.post('bookmarks', {user_id, post_id})
-            .then(() => navigate(route('home.index')))
+        console.log(post_id)
+        return axiosInstance.post('bookmarks', {post_id})
+            .then(() => {
+                swal.fire({
+                    text: 'Post bookmarked',
+                    color: "#820303",
+                    width: 250,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+            })
             .catch(error => {
-                console.log(error.response);
+                // console.log(error.response);
                 // console.log(error.response.data.errors);
                 setErrors(error.response);
 
@@ -50,27 +58,20 @@ export function useBookmark(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function updateBookmark(bookmark) {
-        setLoading(true);
-        setErrors({});
-
-        return axiosInstance.put(`bookmarks/${bookmark.id}`, bookmark)
-            .then(() => navigate(route('home.index')))
-            .catch(error => {
-                console.log(error);
-                setErrors(error.response);
-                swalUnauthAlert(error);
-            })
-            .finally(() => setLoading(false));
-    }
-
     async function destroyBookmark(bookmark) {
         return axiosInstance.delete(`bookmarks/${bookmark.id}`)
-            .then(() => {})
+            .then(() => {
+                swal.fire({
+                    text: 'Bookmark removed',
+                    color: "#820303",
+                    width: 250,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+            })
             .catch(error => {
-                console.log(error);
+                // console.log(error);
                 setErrors(error.response);
-                swalUnauthAlert(error);
             })
             .finally(() => setLoading(false));
     }
@@ -79,7 +80,6 @@ export function useBookmark(id = null) {
         bookmark: { data, setData, errors, loading }, 
         getBookmark, 
         createBookmark, 
-        updateBookmark, 
         destroyBookmark
     }
 }

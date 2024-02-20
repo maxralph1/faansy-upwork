@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
-import axios from 'axios'
-import useAxios from '@/utils/useAxios'
+import Constants from '@/utils/Constants.jsx';
+import swal from 'sweetalert2';
+import axios from 'axios';
+import useAxios from '@/utils/useAxios.jsx';
 
 
 export function usePostlike(id = null) {
@@ -22,17 +23,26 @@ export function usePostlike(id = null) {
         }
     }, [id]);
 
-    async function createPostlike(user_id, post_id) {
+    async function createPostlike(post_id) {
         setLoading(true);
         setErrors({});
 
-        console.log(user_id, post_id)
-        return axiosInstance.post('postlikes', {user_id, post_id})
-            .then(() => navigate(route('home.index')))
+        console.log(post_id)
+        return axiosInstance.post('postlikes', {post_id})
+            .then(() => {
+                swal.fire({
+                    text: 'Post liked',
+                    color: "#820303",
+                    width: 200,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+            })
             .catch(error => {
-                console.log(error.response);
+                // console.log(error.response);
                 // console.log(error.response.data.errors);
                 setErrors(error.response);
+                // console.log(error)
 
                 if (error.response.status == 401) {
                     navigate(route('index'))
@@ -50,25 +60,19 @@ export function usePostlike(id = null) {
             .finally(() => setLoading(false));
     }
 
-    async function updatePostlike(postlike) {
-        setLoading(true);
-        setErrors({});
-
-        return axiosInstance.put(`postlikes/${postlike.id}/`, postlike)
-            .then(() => navigate(route('home.index')))
-            .catch(error => {
-                console.log(error);
-                setErrors(error.response);
-                swalUnauthAlert(error);
-            })
-            .finally(() => setLoading(false));
-    }
-
     async function destroyPostlike(postlike) {
         return axiosInstance.delete(`postlikes/${postlike.id}/`)
-            .then(() => navigate(route('home.index')))
+            .then(() => {
+                swal.fire({
+                    text: 'Post unliked',
+                    color: "#820303",
+                    width: 200,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+            })
             .catch(error => {
-                console.log(error);
+                // console.log(error);
                 setErrors(error.response);
             })
             .finally(() => setLoading(false));
@@ -78,7 +82,6 @@ export function usePostlike(id = null) {
         postlike: { data, setData, errors, loading }, 
         getPostlike, 
         createPostlike, 
-        updatePostlike, 
         destroyPostlike
     }
 }

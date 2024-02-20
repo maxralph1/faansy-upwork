@@ -4,6 +4,7 @@ const routeNames = {
     'home.users.show': '/home/users/:username',
     'home.users.edit': '/home/users/:username/edit',
     'home.users.index': '/home/users',
+    'home.user-verifications.index': '/home/user-verifications',
     'home.user-likes.index': '/home/user-likes',
     'home.streams.index': '/home/streams',
     'home.blocks.index': '/home/blocks',

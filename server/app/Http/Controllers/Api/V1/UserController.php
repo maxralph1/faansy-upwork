@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
-use App\Http\Resources\UserCollection;
-use App\Http\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Models\Userverification;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
-
+use App\Http\Resources\UserCollection;
+use Illuminate\Auth\Events\Registered;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\StoreVerifyProfileRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\VerifyprofileRequest;
 
 class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+        $this->middleware('auth:api');
     }
 
     /**
@@ -68,6 +71,10 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        if ($request->user()->cannot('update', $user)) {
+            abort(403);
+        }
+
         $user->update($request->validated());
 
         // return new UserCollection($user);
@@ -106,7 +113,7 @@ class UserController extends Controller
             'subscribed',
 
         ])->where('role_id', $creator_role->id)->inRandomOrder()
-            ->take(10)->get();
+            ->take(5)->get();
 
         // return UserCollection::collection($creators);
         return UserResource::collection($creators);
@@ -118,6 +125,16 @@ class UserController extends Controller
     public function creator(User $user)
     {
         return new UserResource($user);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function myProfile()
+    {
+        $my_profile = User::where('id', auth()->user()->id)->first();
+
+        return new UserResource($my_profile);
     }
 
     /**

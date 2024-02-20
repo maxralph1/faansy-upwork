@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+// import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from '@/context/AuthContext';
 import { route } from '@/routes';
 import PrivateRoute from '@/utils/PrivateRoute.jsx';
 
@@ -16,6 +17,8 @@ import PrivateUserEdit from '@/views/private/users/Edit.jsx';
 import PrivateUsersIndex from '@/views/private/users/Index.jsx';
 
 import PrivateUserLikesIndex from '@/views/private/userlikes/Index.jsx';
+
+import PrivateUserVerificationsIndex from '@/views/private/userverifications/Index.jsx';
 
 import PrivateUserBlocksIndex from '@/views/private/blocks/Index.jsx';
 
@@ -61,7 +64,8 @@ import NotFound from '@/views/NotFound.jsx';
 
 function App() {
   return (
-    <BrowserRouter>
+    // <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <Routes>
           {/* Public routes */}
@@ -79,6 +83,8 @@ function App() {
             <Route element={<PrivateUserCreate />} path={ route('home.users.create') } />
             <Route element={<PrivateUserEdit />} path={ route('home.users.edit') } />
             <Route element={<PrivateUsersIndex />} path={ route('home.users.index') } />
+
+            <Route element={<PrivateUserVerificationsIndex />} path={ route('home.user-verifications.index') } />
 
             <Route element={<PrivateUserLikesIndex />} path={ route('home.user-likes.index') } />
 
@@ -127,7 +133,8 @@ function App() {
           <Route path='*' element={<NotFound />} />
         </Routes>
       </AuthProvider>
-    </BrowserRouter>
+    {/* </BrowserRouter> */}
+    </HashRouter>
   )
 }
 

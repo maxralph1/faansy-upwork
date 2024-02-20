@@ -65,6 +65,7 @@ class AuthController extends Controller
             'updated_at' => $user->updated_at,
             'profile' => $user->profile,
             'role' => $user->role,
+            'pollresponses' => $user->pollresponses,
         ])->attempt($credentials);
 
         return response()->json([
@@ -152,7 +153,8 @@ class AuthController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
             'profile' => $user->profile,
-            'role' => $user->role->title
+            'role' => $user->role,
+            'pollresponses' => $user->pollresponses,
         ])->login($user);
 
         $sign_in_token_found->delete();
@@ -246,11 +248,17 @@ class AuthController extends Controller
 
     public function refresh()
     {
+        // return response()->json([
+        //     'access_token' => $token,
+        //     'token_type' => 'bearer',
+        //     'expires_in' => auth()->factory()->getTTL() * 60
+        // ]);
         return response()->json([
             'status' => 'success',
             // 'user' => Auth::user(),
             'authorization' => [
                 'token' => Auth::refresh(),
+                // 'token' => auth()->refresh(),
                 'type' => 'bearer',
             ]
         ]);

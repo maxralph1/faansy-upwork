@@ -28,7 +28,9 @@ use App\Http\Controllers\Api\V1\PollresponseController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\WalletfundingController;
 use App\Http\Controllers\Api\V1\FundwithdrawalController;
+use App\Http\Controllers\Api\V1\UserverificationController;
 use App\Http\Controllers\Api\V1\FundraisingdonationController;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +46,11 @@ use App\Http\Controllers\Api\V1\FundraisingdonationController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // return $request->user();
 // });
+
+Route::get('/storage-symlink', function (Request $request) {
+    File::link(storage_path('app/public'), public_path('storage'));
+});
+
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
@@ -77,6 +84,7 @@ Route::apiResource('bookmarks', BookmarkController::class);
 Route::controller(CardController::class)->group(function () {
     Route::patch('cards/{card}/restore', 'restore');
     Route::delete('cards/{card}/delete', 'forceDestroy');
+    Route::patch('cards/{card}/make-default', 'makeDefault');
 });
 Route::apiResource('cards', CardController::class);
 
@@ -173,6 +181,7 @@ Route::controller(PostController::class)->group(function () {
     Route::patch('posts/featured-posts', 'makePostFeatured');
     Route::get('posts/my-posts', 'myPosts');
     Route::patch('posts/{post}/pin-post', 'pinPost');
+    Route::post('posts/{post}', 'update');
 });
 Route::apiResource('posts', PostController::class);
 
@@ -221,9 +230,10 @@ Route::apiResource('tips', TipController::class);
 // Users
 Route::apiResource('users', UserController::class);
 Route::controller(UserController::class)->group(function () {
+    Route::get('my-profile', 'myProfile');
     Route::get('creators', 'creators');
     Route::get('creators/{user:username}', 'creator');
-    Route::put('creators/{user:username}/verify', 'verifyCreator');
+    Route::post('creators/{user:username}/verify', 'verifyCreator');
 });
 
 // Userlike
@@ -232,6 +242,15 @@ Route::controller(UserlikeController::class)->group(function () {
     Route::delete('userlikes/{userlike}/delete', 'forceDestroy');
 });
 Route::apiResource('userlikes', UserlikeController::class);
+
+// Userverification
+Route::controller(UserverificationController::class)->group(function () {
+    Route::patch('user-verifications/{userverification}/restore', 'restore');
+    Route::delete('user-verifications/{userverification}/delete', 'forceDestroy');
+    Route::put('user-verifications/{userverification}/approve', 'approve');
+    Route::put('user-verifications/{userverification}/reject', 'reject');
+});
+Route::apiResource('user-verifications', UserverificationController::class);
 
 // Wallet
 // Route::controller(WalletController::class)->group(function () {

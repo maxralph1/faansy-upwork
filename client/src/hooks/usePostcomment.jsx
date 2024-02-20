@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import Constants from '@/utils/Constants.jsx';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
+import Constants from '@/utils/Constants.jsx';
+import swal from 'sweetalert2';
 import axios from 'axios'
-import useAxios from '@/utils/useAxios'
+import useAxios from '@/utils/useAxios.jsx';
 
 
 export function usePostcomment(id = null) {
@@ -22,15 +23,23 @@ export function usePostcomment(id = null) {
         }
     }, [id]);
 
-    async function createPostcomment(user_id, post_id, body) {
+    async function createPostcomment(post_id, body) {
         setLoading(true);
         setErrors({});
 
-        console.log(user_id, post_id, body)
-        return axiosInstance.post('postcomments', {user_id, post_id, body})
-            .then(() => navigate(route('home.index')))
+        console.log(post_id, body)
+        return axiosInstance.post('postcomments', {post_id, body})
+            .then(() => {
+                // swal.fire({
+                //     text: 'Post commented on',
+                //     color: "#820303",
+                //     width: 275,
+                //     position: 'top',
+                //     showConfirmButton: false,
+                // });
+            })
             .catch(error => {
-                console.log(error.response);
+                console.log(error);
                 // console.log(error.response.data.errors);
                 setErrors(error.response);
 
@@ -55,7 +64,15 @@ export function usePostcomment(id = null) {
         setErrors({});
 
         return axiosInstance.put(`postcomments/${postcomment.id}/`, postcomment)
-            .then(() => navigate(route('home.index')))
+            .then(() => {
+                swal.fire({
+                    text: 'Comment updated',
+                    color: "#820303",
+                    width: 275,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+            })
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);
@@ -66,7 +83,15 @@ export function usePostcomment(id = null) {
 
     async function destroyPostcomment(postcomment) {
         return axiosInstance.delete(`postcomments/${postcomment.id}/`)
-            .then(() => navigate(route('home.index')))
+            .then(() => {
+                swal.fire({
+                    text: 'Commented deleted',
+                    color: "#820303",
+                    width: 275,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+            })
             .catch(error => {
                 console.log(error);
                 setErrors(error.response);

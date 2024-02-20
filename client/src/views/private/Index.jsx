@@ -12,7 +12,6 @@ import { usePosts } from '@/hooks/usePosts.jsx';
 import { usePost } from '@/hooks/usePost.jsx';
 import { useBookmark } from '@/hooks/useBookmark.jsx';
 import { usePostcomment } from '@/hooks/usePostcomment.jsx';
-import { usePostlikes } from '@/hooks/usePostlikes.jsx';
 import { usePostlike } from '@/hooks/usePostlike.jsx';
 import { useTip } from '@/hooks/useTip.jsx';
 import Layout from '@/components/private/Layout.jsx';
@@ -25,16 +24,22 @@ export default function Index() {
     const { user } = useContext(AuthContext);
     const { posts, getPosts } = usePosts();
     const { post, createPost, destroyPost } = usePost();
-    const { postcomment, createPostcomment, destroyPostcomment } = usePostcomment();
-    const { postlike, createPostlike, destroyPostlike } = usePostlike();
-    const { tip, createTip, destroyTip } = useTip();
-    const { bookmark, createBookmark, destroyBookmark } = useBookmark();
+    const { createPostcomment, destroyPostcomment } = usePostcomment();
+    const { createPostlike, destroyPostlike } = usePostlike();
+    const { createTip } = useTip();
+    const { createBookmark, destroyBookmark } = useBookmark();
+
+    const first_page = 1;
+    const pageNumberForward = (posts?.meta?.current_page + 1 > posts?.meta?.last_page) ? posts?.meta?.last_page : posts?.meta?.current_page + 1;
+    const pageNumberBackward = (posts?.meta?.current_page - 1 < first_page) ? first_page : posts?.meta?.current_page - 1;
+    console.log(pageNumberForward);
+    console.log(pageNumberBackward);
 
     /* Post comment state*/
     const [postCommentBody, setPostCommentBody] = useState();
 
     // console.log(user);
-    // console.log(posts);
+    console.log(posts);
 
     async function submitPost(event) {
         event.preventDefault();
@@ -42,8 +47,7 @@ export default function Index() {
         const formData = new FormData();
         formData.append('body', post.data.body);
         post.data.image_url && formData.append('image_url', post.data.image_url);
-        post.data.video_url && formData.append('video_url', post.data.video_url);
-        formData.append('user_id', user.id);
+        // post.data.video_url && formData.append('video_url', post.data.video_url);
 
         await createPost(formData);
         await getPosts();
@@ -52,11 +56,10 @@ export default function Index() {
     async function commentOnPost(event) {
         event.preventDefault();
 
-        const user_id = event.target.user_id.value;
         const post_id = event.target.post_id.value;
         const body = postCommentBody;
 
-        await createPostcomment(user_id, post_id, body);
+        await createPostcomment(post_id, body);
         setPostCommentBody('');
         await getPosts();
     }
@@ -65,10 +68,9 @@ export default function Index() {
         event.preventDefault();
 
         const recipient_id = event.target.recipient_id.value;
-        const donor_id = event.target.donor_id.value;
         const amount = event.target.amount.value;
 
-        await createTip(recipient_id, donor_id, amount);
+        await createTip(recipient_id, amount);
         await getPosts();
     }
 
@@ -85,21 +87,21 @@ export default function Index() {
     return (
         <Layout>
             {/* <section className="col-sm-10 col-md-5 card rounded-0"> */}
-            <section className="col-sm-10 col-md-5 card rounded-0 mid-body">
+            <section className="col-sm-9 col-md-5 card rounded-0 mid-body">
                 <div className="position-sticky top-0 d-flex justify-content-between align-items-center pt-3 pb-2 px-3 bg-white border-bottom z-3">
                     <h1 className="text-uppercase fs-5 fw-bold">Home</h1>
                     <span className="mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
+                        {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical"
                             viewBox="0 0 16 16">
                             <path
                                 d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                        </svg>
+                        </svg> */}
                     </span>
                 </div>
 
                 <div>
                     <div className="mb-1" id='new-post'>
-                        <form onSubmit={submitPost}>
+                        <form onSubmit={ submitPost } encType='multipart/form-data'>
                             <textarea 
                                 name="body" 
                                 id="body" 
@@ -134,7 +136,7 @@ export default function Index() {
                                     </span>
                                     <span>
                                         <div className="text-decoration-none text-secondary">
-                                            <input 
+                                            {/* <input 
                                                 type="file" 
                                                 accept="video/*"
                                                 name="video_url" 
@@ -146,7 +148,7 @@ export default function Index() {
                                                 hidden='hidden' />
                                             <svg onClick={ openVideoSelectWindow } xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-camera-video" viewBox="0 0 16 16">
                                                 <path fillRule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
-                                            </svg>
+                                            </svg> */}
                                         </div>
                                     </span>
                                 </div>
@@ -200,11 +202,11 @@ export default function Index() {
                                                     </small>
                                                     {/* <span className="text-body-secondary">9 hours ago</span> */}
                                                     <span>
-                                                        {/* <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
                                                             viewBox="0 0 16 16">
                                                             <path
                                                                 d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-                                                        </svg> */}
+                                                        </svg>
                                                     </span>
                                                 </div>
                                             </div>
@@ -245,13 +247,36 @@ export default function Index() {
                                                         : dayjs.utc(post.created_at).fromNow()}
                                                 </span>
                                                 {/* <span className="text-body-secondary">9 hours ago</span> */}
-                                                <span>
-                                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
-                                                        viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-                                                    </svg> */}
-                                                </span>
+
+                                                { post?.user?.id == user?.id && 
+                                                    <span className='mb-1 dropstart z-3'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="#4c5661" className="bi bi-three-dots"
+                                                            viewBox="0 0 16 16" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <path
+                                                                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
+                                                        </svg>
+                                                        <ul className="dropdown-menu">
+                                                            <li>
+                                                                <Link 
+                                                                    to={ route('home.posts.edit', { id: post.id})}
+                                                                    className="dropdown-item fw-bold" 
+                                                                    href="#edit-post"><small>Edit Post</small>
+                                                                </Link>
+                                                            </li>
+                                                            <li>
+                                                                <button 
+                                                                    onClick={ async () => {
+                                                                        await destroyPost(post);
+                                                                        await getPosts(posts?.meta?.current_page);
+                                                                    } }
+                                                                    type='button' 
+                                                                    className="dropdown-item fw-bold text-secondary" href="#delete-post"><small>Delete Post</small>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </span>
+                                                }
+
                                             </div>
                                         </div>
                             
@@ -290,7 +315,7 @@ export default function Index() {
                                                 <a href="../videos/spicy_tofu(720p).mp4">MP4</a>
                                                 video.
                                             </video> */}
-                                            <img src={ post.image_url ? `${ Constants.serverURL }/storage/${post.image_url}` : MissingImage } className="card-img-bottom rounded-0" alt="..." />
+                                            <img src={ post.image_url ? `${ Constants.serverURL }/storage/${post.image_url}` : MissingImage } className="card-img-bottom rounded-0" alt={ post.body } />
                                             </>
                                         : 
                                             <span className="card-img-bottom rounded d-flex justify-content-center align-items-center">
@@ -367,7 +392,7 @@ export default function Index() {
                                                     <button 
                                                         onClick={ async () => {
                                                             await destroyPostlike((post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id));
-                                                            await getPosts();
+                                                            await getPosts(posts?.meta?.current_page);
                                                         } }
                                                         className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
@@ -377,8 +402,8 @@ export default function Index() {
                                                     :
                                                     <button 
                                                         onClick={ async () => {
-                                                            await createPostlike(user?.id, post?.id);
-                                                            await getPosts();
+                                                            await createPostlike(post?.id);
+                                                            await getPosts(posts?.meta?.current_page);
                                                         } }
                                                         className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart mt-1" viewBox="0 0 16 16">
@@ -404,7 +429,7 @@ export default function Index() {
                                                                         <button 
                                                                             onClick={ async () => {
                                                                                 await destroyPostlike((post?.likes?.length > 0) && post.likes?.find(foundLike => foundLike?.user?.id == user?.id));
-                                                                                await getPosts();
+                                                                                await getPosts(posts?.meta?.current_page);
                                                                             } }
                                                                             className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent gap-2">
                                                                                 <span className='text-faansy-red'>Unlike post</span>
@@ -415,8 +440,8 @@ export default function Index() {
                                                                         :
                                                                         <button 
                                                                             onClick={ async () => {
-                                                                                await createPostlike(user?.id, post?.id);
-                                                                                await getPosts();
+                                                                                await createPostlike(post?.id);
+                                                                                await getPosts(posts?.meta?.current_page);
                                                                             } }
                                                                             className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent gap-2">
                                                                                 <span className='text-faansy-red'>Like post</span>
@@ -559,60 +584,56 @@ export default function Index() {
                                                 </div>
                                             </span>
 
-                                            <span className='tip-section'>
-                                                <button 
-                                                    href="" 
-                                                    type='button' 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target={`#tipModal${ post?.id }`}
-                                                    data-bs-body={ `@${post?.user?.id}` }
-                                                    className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-currency-dollar" viewBox="0 0 16 16">
-                                                        <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73z"/>
-                                                    </svg>
-                                                    <span className="text-uppercase">Send Tip</span>
-                                                </button>
+                                            { post?.user?.id !== user?.id &&
+                                                <span className='tip-section'>
+                                                    <button 
+                                                        href="" 
+                                                        type='button' 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target={`#tipModal${ post?.id }`}
+                                                        data-bs-body={ `@${post?.user?.id}` }
+                                                        className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-currency-dollar" viewBox="0 0 16 16">
+                                                            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73z"/>
+                                                        </svg>
+                                                        <span className="text-uppercase">Send Tip</span>
+                                                    </button>
 
-                                                <div className="modal fade" id={`tipModal${ post?.id }`} tabIndex="-1" aria-labelledby="tipModalLabel" aria-hidden="true">
-                                                    <div className="modal-dialog">
-                                                        <div className="modal-content">
-                                                            <div className="modal-header">
-                                                                <h4 className="modal-title fs-5 fw-semibold" id="tipModalLabel">Specify Amount (in units only)</h4>
-                                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div className="modal-body">
-                                                                <form onSubmit={ sendTip }>
-                                                                    <div className="d-none">
-                                                                        <input 
-                                                                            type="text" 
-                                                                            name="recipient_id" 
-                                                                            id="recipient_id" 
-                                                                            defaultValue={ post?.user?.id } 
-                                                                            hidden="hidden" />
-                                                                        <input 
-                                                                            type="text" 
-                                                                            name="donor_id" 
-                                                                            id="donor_id" 
-                                                                            defaultValue={ user?.id } 
-                                                                            hidden="hidden" />
-                                                                    </div>
-                                                                    <div className="mb-3">
-                                                                        <textarea 
-                                                                            name="amount" 
-                                                                            id="amount" 
-                                                                            placeholder='e.g. 20.50' 
-                                                                            aria-label="Tip amount"
-                                                                            className="form-control"></textarea>
-                                                                    </div>
-                                                                    <div className="d-flex justify-content-end">
-                                                                        <button type="submit" className="btn btn-sm btn-faansy-red text-light">Tip</button>
-                                                                    </div>
-                                                                </form>
+                                                    <div className="modal fade" id={`tipModal${ post?.id }`} tabIndex="-1" aria-labelledby="tipModalLabel" aria-hidden="true">
+                                                        <div className="modal-dialog">
+                                                            <div className="modal-content">
+                                                                <div className="modal-header">
+                                                                    <h4 className="modal-title fs-5 fw-semibold" id="tipModalLabel">Specify Amount (in units only)</h4>
+                                                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div className="modal-body">
+                                                                    <form onSubmit={ sendTip }>
+                                                                        <div className="d-none">
+                                                                            <input 
+                                                                                type="text" 
+                                                                                name="recipient_id" 
+                                                                                id="recipient_id" 
+                                                                                defaultValue={ post?.user?.id } 
+                                                                                hidden="hidden" />
+                                                                        </div>
+                                                                        <div className="mb-3">
+                                                                            <textarea 
+                                                                                name="amount" 
+                                                                                id="amount" 
+                                                                                placeholder='e.g. 20.50' 
+                                                                                aria-label="Tip amount"
+                                                                                className="form-control"></textarea>
+                                                                        </div>
+                                                                        <div className="d-flex justify-content-end">
+                                                                            <button type="submit" className="btn btn-sm btn-faansy-red text-light">Tip</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </span>
+                                                </span>
+                                            }
                                         </div>
 
                                         <div>
@@ -621,7 +642,7 @@ export default function Index() {
                                                     <button 
                                                         onClick={ async () => {
                                                             await destroyBookmark((post?.bookmarks?.length > 0) && post.bookmarks?.find(foundBookmark => foundBookmark?.user?.id == user?.id));
-                                                            await getPosts();
+                                                            await getPosts(posts?.meta?.current_page);
                                                         } }
                                                         className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#820303" className="bi bi-bookmark-fill" viewBox="0 0 16 16">
@@ -631,8 +652,8 @@ export default function Index() {
                                                 :
                                                 <button 
                                                     onClick={ async () => {
-                                                        await createBookmark(user?.id, post?.id);
-                                                        await getPosts();
+                                                        await createBookmark(post?.id);
+                                                        await getPosts(posts?.meta?.current_page);
                                                     } }
                                                     className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-bookmark"
@@ -659,23 +680,49 @@ export default function Index() {
                                     </section>
                                 </article>
                             )
-                        }) : (
-                            <>
-                                <section className='vh-50 pt-5 mt-2'>
-                                    <Loading />
+                        }) : (posts?.data?.length < 1) ? (
+                                <section className='vh-100 d-flex justify-content-center align-items-center'>
+                                    <span className='h-50 text-center fw-semibold px-5'>No posts yet in your feeds.</span>
                                 </section>
-                            </>
+                        ) : (
+                                <section className='vh-100 pt-5 mt-2 px-5'>
+                                    <div className='h-50 px-5'>
+                                        <Loading />
+                                    </div>
+                                </section>
                         )}
-                        
                     </section>
+
+                    <div className='d-flex justify-content-center gap-2 py-4'>
+                        { ((posts?.data?.length > 0) && ((posts?.meta?.current_page > first_page))) 
+                        &&
+                            <div className="d-flex justify-content-center">
+                                <button 
+                                    type="button"
+                                    onClick={ async () => {
+                                        await getPosts(pageNumberBackward)
+                                    } }
+                                    className="btn btn-outline-secondary py-1 px-3 rounded-pill text-faansy-red text-uppercase fw-semibold show-more">
+                                        Go back
+                                </button>
+                            </div>
+                        }
+
+                        { ((posts?.data?.length > 0) && ((posts?.meta?.current_page < posts?.meta?.last_page))) 
+                        &&
+                            <div className="d-flex justify-content-center">
+                                <button 
+                                    type="button"
+                                    onClick={ async () => {
+                                        await getPosts(pageNumberForward)
+                                    } }
+                                    className="btn btn-outline-secondary py-1 px-3 rounded-pill text-faansy-red text-uppercase fw-semibold show-more">
+                                        Show More
+                                </button>
+                            </div>
+                        }
+                    </div>
                 </div>
-{/* <button 
-                                                    href="" 
-                                                    type='button' 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target={`#likeModal${ post?.id }`} 
-                                                    data-bs-body='' 
-                                                    className="text-decoration-none text-secondary d-flex align-items-center border-0 bg-transparent"></button> */}
             </section>
         </Layout>
     )
