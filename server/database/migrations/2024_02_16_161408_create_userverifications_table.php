@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamp('approval_time')->nullable();
             $table->boolean('rejected')->nullable();
             $table->string('reason_for_rejection')->nullable();
+            $table->timestamp('rejection_time')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
