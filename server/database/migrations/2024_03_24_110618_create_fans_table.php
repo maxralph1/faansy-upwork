@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('todos', function (Blueprint $table) {
-            $table->id();
+        Schema::create('fans', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->foreignUlid('fanlist_id')->constrained();
+            $table->foreignUlid('user_id')->constrained();
             $table->string('title');
-            $table->string('description');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('todos');
+        Schema::dropIfExists('fans');
     }
 };

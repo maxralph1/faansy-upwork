@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('livestreams', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained();
+            // $table->enum('media_type', ['video', 'audio']);
+            $table->string('media_type');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

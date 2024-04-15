@@ -13,11 +13,20 @@ export default function Layout({ children }) {
             <Header />
 
             <main className="position-relative d-flex w-100">
-                <SideBar />
+                { location.pathname != route('public.posts.show') ? <SideBar /> : '' }
 
                 { children }
 
-                { location.pathname != route('home.stats.index') && <Aside />}
+                {/* { (location.pathname != route('home.stats.index')) || (location.pathname != route('home.user-verifications.index')) || (location.pathname != route('home.user-become-creators.index')) && <Aside />} */}
+                { (location.pathname == route('home.stats.index')) 
+                    ? '' 
+                        : (location.pathname == route('home.user-verifications.index'))
+                        ? ''
+                            : (location.pathname == route('home.user-become-creators.index'))
+                            ? '' 
+                                : (location.pathname == route('public.posts.show'))
+                                ? '' 
+                                    : <Aside />}
             </main>
         </>
     )

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { route } from '@/routes';
 import Constants from '@/utils/Constants.jsx';
-import axios from 'axios';
+// import axios from 'axios';
 import useAxios from '@/utils/useAxios.jsx';
 import swal from 'sweetalert2';
 
@@ -44,6 +44,15 @@ export function usePost(id = null) {
                 if (error?.response?.status == 401) {
                     navigate(route('index'))
                 }
+                if (error?.response?.status == 403) {
+                    swal.fire({
+                        text: 'You must be a creator before you can add posts',
+                        color: "#820303",
+                        width: 350,
+                        position: 'top',
+                        showConfirmButton: false,
+                    });
+                }
                 if (error.response.status == 413) {
                     swal.fire({
                         text: `${error.response.statusText}`,
@@ -60,7 +69,8 @@ export function usePost(id = null) {
     async function getPost(id, { signal } = {}) {
         setLoading(true);
 
-        return axiosInstance.get(`${ Constants.serverURL }/api/posts/${id}`, { signal })
+        return axiosInstance.get(`posts/${id}`, { signal })
+        // return axios.get(`${ Constants.serverURL }/api/posts/${id}`, { signal })
             .then(response => setData(response?.data?.data))
             .catch((error) => {
                 console.log(error)
@@ -86,8 +96,7 @@ export function usePost(id = null) {
                     position: 'top',
                     showConfirmButton: false,
                 });
-                console.log(response)
-                navigate(route('home.index'))
+                console.log(response);
             })
             .catch(error => {
                 console.log(error);
@@ -98,6 +107,131 @@ export function usePost(id = null) {
                 if (error?.response?.status == 403) {
                     swal.fire({
                         text: 'Access Denied: You can only update posts that you own.',
+                        color: "#820303",
+                        width: 350,
+                        position: 'top',
+                        showConfirmButton: false,
+                    });
+                }
+                if (error?.response?.status == 422) {
+                    swal.fire({
+                        text: 'Error: Ensure you filled out all fields with the appropriate values.',
+                        color: "#820303",
+                        width: 350,
+                        position: 'top',
+                        showConfirmButton: false,
+                    });
+                }
+            })
+            .finally(() => setLoading(false));
+    }
+
+    async function featurePost(post) {
+        setLoading(true);
+        setErrors({});
+        console.log(post)
+
+        return axiosInstance.post(`posts/featured-posts/${post.id}`)
+            .then((response) => {
+                swal.fire({
+                    text: 'Post added to featured posts.',
+                    color: "#820303",
+                    width: 325,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+                setErrors(error.response);
+                if (error?.response?.status == 401) {
+                    navigate(route('index'))
+                }
+                if (error?.response?.status == 403) {
+                    swal.fire({
+                        text: 'Access Denied: You can only make posts featured if you have either of super-admin or admin roles.',
+                        color: "#820303",
+                        width: 350,
+                        position: 'top',
+                        showConfirmButton: false,
+                    });
+                }
+                if (error?.response?.status == 409) {
+                    // swal.fire({
+                    //     text: 'Conflict: Post already featured.',
+                    //     color: "#820303",
+                    //     width: 350,
+                    //     position: 'top',
+                    //     showConfirmButton: false,
+                    // });
+                }
+            })
+            .finally(() => setLoading(false));
+    }
+
+    async function pinPost(post) {
+        setLoading(true);
+        setErrors({});
+        console.log(post)
+
+        return axiosInstance.post(`posts/${post?.id}/pin-post`)
+            .then((response) => {
+                swal.fire({
+                    text: 'Post pinned.',
+                    color: "#820303",
+                    width: 200,
+                    position: 'top',
+                    showConfirmButton: false,
+                });
+                // console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+                setErrors(error.response);
+                if (error?.response?.status == 401) {
+                    navigate(route('index'))
+                }
+                if (error?.response?.status == 403) {
+                    swal.fire({
+                        text: 'Access Denied: You can only pin posts you own',
+                        color: "#820303",
+                        width: 350,
+                        position: 'top',
+                        showConfirmButton: false,
+                    });
+                }
+            })
+            .finally(() => setLoading(false));
+    }
+
+    async function repostPost(repost_body) {
+        setLoading(true);
+        setErrors({});
+        console.log(repost_body)
+        console.log(id)
+
+        return axiosInstance.post(`posts/${id}/repost`, {repost_body})
+            .then((response) => {
+                // swal.fire({
+                //     text: 'Post updated',
+                //     color: "#820303",
+                //     width: 200,
+                //     position: 'top',
+                //     showConfirmButton: false,
+                // });
+                // console.log(response)
+                // navigate(route('home.index'))
+            })
+            .catch(error => {
+                console.log(error);
+                setErrors(error.response);
+                if (error?.response?.status == 401) {
+                    navigate(route('index'))
+                }
+                if (error?.response?.status == 403) {
+                    swal.fire({
+                        text: 'Access Denied: You can only repost posts that you own.',
                         color: "#820303",
                         width: 350,
                         position: 'top',
@@ -152,6 +286,9 @@ export function usePost(id = null) {
         getPost, 
         createPost, 
         updatePost, 
+        featurePost, 
+        pinPost, 
+        repostPost, 
         destroyPost
     }
 }

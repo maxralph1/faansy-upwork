@@ -15,13 +15,10 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('user_id')->constrained();
             $table->string('bio')->nullable();
-            $table->string('address')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('website_url')->nullable();
-            $table->string('twitter_account')->nullable();
-            $table->string('google_account')->nullable();
-            // $table->string('language');
-            $table->enum('language', ['de', 'en-US', 'fr']);
+            // $table->enum('language', ['de', 'en-US', 'fr']);
+            $table->string('language')->default('en-US');
             $table->boolean('dark_mode')->default(false);
             $table->timestamps();
             $table->softDeletes();

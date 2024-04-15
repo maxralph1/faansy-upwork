@@ -1,15 +1,19 @@
-// import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { route } from '@/routes';
 import PrivateRoute from '@/utils/PrivateRoute.jsx';
 
+import Features from '@/views/public/Features.jsx';
 import Index from '@/views/public/Index.jsx';
 import CreateAccount from '@/views/public/CreateAccount.jsx';
 import ResetPasswordRequest from '@/views/public/ResetPasswordRequest.jsx';
 import ResetPassword from '@/views/public/ResetPassword.jsx';
 import PasswordlessSigninRequest from '@/views/public/PasswordlessSigninRequest.jsx';
 import PasswordlessSignin from '@/views/public/PasswordlessSignin.jsx';
+import PostShow from '@/views/public/posts/Show.jsx';
+import UserShow from '@/views/public/users/Show.jsx';
 
 import PrivateUserCreate from '@/views/private/users/Create.jsx';
 import PrivateUser from '@/views/private/users/Show.jsx';
@@ -19,6 +23,8 @@ import PrivateUsersIndex from '@/views/private/users/Index.jsx';
 import PrivateUserLikesIndex from '@/views/private/userlikes/Index.jsx';
 
 import PrivateUserVerificationsIndex from '@/views/private/userverifications/Index.jsx';
+
+import PrivateUserBecomecreatorsIndex from '@/views/private/userbecomecreators/Index.jsx';
 
 import PrivateUserBlocksIndex from '@/views/private/blocks/Index.jsx';
 
@@ -32,7 +38,9 @@ import PrivateWalletIndex from '@/views/private/wallet/Index.jsx';
 
 import PrivateStatsIndex from '@/views/private/stats/Index.jsx';
 
+import PrivatePostShow from '@/views/private/posts/Show.jsx';
 import PrivatePostEdit from '@/views/private/posts/Edit.jsx';
+import PrivatePostRepost from '@/views/private/posts/Repost.jsx';
 import PrivatePostsIndex from '@/views/private/posts/Index.jsx';
 
 import PrivatePostCommentEdit from '@/views/private/postcomments/Edit.jsx';
@@ -40,7 +48,6 @@ import PrivatePostCommentsIndex from '@/views/private/postcomments/Index.jsx';
 
 import PrivateBookmarksIndex from '@/views/private/bookmarks/Index.jsx';
 
-import PrivateSubscriptionEdit from '@/views/private/subscriptions/Edit.jsx';
 import PrivateSubscriptionsIndex from '@/views/private/subscriptions/Index.jsx';
 
 import PrivateTipEdit from '@/views/private/tips/Edit.jsx';
@@ -52,7 +59,6 @@ import PrivateCardsIndex from '@/views/private/cards/Index.jsx';
 import PrivateChatShow from '@/views/private/chats/Show.jsx';
 import PrivateChatsIndex from '@/views/private/chats/Index.jsx';
 
-import PrivateNotificationEdit from '@/views/private/notifications/Edit.jsx';
 import PrivateNotificationsIndex from '@/views/private/notifications/Index.jsx';
 
 import MyProfile from '@/views/private/MyProfile.jsx';
@@ -64,17 +70,19 @@ import NotFound from '@/views/NotFound.jsx';
 
 function App() {
   return (
-    // <BrowserRouter>
-    <HashRouter>
+    <BrowserRouter>
       <AuthProvider>
         <Routes>
           {/* Public routes */}
-          <Route element={<Index />} path={ route('index') } />
+          <Route element={<Features />} path={ route('features') } />
           <Route element={<CreateAccount />} path={ route('create-account') } />
           <Route element={<ResetPasswordRequest />} path={ route('reset-password-request') } />
           <Route element={<ResetPassword />} path={ route('reset-password') } />
           <Route element={<PasswordlessSigninRequest />} path={ route('passwordless-signin-request') } />
           <Route element={<PasswordlessSignin />} path={ route('passwordless-signin') } />
+          <Route element={<PostShow />} path={ route('public.posts.show') } />
+          <Route element={<UserShow />} path={ route('public.users.show') } />
+          <Route element={<Index />} path={ route('index') } />
           {/* End of Public routes */}
 
           {/* Protected routes */}
@@ -85,6 +93,8 @@ function App() {
             <Route element={<PrivateUsersIndex />} path={ route('home.users.index') } />
 
             <Route element={<PrivateUserVerificationsIndex />} path={ route('home.user-verifications.index') } />
+
+            <Route element={<PrivateUserBecomecreatorsIndex />} path={ route('home.user-become-creators.index') } />
 
             <Route element={<PrivateUserLikesIndex />} path={ route('home.user-likes.index') } />
 
@@ -98,7 +108,9 @@ function App() {
 
             <Route element={<PrivateWalletIndex />} path={ route('home.wallet.index') } />
 
+            <Route element={<PrivatePostShow />} path={ route('home.posts.show') } />
             <Route element={<PrivatePostEdit />} path={ route('home.posts.edit') } />
+            <Route element={<PrivatePostRepost />} path={ route('home.posts.repost') } />
             <Route element={<PrivatePostsIndex />} path={ route('home.posts.index') } />
 
             <Route element={<PrivatePostCommentEdit />} path={ route('home.post-comments.edit') } />
@@ -106,7 +118,6 @@ function App() {
 
             <Route element={<PrivateBookmarksIndex />} path={ route('home.bookmarks.index') } />
 
-            <Route element={<PrivateSubscriptionEdit />} path={ route('home.subscriptions.edit') } />
             <Route element={<PrivateSubscriptionsIndex />} path={ route('home.subscriptions.index') } />
 
             <Route element={<PrivateTipEdit />} path={ route('home.tips.edit') } />
@@ -118,7 +129,6 @@ function App() {
             <Route element={<PrivateChatShow />} path={ route('home.chats.show') } />
             <Route element={<PrivateChatsIndex />} path={ route('home.chats.index') } />
 
-            <Route element={<PrivateNotificationEdit />} path={ route('home.notifications.edit') } />
             <Route element={<PrivateNotificationsIndex />} path={ route('home.notifications.index') } />
 
             <Route element={<PrivateStatsIndex />} path={ route('home.stats.index') } />
@@ -133,8 +143,7 @@ function App() {
           <Route path='*' element={<NotFound />} />
         </Routes>
       </AuthProvider>
-    {/* </BrowserRouter> */}
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 

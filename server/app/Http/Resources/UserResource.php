@@ -5,7 +5,9 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use App\Http\Resources\PollResource;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\BlockResource;
 use App\Http\Resources\ProfileResource;
+use App\Http\Resources\RestrictResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -30,6 +32,7 @@ class UserResource extends JsonResource
             'user_background_image_url' => $this->user_background_image_url,
             'last_seen' => $this->last_seen,
             'show_activity_status' => $this->show_activity_status,
+            'users_must_be_subscribed_to_view_my_content' => $this->users_must_be_subscribed_to_view_my_content,
             'free_subscription' => $this->free_subscription,
             'subscription_amount' => $this->subscription_amount / 100,
             'show_subscription_offers' => $this->show_subscription_offers,
@@ -53,11 +56,13 @@ class UserResource extends JsonResource
             ],
             'userlikers' => $this->userlikers,
             'subscriptions' => SubscriptionResource::collection($this->subscribed),
+            // 'subscriber' => SubscriptionResource::collection($this->subscriber),
             'posts' => PostResource::collection($this->posts),
-            // 'polls' => $this->polls,
             'polls' => PollResource::collection($this->polls),
             'postcomments' => $this->postcomments,
             'postlikes' => $this->postlikes,
+            'restrictor' => RestrictResource::collection($this->restrictor),
+            'blocker' => BlockResource::collection($this->blocker),
             // 'livestreams' => $this?->livestreams,
             // 'livestreamcomments' => $this?->livestreamcomments,
             // 'livestreamlikes' => $this?->livestreamlikes,

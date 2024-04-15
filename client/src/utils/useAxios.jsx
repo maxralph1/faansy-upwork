@@ -17,46 +17,72 @@ const useAxios = () => {
     const axiosInstance = axios.create({
         baseURL, 
         headers: {
-            'Authorization': `Bearer ${authTokens?.authorization.token}`,
+            'Authorization': `Bearer ${authTokens?.authorization?.token}`,
             // 'Content-Type': 'application/json',
             // 'Content-Type': 'application/x-www-form-urlencoded', 
             "Content-Type": "multipart/form-data",
         },
     });
+    
+    // async function refreshFunc() {
+    //     const response = await axiosInstance.post(`${baseURL}/refresh`, {
+    //         headers: {
+    //             // 'Content-Type': 'application/json',
+    //             'Access-Control-Allow-Origin': '*',
+    //             "Content-Type": "multipart/form-data",
+    //             'Authorization': `Bearer ${authTokens?.authorization.token}`,
+    //         },
+    //     });
+    //     console.log(response.data)
+    //     console.log('refreshed');
 
-    axiosInstance.interceptors.request.use(async req => {
-        const user = jwtDecode(authTokens?.authorization?.token);
-        const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
+    //     localStorage.setItem('authTokens', JSON.stringify(response.data))
 
-        if (!isExpired) return req;
+    //     setAuthTokens(response.data);
+    //     setUser(jwtDecode(response.data.authorization.token));
+    // };
 
-        // // modify this navigate before usage
-        // // if (isExpired) navigate(route('index'));
+    // axiosInstance.interceptors.request.use(async req => {
+    //     const user = jwtDecode(authTokens?.authorization?.token);
+    //     const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
 
-        const response = await axios.post(`${baseURL}/refresh`);
-        console.log(response.data)
+    //     if (!isExpired) return req;
 
-        localStorage.setItem('authTokens', JSON.stringify(response.data))
+    //     // refreshFunc();
 
-        setAuthTokens(response.data);
-        setUser(jwtDecode(response.data.authorization.token));
+    //     // // modify this navigate before usage
+    //     // // if (isExpired) navigate(route('index'));
 
-        // Update user's last seen here
-        // await ...
+    //     const response = await axios.post(`${baseURL}/refresh`, {
+    //         headers: {
+    //             // 'Content-Type': 'application/json',
+    //             'Access-Control-Allow-Origin': '*',
+    //             "Content-Type": "multipart/form-data",
+    //             // 'Authorization': `Bearer ${authTokens?.authorization?.token}`,
+    //         },
+    //     });
+    //     console.log(response?.data)
+    //     console.log('refreshed');
 
-        req.headers.Authorization = `Bearer ${response?.data?.authorization?.token}`;
-        return req;
-    });
+    //     localStorage.setItem('authTokens', JSON.stringify(response?.data))
 
-    // axiosInstance.interceptors.response.use(response => {
-    //     return response;
-    //     }, error => {
-    //         console.log(error)
-    //         if (error?.response?.status == 401) {
-    //             navigate(route('index'));
-    //         }
-    //     return error;
+    //     setAuthTokens(response?.data);
+    //     setUser(jwtDecode(response?.data?.authorization?.token));
+
+    //     // Update user's last seen here
+    //     // await ...
+
+    //     req.headers.Authorization = `Bearer ${response?.data?.authorization?.token}`;
+    //     return req;
     // });
+
+    axiosInstance.interceptors.response.use(
+        response => response,
+        error => {
+        if (error?.response?.status === 401) navigate(route('index'));
+        return Promise.reject(error)
+        },
+    )
 
     return axiosInstance;
 }

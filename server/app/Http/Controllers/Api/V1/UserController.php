@@ -20,7 +20,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api', ['except' => ['showPublic']]);
     }
 
     /**
@@ -53,7 +53,6 @@ class UserController extends Controller
 
         event(new Registered($user));
 
-        // return new UserCollection($user);
         return new UserResource($user);
     }
 
@@ -62,7 +61,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // return new UserCollection($user);
         return new UserResource($user);
     }
 
@@ -75,9 +73,69 @@ class UserController extends Controller
             abort(403);
         }
 
-        $user->update($request->validated());
+        $validated = $request->validated();
 
-        // return new UserCollection($user);
+        $user['first_name'] = $validated['first_name'];
+        $user['last_name'] = $validated['last_name'];
+        $user['username'] = $validated['username'];
+        $user['email'] = $validated['email'];
+
+        if ($request->file('user_image_url')) {
+            $user_image_path = $validated['user_image_url']->store('images/users/user-images');
+            $user['user_image_url'] = $user_image_path;
+        }
+
+        if ($request->file('user_background_image_url')) {
+            $user_background_image_path = $validated['user_background_image_url']->store('images/users/user-background-images');
+            $user['user_background_image_url'] = $user_background_image_path;
+        }
+
+        $user['show_activity_status'] = $validated['show_activity_status'];
+        $user['free_subscription'] = $validated['free_subscription'];
+        $user['subscription_amount'] = $validated['subscription_amount'];
+        $user['show_subscription_offers'] = $validated['show_subscription_offers'];
+        // $user['dark_mode'] = $validated['dark_mode'];
+
+        $user->update();
+
+        return new UserResource($user);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function updateProfilePhoto(UpdateUserRequest $request, User $user)
+    {
+        if ($request->user()->cannot('update', $user)) {
+            abort(403);
+        }
+
+        $validated = $request->validated();
+
+        $user_image_path = $validated['user_image_url']->store('images/users/user-images');
+        $user['user_image_url'] = $user_image_path;
+
+        $user->update();
+
+        return new UserResource($user);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function updateBackgroundPhoto(UpdateUserRequest $request, User $user)
+    {
+        if ($request->user()->cannot('update', $user)) {
+            abort(403);
+        }
+
+        $validated = $request->validated();
+
+        $user_background_image_path = $validated['user_background_image_url']->store('images/users/user-background-images');
+        $user['user_background_image_url'] = $user_background_image_path;
+
+        $user->update();
+
         return new UserResource($user);
     }
 
@@ -146,6 +204,14 @@ class UserController extends Controller
 
         $user->update(['verified' => true]);
 
+        return new UserResource($user);
+    }
+
+    /**
+     * Display the specified resource for unauthenticated viewers.
+     */
+    public function showPublic(User $user)
+    {
         return new UserResource($user);
     }
 }
